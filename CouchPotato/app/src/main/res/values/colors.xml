@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--System used colors-->
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#e02894</color>
+    <color name="black_overlay">#cc000000</color>
+
+    <!--Player colors-->
+    <color name="p1_col">#ff2e2e</color>
+    <color name="p2_col">#5555ff</color>
+    <color name="p3_col">#ccbe1f</color>
+    <color name="p4_col">#60d033</color>
+    <color name="p5_col">#ffaa00</color>
+    <color name="p6_col">#eb52ba</color>
+    <color name="p7_col">#50f0dd</color>
+    <color name="p8_col">#85778c</color>
+
+    <!--Couch Potato specific colors-->
+    <color name="main_black">#222224</color>
+    <color name="main_black_faded">#90111113</color>
+    <color name="main_white">#dfdddd</color>
+    <color name="main_white_faded">#90ffffff</color>
+    <color name="main_accept">#50f055</color>
+    <color name="main_deny">#f25749</color>
+</resources>

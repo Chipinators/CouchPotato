@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="paperprisoners.couchpotato.InfoActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_medium"
+        android:background="@color/main_black">
+
+        <Button
+            android:id="@+id/info_back"
+            android:layout_width="@dimen/size_medium"
+            android:layout_height="@dimen/size_medium"
+            android:background="@drawable/ic_back_white_48dp"
+            android:backgroundTint="@color/main_white" />
+
+        <TextView
+            android:id="@+id/info_bar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:padding="8dp"
+            android:text="@string/info_bar_title"
+            android:textAlignment="center"
+            android:textColor="@color/main_white"
+            android:textSize="@dimen/font_large"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/padding_large"
+        android:paddingRight="@dimen/padding_large">
+
+        <ScrollView
+            android:id="@+id/info_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+
+</LinearLayout>

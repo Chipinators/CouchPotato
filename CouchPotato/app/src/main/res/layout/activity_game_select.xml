@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/select_background_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/p1_col"
+    android:gravity="center_horizontal"
+    tools:context="paperprisoners.couchpotato.GameSelectActivity">
+
+    <RelativeLayout
+        android:id="@+id/select_top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_medium"
+        android:layout_gravity="center"
+        android:layout_alignParentTop="true"
+        android:background="@color/main_black">
+
+        <Button
+            android:id="@+id/select_back"
+            android:layout_width="@dimen/size_medium"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/ic_back_white_48dp"
+            android:backgroundTint="@color/main_white" />
+
+        <Button
+            android:id="@+id/select_info"
+            android:layout_width="@dimen/size_medium"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/ic_help_white_48dp"
+            android:backgroundTint="@color/main_white" />
+            
+        <TextView
+            android:id="@+id/select_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/select_info"
+            android:layout_toRightOf="@id/select_back"
+            android:gravity="center"
+            android:padding="4dp"
+            android:text="@string/na_name"
+            android:textColor="@color/main_white"
+            android:textSize="@dimen/font_large"
+            android:textStyle="bold"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/select_top_bar"
+        android:layout_above="@+id/select_game_start"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        >
+
+        <Button
+            android:id="@+id/select_left"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:text="&lt;&lt;"
+            android:background="@color/main_black_faded"
+            android:textColor="@color/main_white"
+            android:textSize="@dimen/font_xlarge"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/select_right"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="&gt;&gt;"
+            android:background="@color/main_black_faded"
+            android:textColor="@color/main_white"
+            android:textSize="@dimen/font_xlarge"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/size_small"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" >
+
+            <ImageView
+                android:src="@drawable/ic_group_white_48dp"
+                android:layout_width="@dimen/size_small"
+                android:layout_height="@dimen/size_small"
+                android:tint="@color/main_black"/>
+
+            <Space
+                android:layout_width="@dimen/padding_medium"
+                android:layout_height="@dimen/size_small" />
+
+            <TextView
+                android:id="@+id/select_players"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/size_small"
+                android:text="3-8"
+                android:textColor="@color/main_black"
+                android:textSize="@dimen/font_medium"
+                android:textStyle="bold"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/select_players2"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/size_small"
+                android:text=" Players"
+                android:textColor="@color/main_black"
+                android:textSize="@dimen/font_medium"
+                android:textStyle="bold"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/select_game_start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/size_medium"
+        android:paddingRight="@dimen/size_medium"
+        android:paddingBottom="@dimen/padding_large"
+        android:layout_gravity="bottom"
+        android:gravity="center_horizontal"
+        >
+
+        <Button
+            android:id="@+id/select_host"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/select_host"
+            android:background="@color/main_black"
+            android:textColor="@color/main_white"
+            android:textSize="@dimen/font_medium"
+            android:textStyle="bold" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/padding_large" />
+
+        <Button
+            android:id="@+id/select_join"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/select_join"
+            android:background="@color/main_black"
+            android:textColor="@color/main_white"
+            android:textSize="@dimen/font_medium"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</RelativeLayout>

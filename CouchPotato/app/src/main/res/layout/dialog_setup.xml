@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/main_black"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/main_black"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_medium">
+
+        <TextView
+            android:id="@+id/setup_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/na_message"
+            android:textAlignment="center"
+            android:textColor="@color/main_white"
+            android:textSize="@dimen/font_large"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/setup_status"
+            android:layout_width="@dimen/size_medium"
+            android:layout_height="@dimen/size_medium"
+            android:src="@drawable/ic_autorenew_white_48dp"
+            android:tint="@color/main_deny" />
+
+        <TextView
+            android:id="@+id/setup_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/na_value"
+            android:textAlignment="center"
+            android:textColor="@color/main_white"
+            android:textSize="@dimen/font_xlarge" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/setup_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/setup_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:textSize="@dimen/font_large"
+            android:textStyle="bold"
+            android:background="@color/main_deny"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/setup_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/start"
+            android:textSize="@dimen/font_large"
+            android:textStyle="bold"
+            android:background="@color/main_accept"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+</LinearLayout>

@@ -29,16 +29,16 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="55"
-            android:gravity="center_horizontal"
+            android:gravity="center"
             android:orientation="vertical">
 
 
             <!--android:src="@drawable/logo.png"-->
             <ImageView
+                android:src="@drawable/logo_512"
                 android:id="@+id/title_image"
-                android:layout_width="160dp"
-                android:layout_height="160dp"
-                android:background="@color/main_black" />
+                android:layout_width="180dp"
+                android:layout_height="180dp" />
 
             <TextView
                 android:id="@+id/title_text"
@@ -71,7 +71,8 @@
                 android:inputType="text"
                 android:maxLength="15"
                 android:textAlignment="center"
-                android:textColor="@color/main_black" />
+                android:textColor="@color/main_black"
+                android:textSize="@dimen/font_medium" />
 
             <Button
                 android:id="@+id/title_submit"

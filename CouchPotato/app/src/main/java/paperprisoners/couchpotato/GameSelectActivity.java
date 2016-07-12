@@ -18,6 +18,7 @@ import android.widget.TextView;
 public class GameSelectActivity extends Activity implements View.OnClickListener {
 
     private int id = 1;
+    private int games = 1;
     private String username;
 
     private TextView nameText, playersText, playersText2;
@@ -91,20 +92,25 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
             setup.show();
         }
         else if ( v == leftButton ) {
-            id --;
-            if ( id < 1 )
-                id = 8;
-            int col = getResources().getIdentifier("p"+id+"_col", "color", this.getPackageName());
-            col = getBaseContext().getColor( col );
-            bg.setBackgroundColor( col );
+            if (games > 1) {
+                id--;
+
+                if (id < games)
+                    id = games;
+                int col = getResources().getIdentifier("p" + id + "_col", "color", this.getPackageName());
+                col = getBaseContext().getColor(col);
+                bg.setBackgroundColor(col);
+            }
         }
         else {
-            id ++;
-            if ( id > 8 )
-                id = 1;
-            int col = getResources().getIdentifier("p"+id+"_col", "color", this.getPackageName());
-            col = getBaseContext().getColor( col );
-            bg.setBackgroundColor( col );
+            if(games > 1) {
+                id++;
+                if (id > games)
+                    id = 1;
+                int col = getResources().getIdentifier("p" + id + "_col", "color", this.getPackageName());
+                col = getBaseContext().getColor(col);
+                bg.setBackgroundColor(col);
+            }
         }
     }
 }

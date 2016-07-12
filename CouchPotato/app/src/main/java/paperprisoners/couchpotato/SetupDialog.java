@@ -74,7 +74,12 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v == startButton) {
-            switchToComplete();
+            if(countText.getText().toString().toCharArray()[0] == '1'){
+
+            }
+            else {
+                switchToComplete();
+            }
         }
         else
             cancel();

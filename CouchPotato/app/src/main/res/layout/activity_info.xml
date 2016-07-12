@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/wouldchuck"
     tools:context="paperprisoners.couchpotato.InfoActivity">
 
     <RelativeLayout
@@ -32,16 +33,41 @@
 
     </RelativeLayout>
 
-    <FrameLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="@dimen/padding_large"
         android:paddingRight="@dimen/padding_large">
 
-        <ScrollView
-            android:id="@+id/info_scroll"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </FrameLayout>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:paddingTop="@dimen/padding_large">
+
+            <ImageView
+                android:id="@+id/info_logo"
+                android:src="@drawable/wouldchuck_512"
+                android:layout_width="200dp"
+                android:layout_height="200dp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/padding_large" />
+
+            <TextView
+                android:id="@+id/info_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="@string/na_filler"
+                android:textSize="@dimen/font_medium"
+                android:textStyle="bold"
+                android:textColor="@color/main_black"/>
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>

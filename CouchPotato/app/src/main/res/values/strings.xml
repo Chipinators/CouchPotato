@@ -8,8 +8,9 @@
     <string name="chars_response">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789:;\'&quot;,.&lt;&gt;/\?~!@#$%&amp;*()-+=</string>
 
     <!--Globally used strings. Only add to if needed-->
-    <string name="cancel">CANCEL</string>
     <string name="start">START</string>
+    <string name="cancel">CANCEL</string>
+    <string name="winner">WINNER</string>
 
     <!--Activity-specific strings. Prefix with the name of the Activity-->
     <string name="title_name_field">enter your name</string>
@@ -29,6 +30,7 @@
     <string name="na_message">Coming up with a more creative message...</string>
     <string name="na_filler">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tempor ultricies luctus. In at libero velit. Sed ultrices elit sit amet nulla mattis mattis. Curabitur ultrices justo ut elit iaculis cursus. Aenean a massa scelerisque tellus semper suscipit eu sed justo. Ut facilisis ac nulla sed ultrices. Donec imperdiet lectus vitae venenatis fringilla. Duis interdum ipsum nisi, a suscipit odio iaculis eget. Morbi ut risus vehicula, sollicitudin risus in, venenatis tortor. Donec ultrices lacinia consequat. Donec pretium aliquam velit, sit amet consequat ligula varius non.</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!--Game-specific strings-->
+    <string name="wouldchuck_wyr">WOULD YOU RATHER...</string>
+    <string name="wouldchuck_or">OR</string>
 </resources>

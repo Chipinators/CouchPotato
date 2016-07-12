@@ -13,7 +13,7 @@
     <color name="p4_col">#60d033</color>
     <color name="p5_col">#ffaa00</color>
     <color name="p6_col">#eb52ba</color>
-    <color name="p7_col">#50f0dd</color>
+    <color name="p7_col">#4ce6d4</color>
     <color name="p8_col">#85778c</color>
 
     <!--Couch Potato specific colors-->
@@ -23,4 +23,7 @@
     <color name="main_white_faded">#90ffffff</color>
     <color name="main_accept">#50f055</color>
     <color name="main_deny">#f25749</color>
+
+    <!--Game colors-->
+    <color name="wouldchuck">#acd8ac</color>
 </resources>

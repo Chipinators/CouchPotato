@@ -4,17 +4,17 @@
     android:id="@+id/select_background_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/p1_col"
+    android:background="@color/wouldchuck"
     android:gravity="center_horizontal"
+    android:orientation="vertical"
     tools:context="paperprisoners.couchpotato.GameSelectActivity">
 
     <RelativeLayout
         android:id="@+id/select_top_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/size_medium"
-        android:layout_gravity="center"
         android:layout_alignParentTop="true"
+        android:layout_gravity="center"
         android:background="@color/main_black">
 
         <Button
@@ -32,11 +32,12 @@
             android:layout_alignParentRight="true"
             android:background="@drawable/ic_help_white_48dp"
             android:backgroundTint="@color/main_white" />
-            
+
         <TextView
             android:id="@+id/select_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:layout_toLeftOf="@id/select_info"
             android:layout_toRightOf="@id/select_back"
             android:gravity="center"
@@ -44,19 +45,17 @@
             android:text="@string/na_name"
             android:textColor="@color/main_white"
             android:textSize="@dimen/font_large"
-            android:textStyle="bold"
-            android:layout_centerInParent="true"/>
+            android:textStyle="bold" />
 
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/select_top_bar"
         android:layout_above="@+id/select_game_start"
-        android:paddingTop="16dp"
+        android:layout_below="@+id/select_top_bar"
         android:paddingBottom="16dp"
-        >
+        android:paddingTop="16dp">
 
         <Button
             android:id="@+id/select_left"
@@ -64,8 +63,8 @@
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:text="&lt;&lt;"
             android:background="@color/main_black_faded"
+            android:text="&lt;&lt;"
             android:textColor="@color/main_white"
             android:textSize="@dimen/font_xlarge"
             android:textStyle="bold" />
@@ -76,24 +75,33 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:text="&gt;&gt;"
             android:background="@color/main_black_faded"
+            android:text="&gt;&gt;"
             android:textColor="@color/main_white"
             android:textSize="@dimen/font_xlarge"
             android:textStyle="bold" />
 
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_toLeftOf="@id/select_right"
+            android:layout_toRightOf="@id/select_left"
+            android:padding="@dimen/padding_large"
+            android:src="@drawable/wouldchuck_512" />
+
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="@dimen/size_small"
-            android:orientation="horizontal"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true" >
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal">
 
             <ImageView
-                android:src="@drawable/ic_group_white_48dp"
                 android:layout_width="@dimen/size_small"
                 android:layout_height="@dimen/size_small"
-                android:tint="@color/main_black"/>
+                android:src="@drawable/ic_group_white_48dp"
+                android:tint="@color/main_black" />
 
             <Space
                 android:layout_width="@dimen/padding_medium"
@@ -103,21 +111,21 @@
                 android:id="@+id/select_players"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/size_small"
+                android:gravity="center"
                 android:text="3-8"
                 android:textColor="@color/main_black"
                 android:textSize="@dimen/font_medium"
-                android:textStyle="bold"
-                android:gravity="center"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/select_players2"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/size_small"
+                android:gravity="center"
                 android:text=" Players"
                 android:textColor="@color/main_black"
                 android:textSize="@dimen/font_medium"
-                android:textStyle="bold"
-                android:gravity="center"/>
+                android:textStyle="bold" />
 
         </LinearLayout>
 
@@ -128,20 +136,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/size_medium"
-        android:paddingRight="@dimen/size_medium"
-        android:paddingBottom="@dimen/padding_large"
         android:layout_gravity="bottom"
         android:gravity="center_horizontal"
-        >
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/padding_large"
+        android:paddingLeft="@dimen/size_medium"
+        android:paddingRight="@dimen/size_medium">
 
         <Button
             android:id="@+id/select_host"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/select_host"
             android:background="@color/main_black"
+            android:text="@string/select_host"
             android:textColor="@color/main_white"
             android:textSize="@dimen/font_medium"
             android:textStyle="bold" />
@@ -154,8 +161,8 @@
             android:id="@+id/select_join"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/select_join"
             android:background="@color/main_black"
+            android:text="@string/select_join"
             android:textColor="@color/main_white"
             android:textSize="@dimen/font_medium"
             android:textStyle="bold" />

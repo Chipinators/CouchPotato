@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/p5_col"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_large">
+
+    <RelativeLayout
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@color/main_black"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/wouldchuck_choice_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="29"
+            android:textAlignment="center"
+            android:textColor="@color/main_white"
+            android:textSize="@dimen/size_large"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/padding_large" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/wouldchuck_wyr"
+        android:textColor="@color/main_black"
+        android:textSize="@dimen/font_large"
+        android:textStyle="bold" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/padding_small" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/wouldchuck_choice_1"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:paddingTop="@dimen/padding_medium"
+                android:paddingLeft="@dimen/padding_small"
+                android:paddingRight="@dimen/padding_small"
+                android:paddingBottom="@dimen/padding_xlarge"
+                android:text="@string/na_message"
+                android:textSize="@dimen/font_medium"
+                android:textColor="@color/main_white"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                android:background="@color/main_black_faded" />
+
+            <Space
+                android:id="@+id/wouldchuck_choice_space"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/padding_medium" />
+
+            <Button
+                android:id="@+id/wouldchuck_choice_2"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:paddingTop="@dimen/padding_xlarge"
+                android:paddingLeft="@dimen/padding_small"
+                android:paddingRight="@dimen/padding_small"
+                android:paddingBottom="@dimen/padding_medium"
+                android:text="@string/na_message"
+                android:textSize="@dimen/font_medium"
+                android:textColor="@color/main_white"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                android:background="@color/main_black_faded" />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/padding_small"
+                android:text="@string/wouldchuck_or"
+                android:textColor="@color/main_white"
+                android:textSize="@dimen/font_xlarge"
+                android:textStyle="bold"
+                android:background="@color/main_black"/>
+
+        </RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>

@@ -12,7 +12,10 @@
         android:background="@color/main_black"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="@dimen/padding_medium">
+        android:paddingBottom="@dimen/padding_small"
+        android:paddingLeft="@dimen/padding_medium"
+        android:paddingRight="@dimen/padding_medium"
+        android:paddingTop="@dimen/padding_medium">
 
         <TextView
             android:id="@+id/setup_message"
@@ -24,12 +27,24 @@
             android:textSize="@dimen/font_large"
             android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/setup_status"
-            android:layout_width="@dimen/size_medium"
-            android:layout_height="@dimen/size_medium"
-            android:src="@drawable/ic_autorenew_white_48dp"
-            android:tint="@color/main_deny" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/setup"
+            android:layout_gravity="center">
+
+            <ProgressBar
+                android:id="@+id/setup_loader"
+                android:layout_width="@dimen/loader"
+                android:layout_height="@dimen/loader"
+                android:progressTint="@color/main_neutral"
+                android:indeterminateTint="@color/main_neutral"
+                android:layout_centerInParent="true" />
+
+            <ListView
+                android:id="@+id/setup_list"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/setup" />
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/setup_count"
@@ -46,29 +61,29 @@
         android:id="@+id/setup_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:gravity="center"
+        android:orientation="horizontal"
         android:weightSum="2">
 
         <Button
             android:id="@+id/setup_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/main_deny"
             android:text="@string/cancel"
             android:textSize="@dimen/font_large"
-            android:textStyle="bold"
-            android:background="@color/main_deny"
-            android:layout_weight="1"/>
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/setup_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/main_accept"
             android:text="@string/start"
             android:textSize="@dimen/font_large"
-            android:textStyle="bold"
-            android:background="@color/main_accept"
-            android:layout_weight="1"/>
+            android:textStyle="bold" />
 
     </LinearLayout>
 </LinearLayout>

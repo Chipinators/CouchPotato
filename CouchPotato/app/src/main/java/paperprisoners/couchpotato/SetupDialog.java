@@ -2,17 +2,14 @@ package paperprisoners.couchpotato;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.res.Resources;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Space;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 /**
@@ -24,14 +21,21 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener {
 
     private boolean isHost = false;
 
-    private ImageView statusImage;
     private TextView messageText, countText;
-    private Button cancelButton, startButton;
+    private Button cancelButton, startButton, addUsr;
     private LinearLayout buttonArea;
 
-    public SetupDialog(Context context, boolean isHost) {
+    private ListView userList;
+    private SetupAdapter adapter;
+
+    private int players = 0;
+    private int gameID;
+
+
+    public SetupDialog(Context context, boolean isHost, int id) {
         super(context);
         this.isHost = isHost;
+        gameID = id;
     }
 
 
@@ -42,12 +46,13 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_setup);
         //Gets elements
-        statusImage = (ImageView) findViewById( R.id.setup_status );
         messageText = (TextView) findViewById( R.id.setup_message );
         countText = (TextView) findViewById( R.id.setup_count );
         cancelButton = (Button) findViewById( R.id.setup_cancel );
         startButton = (Button) findViewById( R.id.setup_start );
         buttonArea = (LinearLayout) findViewById(R.id.setup_buttons);
+        userList = (ListView) findViewById(R.id.setup_list);
+        addUsr = (Button) findViewById(R.id.addUsr);
         //Setting fonts
         try {
             Typeface light = Typeface.createFromAsset( getContext().getAssets(), "font/oswald/Oswald-Light.ttf" );
@@ -59,6 +64,9 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener {
             startButton.setTypeface(bold);
         }
         catch (Exception e) {}
+        //List setup stuff
+        adapter = new SetupAdapter( getContext(), 0, isHost );
+        userList.setAdapter( adapter );
         //Adding listeners
         cancelButton.setOnClickListener( this );
         startButton.setOnClickListener( this );
@@ -71,18 +79,36 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener {
         }
     }
 
+
     @Override
     public void onClick(View v) {
-        if (v == startButton) {
-            if(countText.getText().toString().toCharArray()[0] == '1'){
+        if (v == addUsr) {
+            ProgressBar loader = (ProgressBar) findViewById(R.id.setup_loader);
+            loader.setVisibility(View.INVISIBLE);
+            if(players >= 8){
 
             }
             else {
-                switchToComplete();
+                adapter.add( new UserData("User "+((int)(Math.random()*256)),1,null,null) );
+                userList.invalidate();
+                players ++;
+                countText.setText((players + "/8"));
             }
         }
-        else
+        else if(v == startButton){
+            Intent game = new Intent(this.getContext(), Game.class);
+            game.putExtra("host", isHost);
+            game.putExtra("players", players);
+            game.putExtra("gameNum", gameID);
+            this.closeOptionsMenu();
+            this.getContext().startActivity(game);
+        }
+        else {
+            adapter.clear();
+            userList.invalidate();
             cancel();
+            new KickDialog(getContext()).show();
+        }
     }
 
 
@@ -91,7 +117,8 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener {
     private void setupHost() {
         setTitle( getContext().getString(R.string.select_host) );
         messageText.setText( getContext().getString(R.string.setup_host1) );
-        countText.setText( "1/8" );
+        players ++;
+        countText.setText(players + "/8");
     }
 
     private void setupClient() {
@@ -99,16 +126,6 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener {
         messageText.setText( getContext().getString(R.string.setup_join1) );
         countText.setText( getContext().getString(R.string.setup_searching) );
         buttonArea.removeView(startButton);
-    }
-
-    private void switchToWaiting() {
-        statusImage.setImageResource( R.drawable.ic_autorenew_white_48dp );
-        statusImage.setColorFilter( getContext().getColor( R.color.main_deny ) );
-    }
-
-    private void switchToComplete() {
-        statusImage.setImageResource( R.drawable.ic_done_white_48dp );
-        statusImage.setColorFilter( getContext().getColor( R.color.main_accept ) );
     }
 
 }

@@ -2,17 +2,13 @@ package paperprisoners.couchpotato;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Space;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 /**
@@ -24,10 +20,12 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener {
 
     private boolean isHost = false;
 
-    private ImageView statusImage;
     private TextView messageText, countText;
     private Button cancelButton, startButton;
     private LinearLayout buttonArea;
+
+    private ListView userList;
+    private SetupAdapter adapter;
 
     public SetupDialog(Context context, boolean isHost) {
         super(context);
@@ -42,12 +40,12 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_setup);
         //Gets elements
-        statusImage = (ImageView) findViewById( R.id.setup_status );
         messageText = (TextView) findViewById( R.id.setup_message );
         countText = (TextView) findViewById( R.id.setup_count );
         cancelButton = (Button) findViewById( R.id.setup_cancel );
         startButton = (Button) findViewById( R.id.setup_start );
         buttonArea = (LinearLayout) findViewById(R.id.setup_buttons);
+        userList = (ListView) findViewById(R.id.setup_list);
         //Setting fonts
         try {
             Typeface light = Typeface.createFromAsset( getContext().getAssets(), "font/oswald/Oswald-Light.ttf" );
@@ -59,6 +57,9 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener {
             startButton.setTypeface(bold);
         }
         catch (Exception e) {}
+        //List setup stuff
+        adapter = new SetupAdapter( getContext(), 0, isHost );
+        userList.setAdapter( adapter );
         //Adding listeners
         cancelButton.setOnClickListener( this );
         startButton.setOnClickListener( this );
@@ -74,15 +75,27 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v == startButton) {
+<<<<<<< HEAD
             if(countText.getText().toString().toCharArray()[0] == '1'){
 
             }
             else {
                 switchToComplete();
             }
+=======
+            //TODO: Start the game
+            ProgressBar loader = (ProgressBar) findViewById(R.id.setup_loader);
+            loader.setVisibility(View.INVISIBLE);
+            adapter.add( new UserData("User "+((int)(Math.random()*256)),1,null,null) );
+            userList.invalidate();
+>>>>>>> origin/UI_Overhaul
         }
-        else
+        else {
+            adapter.clear();
+            userList.invalidate();
             cancel();
+            new KickDialog(getContext()).show();
+        }
     }
 
 
@@ -99,16 +112,6 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener {
         messageText.setText( getContext().getString(R.string.setup_join1) );
         countText.setText( getContext().getString(R.string.setup_searching) );
         buttonArea.removeView(startButton);
-    }
-
-    private void switchToWaiting() {
-        statusImage.setImageResource( R.drawable.ic_autorenew_white_48dp );
-        statusImage.setColorFilter( getContext().getColor( R.color.main_deny ) );
-    }
-
-    private void switchToComplete() {
-        statusImage.setImageResource( R.drawable.ic_done_white_48dp );
-        statusImage.setColorFilter( getContext().getColor( R.color.main_accept ) );
     }
 
 }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--System used colors-->
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#e02894</color>
+    <color name="colorPrimary">#3399f0</color>
+    <color name="colorPrimaryDark">#021a26</color>
+    <color name="colorAccent">#3399f0</color>
     <color name="black_overlay">#cc000000</color>
 
     <!--Player colors-->
@@ -17,12 +17,14 @@
     <color name="p8_col">#85778c</color>
 
     <!--Couch Potato specific colors-->
+    <color name="paper_prisoners">#318ebe</color>
     <color name="main_black">#222224</color>
     <color name="main_black_faded">#90111113</color>
     <color name="main_white">#dfdddd</color>
     <color name="main_white_faded">#90ffffff</color>
     <color name="main_accept">#50f055</color>
     <color name="main_deny">#f25749</color>
+    <color name="main_neutral">#3399f0</color>
 
     <!--Game colors-->
     <color name="wouldchuck">#acd8ac</color>

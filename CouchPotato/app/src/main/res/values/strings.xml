@@ -10,7 +10,19 @@
     <!--Globally used strings. Only add to if needed-->
     <string name="start">START</string>
     <string name="cancel">CANCEL</string>
+    <string name="ok">OK</string>
     <string name="winner">WINNER</string>
+    <string name="p1">P1</string>
+    <string name="p2">P2</string>
+    <string name="p3">P3</string>
+    <string name="p4">P4</string>
+    <string name="p5">P5</string>
+    <string name="p6">P6</string>
+    <string name="p7">P7</string>
+    <string name="p8">P8</string>
+    <string name="round1">Round One</string>
+    <string name="round2">Round Two</string>
+    <string name="round3">Final Round</string>
 
     <!--Activity-specific strings. Prefix with the name of the Activity-->
     <string name="title_name_field">enter your name</string>
@@ -19,14 +31,19 @@
     <string name="select_host">HOST A GAME</string>
     <string name="select_join">JOIN A GAME</string>
     <string name="setup_host1">Please wait for people to join your room...</string>
-    <string name="setup_host2">Found enough players! Hit START to begin.</string>
-    <string name="setup_join1">Please wait as we connect to the host...</string>
-    <string name="setup_join2">Host found! Waiting on host to start.</string>
+    <string name="setup_host2">Found enough players! Hit START when ready.</string>
+    <string name="setup_host3">You\'ve got a full house! Tap START to begin.</string>
+    <string name="setup_join1">Please wait as we search for nearby hosts...</string>
+    <string name="setup_join2">Hosts found! Pick who you want to play with.</string>
+    <string name="setup_join3">Connected! Waiting on host to start.</string>
     <string name="setup_searching">Searching...</string>
+    <string name="kick_dialog">The host dropped you from the game you had joined.\nBecause of reasons.</string>
 
     <!--Placeholder text-->
+    <string name="na_empty"> </string>
     <string name="na_value">N/A</string>
     <string name="na_name">&quot;null_person&quot;</string>
+    <string name="na_device">Unknown device model</string>
     <string name="na_message">Coming up with a more creative message...</string>
     <string name="na_filler">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tempor ultricies luctus. In at libero velit. Sed ultrices elit sit amet nulla mattis mattis. Curabitur ultrices justo ut elit iaculis cursus. Aenean a massa scelerisque tellus semper suscipit eu sed justo. Ut facilisis ac nulla sed ultrices. Donec imperdiet lectus vitae venenatis fringilla. Duis interdum ipsum nisi, a suscipit odio iaculis eget. Morbi ut risus vehicula, sollicitudin risus in, venenatis tortor. Donec ultrices lacinia consequat. Donec pretium aliquam velit, sit amet consequat ligula varius non.</string>
 

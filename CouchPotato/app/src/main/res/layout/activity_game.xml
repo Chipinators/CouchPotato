@@ -1,8 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="paperprisoners.couchpotato.GameActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@color/p8_col">
 
+    <RelativeLayout
+        android:id="@+id/game_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_medium"
+        android:background="@color/main_black">
+
+        <ImageView
+            android:id="@+id/game_rank"
+            android:src="@drawable/ic_person_white_48dp"
+            android:layout_width="@dimen/size_medium"
+            android:layout_height="@dimen/size_medium"
+            android:layout_alignParentLeft="true"
+            android:tint="@color/main_white" />
+
+        <Button
+            android:id="@+id/game_menu"
+            android:layout_width="@dimen/size_medium"
+            android:layout_height="@dimen/size_medium"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/ic_menu_white_48dp" />
+
+        <TextView
+            android:id="@+id/game_name"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/size_medium"
+            android:layout_centerInParent="true"
+            android:layout_toLeftOf="@id/game_menu"
+            android:layout_toRightOf="@id/game_rank"
+            android:padding="8dp"
+            android:text="@string/na_name"
+            android:textAlignment="center"
+            android:textColor="@color/main_white"
+            android:textSize="@dimen/font_large"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/game_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

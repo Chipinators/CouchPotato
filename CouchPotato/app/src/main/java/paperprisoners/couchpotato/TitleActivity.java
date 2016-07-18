@@ -2,10 +2,8 @@ package paperprisoners.couchpotato;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -41,8 +39,8 @@ public class TitleActivity extends Activity implements View.OnClickListener, Tex
         submit = (Button) this.findViewById(R.id.title_submit);
         //Setting fonts
         try {
-            Typeface regular = Typeface.createFromAsset( getAssets(), "font/oswald/Oswald-Regular.ttf" );
-            Typeface bold = Typeface.createFromAsset( getAssets(), "font/oswald/Oswald-Bold.ttf" );
+            Typeface regular = TypefaceManager.get("Oswald-Regular");
+            Typeface bold = TypefaceManager.get("Oswald-Bold");
             titleText.setTypeface(bold);
             nameField.setTypeface(regular);
             submit.setTypeface(bold);

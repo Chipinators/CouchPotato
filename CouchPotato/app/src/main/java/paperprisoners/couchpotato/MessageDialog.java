@@ -6,9 +6,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 /**
@@ -16,13 +13,15 @@ import android.widget.TextView;
  *
  * @author Ian
  */
-public class KickDialog extends AlertDialog implements View.OnClickListener {
+public class MessageDialog extends AlertDialog implements View.OnClickListener {
 
+    private String text;
     private TextView message;
     private Button okButton;
 
-    public KickDialog(Context context) {
+    public MessageDialog(Context context, String message) {
         super(context);
+        this.text = message;
     }
 
 
@@ -31,20 +30,22 @@ public class KickDialog extends AlertDialog implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_kick);
+        setContentView(R.layout.dialog_message);
         //Gets elements
-        message = (TextView) findViewById(R.id.kick_message);
-        okButton = (Button) findViewById(R.id.kick_ok);
+        message = (TextView) findViewById(R.id.message_text);
+        okButton = (Button) findViewById(R.id.message_ok);
         //Setting fonts
         try {
-            Typeface regular = Typeface.createFromAsset( getContext().getAssets(), "font/oswald/Oswald-Regular.ttf" );
-            Typeface bold = Typeface.createFromAsset( getContext().getAssets(), "font/oswald/Oswald-Bold.ttf" );
+            Typeface regular = TypefaceManager.get("Oswald-Regular");
+            Typeface bold = TypefaceManager.get("Oswald-Bold");
             message.setTypeface(regular);
             okButton.setTypeface(bold);
-        }
-        catch (Exception e) {}
+        } catch (Exception e) { }
+        //Adding message text
+        if (text != null)
+            message.setText(text);
         //Adding listeners
-        okButton.setOnClickListener( this );
+        okButton.setOnClickListener(this);
     }
 
     @Override

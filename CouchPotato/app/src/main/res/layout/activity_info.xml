@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="paperprisoners.couchpotato.InfoActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/wouldchuck"
     android:orientation="vertical"
-    android:background="@color/wouldchuck">
+    tools:context="paperprisoners.couchpotato.InfoActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -42,15 +42,15 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:gravity="center_horizontal"
+            android:orientation="vertical"
             android:paddingTop="@dimen/padding_large">
 
             <ImageView
                 android:id="@+id/info_logo"
-                android:src="@drawable/wouldchuck_512"
                 android:layout_width="200dp"
-                android:layout_height="200dp" />
+                android:layout_height="200dp"
+                android:src="@drawable/wouldchuck_512" />
 
             <Space
                 android:layout_width="match_parent"
@@ -60,11 +60,11 @@
                 android:id="@+id/info_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAlignment="center"
                 android:text="@string/na_filler"
+                android:textAlignment="center"
+                android:textColor="@color/main_black"
                 android:textSize="@dimen/font_medium"
-                android:textStyle="bold"
-                android:textColor="@color/main_black"/>
+                android:textStyle="bold" />
 
         </LinearLayout>
 

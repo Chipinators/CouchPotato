@@ -27,5 +27,6 @@
     <color name="main_neutral">#3399f0</color>
 
     <!--Game colors-->
+    <color name="more">#98d3d9</color>
     <color name="wouldchuck">#acd8ac</color>
 </resources>

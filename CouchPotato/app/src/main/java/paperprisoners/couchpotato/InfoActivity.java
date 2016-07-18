@@ -2,18 +2,18 @@ package paperprisoners.couchpotato;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 public class InfoActivity extends Activity implements View.OnClickListener {
 
     private Button back;
+    private TextView text, barTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +24,14 @@ public class InfoActivity extends Activity implements View.OnClickListener {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN );
         setContentView( R.layout.activity_info );
         back = (Button) findViewById( R.id.info_back );
+        text = (TextView) findViewById( R.id.info_text );
+        barTitle = (TextView) findViewById( R.id.info_bar_title ) ;
+        //sets fonts
+        Typeface regular = TypefaceManager.get( "Oswald-Regular" );
+        Typeface bold = TypefaceManager.get( "Oswald-Bold" );
+        text.setTypeface(regular);
+        barTitle.setTypeface(bold);
+        //adds listener
         back.setOnClickListener( this );
     }
 

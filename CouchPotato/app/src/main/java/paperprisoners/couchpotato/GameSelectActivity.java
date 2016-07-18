@@ -1,9 +1,13 @@
 package paperprisoners.couchpotato;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -15,14 +19,14 @@ import android.widget.TextView;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class GameSelectActivity extends Activity implements View.OnClickListener {
+public class GameSelectActivity extends Activity implements View.OnClickListener, ViewPager.OnPageChangeListener {
 
-    private int id = 1;
-    private String username;
+    protected String username;
 
-    private TextView nameText, playersText, playersText2;
-    private Button backButton, infoButton, hostButton, joinButton, leftButton, rightButton;
+    private TextView nameText;
+    private Button backButton, infoButton, hostButton, joinButton;
     private RelativeLayout bg;
+    private PagedFragment pages;
 
     private SetupDialog setup;
 
@@ -36,75 +40,90 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
         setContentView(R.layout.activity_select);
         //Element setup
         nameText = (TextView) findViewById(R.id.select_name);
-        playersText = (TextView) findViewById(R.id.select_players);
-        playersText2 = (TextView) findViewById(R.id.select_players2);
+        //playersText = (TextView) findViewById(R.id.select_players);
+        //playersText2 = (TextView) findViewById(R.id.select_players2);
         backButton = (Button) findViewById(R.id.select_back);
         infoButton = (Button) findViewById(R.id.select_info);
         hostButton = (Button) findViewById(R.id.select_host);
         joinButton = (Button) findViewById(R.id.select_join);
-        leftButton = (Button) findViewById(R.id.select_left);
-        rightButton = (Button) findViewById(R.id.select_right);
         bg = (RelativeLayout) findViewById(R.id.select_background_layout);
+        pages = (PagedFragment) getFragmentManager().findFragmentById(R.id.select_pager);
         //Setting fonts
         try {
-            //Typeface light = Typeface.createFromAsset( getAssets(), "font/oswald/Oswald-Light.ttf" );
-            Typeface regular = Typeface.createFromAsset( getAssets(), "font/oswald/Oswald-Regular.ttf" );
-            Typeface bold = Typeface.createFromAsset( getAssets(), "font/oswald/Oswald-Bold.ttf" );
+            Typeface regular = TypefaceManager.get("Oswald-Regular");
+            Typeface bold = TypefaceManager.get("Oswald-Bold");
             nameText.setTypeface(regular);
-            playersText.setTypeface(bold);
-            playersText2.setTypeface(bold);
             hostButton.setTypeface(bold);
             joinButton.setTypeface(bold);
+        } catch (Exception e) {
         }
-        catch (Exception e) {}
         //Adding listeners
         backButton.setOnClickListener(this);
         infoButton.setOnClickListener(this);
         hostButton.setOnClickListener(this);
         joinButton.setOnClickListener(this);
-        leftButton.setOnClickListener(this);
-        rightButton.setOnClickListener(this);
+        pages.setListener(this);
         //Filling in values
         username = this.getIntent().getStringExtra("username");
         if (username != null)
-            ((TextView)this.findViewById(R.id.select_name)).setText(username);
+            ((TextView) this.findViewById(R.id.select_name)).setText(username);
+
+        Bitmap wcLogo = BitmapFactory.decodeResource(getResources(), R.drawable.wouldchuck_512);
+        Bitmap moreLogo = BitmapFactory.decodeResource(getResources(), R.drawable.more_512);
+        GameData wc = new GameData("Wouldchuck", wcLogo, 3, 8);
+        GameData more = new GameData(moreLogo, 0, 0);
+        pages.addPage(PagedGameAdapter.generateView(getBaseContext(), wc));
+        pages.addPage(PagedGameAdapter.generateView(getBaseContext(), more));
     }
 
     @Override
     public void onClick(View v) {
         if (v == backButton) {
-            Intent toTitle = new Intent( this, TitleActivity.class );
+            Intent toTitle = new Intent(this, TitleActivity.class);
             toTitle.putExtra("username", username);
-            this.startActivity( toTitle );
-        }
-        else if ( v == infoButton ) {
-            Intent toInfo = new Intent( this, InfoActivity.class );
-            toInfo.putExtra( "gameID", 0 );
-            this.startActivity( toInfo );
-        }
-        else if ( v == hostButton ) {
+            this.startActivity(toTitle);
+        } else if (v == infoButton) {
+            Intent toInfo = new Intent(this, InfoActivity.class);
+            toInfo.putExtra("gameID", 0);
+            this.startActivity(toInfo);
+        } else if (v == hostButton) {
             setup = new SetupDialog(GameSelectActivity.this, true);
             setup.show();
-        }
-        else if ( v == joinButton ) {
+        } else if (v == joinButton) {
             setup = new SetupDialog(GameSelectActivity.this, false);
             setup.show();
+            //Intent t = new Intent(this, GameActivity.class);
+            //t.putExtra("username", username);
+            //startActivity(t);
         }
-        else if ( v == leftButton ) {
-            id --;
-            if ( id < 1 )
-                id = 8;
-            int col = getResources().getIdentifier("p"+id+"_col", "color", this.getPackageName());
-            col = getBaseContext().getColor( col );
-            bg.setBackgroundColor( col );
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        if (position == 0) {
+            bg.setBackgroundColor(getColor(R.color.wouldchuck));
+            hostButton.setEnabled(true);
+            hostButton.setBackgroundColor(getColor(R.color.main_black));
+            joinButton.setEnabled(true);
+            joinButton.setBackgroundColor(getColor(R.color.main_black));
         }
-        else {
-            id ++;
-            if ( id > 8 )
-                id = 1;
-            int col = getResources().getIdentifier("p"+id+"_col", "color", this.getPackageName());
-            col = getBaseContext().getColor( col );
-            bg.setBackgroundColor( col );
+        else if (position == 1) {
+            bg.setBackgroundColor(getColor(R.color.more));
+            hostButton.setEnabled(false);
+            hostButton.setBackgroundColor(getColor(R.color.main_black_faded));
+            joinButton.setEnabled(false);
+            joinButton.setBackgroundColor(getColor(R.color.main_black_faded));
         }
+
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 }

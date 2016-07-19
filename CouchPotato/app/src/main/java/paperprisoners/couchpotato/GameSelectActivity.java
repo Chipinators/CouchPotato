@@ -87,10 +87,10 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
             toInfo.putExtra("gameID", 0);
             this.startActivity(toInfo);
         } else if (v == hostButton) {
-            setup = new SetupDialog(GameSelectActivity.this, true);
+            setup = new SetupDialog(this, true);
             setup.show();
         } else if (v == joinButton) {
-            setup = new SetupDialog(GameSelectActivity.this, false);
+            setup = new SetupDialog(this, false);
             setup.show();
             //Intent t = new Intent(this, GameActivity.class);
             //t.putExtra("username", username);

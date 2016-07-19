@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/wouldchuck"
-    android:orientation="vertical"
-    tools:context="paperprisoners.couchpotato.InfoActivity">
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"

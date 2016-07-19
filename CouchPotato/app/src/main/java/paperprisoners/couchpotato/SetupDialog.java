@@ -31,11 +31,14 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener {
     private ListView userList;
     private SetupAdapter adapter;
 
+    private Context ownerContext;
+
     public SetupDialog(Context context, int minPlayers, int maxPlayers, boolean isHost) {
         super(context);
         this.minPlayers = minPlayers;
         this.maxPlayers = maxPlayers;
         this.isHost = isHost;
+        this.ownerContext = context;
     }
 
     public SetupDialog(Context context, boolean isHost) {
@@ -80,9 +83,9 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v == startButton) {
-            Intent toGame = new Intent(getContext(),GameActivity.class);
-
-            getContext().startActivity(toGame);
+            Intent toGame = new Intent(ownerContext,GameActivity.class);
+            ownerContext.startActivity(toGame);
+            cancel();
         } else {
             addUser(new UserData("dude",0,null,null));
             //adapter.clear();

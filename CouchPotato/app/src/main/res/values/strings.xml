@@ -56,6 +56,6 @@
     <!--Game-specific strings-->
     <string name="wouldchuck_wyr">WOULD YOU RATHER...</string>
     <string name="wouldchuck_or">OR</string>
-    <string name="wouldchuck_directions">Enter 3 things you'd see on a \'Would You Rather\' question:</string>
+    <string name="wouldchuck_directions">Enter 3 things you\'d see on a \'Would You Rather\' question:</string>
 
 </resources>

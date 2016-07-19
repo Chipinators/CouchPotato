@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:padding="@dimen/padding_large">
+
+    <LinearLayout
+        android:id="@+id/wc_input_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@color/main_black"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/wc_input_timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/na_empty"
+                android:textAlignment="center"
+                android:textColor="@color/main_white"
+                android:textSize="@dimen/size_large"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/padding_large" />
+
+        <TextView
+            android:id="@+id/wc_input_direction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wouldchuck_directions"
+            android:textColor="@color/main_black"
+            android:textSize="@dimen/font_large"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/wc_input_submit"
+        android:layout_below="@id/wc_input_header"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_large">
+
+        <EditText
+            android:id="@+id/wc_input_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:digits="@string/chars_response"
+            android:hint="put a thing here"
+            android:textAlignment="center" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/padding_small" />
+
+        <EditText
+            android:id="@+id/wc_input_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:digits="@string/chars_response"
+            android:hint="another thing here"
+            android:textAlignment="center" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/padding_small" />
+
+        <EditText
+            android:id="@+id/wc_input_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:digits="@string/chars_response"
+            android:hint="one last thing here"
+            android:textAlignment="center" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/wc_input_submit"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/main_black"
+        android:text="@string/submit"
+        android:textColor="@color/main_white"
+        android:textSize="@dimen/font_medium"
+        android:textStyle="bold" />
+
+</RelativeLayout>

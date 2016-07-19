@@ -32,8 +32,8 @@
 
 
             <!--android:src="@drawable/logo.png"-->
-            <ImageView
-                android:src="@drawable/logo_512"
+            <Button
+                android:background="@drawable/logo_512"
                 android:id="@+id/title_image"
                 android:layout_width="@dimen/logo"
                 android:layout_height="@dimen/logo" />

@@ -12,6 +12,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
@@ -21,6 +22,9 @@ import android.widget.TextView;
  */
 public class TitleActivity extends Activity implements View.OnClickListener, TextWatcher {
 
+    private int easter = 0;
+
+    private Button logo;
     private TextView titleText;
     private EditText nameField;
     private Button submit;
@@ -34,6 +38,7 @@ public class TitleActivity extends Activity implements View.OnClickListener, Tex
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_title);
         //Element setup
+        logo = (Button) this.findViewById(R.id.title_image);
         titleText = (TextView) this.findViewById(R.id.title_text);
         nameField = (EditText) this.findViewById(R.id.title_name_field);
         submit = (Button) this.findViewById(R.id.title_submit);
@@ -47,9 +52,11 @@ public class TitleActivity extends Activity implements View.OnClickListener, Tex
         }
         catch (Exception e) {}
         //Adding listeners
+        logo.setOnClickListener(this);
         nameField.addTextChangedListener(this);
         submit.setOnClickListener(this);
         submit.setEnabled(false);
+
         //Setting values
         String username = this.getIntent().getStringExtra("username");
         if (username != null)
@@ -63,6 +70,15 @@ public class TitleActivity extends Activity implements View.OnClickListener, Tex
             Intent toSelect = new Intent( this, GameSelectActivity.class );
             toSelect.putExtra("username", ((EditText)findViewById(R.id.title_name_field)).getText().toString());
             this.startActivity( toSelect );
+        }
+        else {
+            //Easter egg
+            easter ++;
+            if (easter == 4) {
+                logo.setEnabled(false);
+                logo.setBackground(getDrawable(R.drawable.cool_512));
+                titleText.setText(getString(R.string.easter));
+            }
         }
     }
 

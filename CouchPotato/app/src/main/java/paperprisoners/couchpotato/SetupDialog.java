@@ -1,5 +1,6 @@
 package paperprisoners.couchpotato;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -19,7 +20,9 @@ import android.widget.TextView;
  */
 public class SetupDialog extends AlertDialog implements View.OnClickListener {
 
+    private int minPlayers=3, maxPlayers=8;
     private boolean isHost = false;
+    private boolean joined = false;
 
     private TextView messageText, countText;
     private Button cancelButton, startButton, addUsr;
@@ -28,14 +31,18 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener {
     private ListView userList;
     private SetupAdapter adapter;
 
-    private int players = 0;
-    private int gameID;
+    private Context ownerContext;
 
-
-    public SetupDialog(Context context, boolean isHost, int id) {
+    public SetupDialog(Context context, int minPlayers, int maxPlayers, boolean isHost) {
         super(context);
+        this.minPlayers = minPlayers;
+        this.maxPlayers = maxPlayers;
         this.isHost = isHost;
-        gameID = id;
+        this.ownerContext = context;
+    }
+
+    public SetupDialog(Context context, boolean isHost) {
+        this(context,3,8,isHost);
     }
 
 
@@ -46,35 +53,29 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_setup);
         //Gets elements
-        messageText = (TextView) findViewById( R.id.setup_message );
-        countText = (TextView) findViewById( R.id.setup_count );
-        cancelButton = (Button) findViewById( R.id.setup_cancel );
-        startButton = (Button) findViewById( R.id.setup_start );
+        messageText = (TextView) findViewById(R.id.setup_message);
+        countText = (TextView) findViewById(R.id.setup_count);
+        cancelButton = (Button) findViewById(R.id.setup_cancel);
+        startButton = (Button) findViewById(R.id.setup_start);
         buttonArea = (LinearLayout) findViewById(R.id.setup_buttons);
         userList = (ListView) findViewById(R.id.setup_list);
-        addUsr = (Button) findViewById(R.id.addUsr);
         //Setting fonts
-        try {
-            Typeface light = Typeface.createFromAsset( getContext().getAssets(), "font/oswald/Oswald-Light.ttf" );
-            Typeface regular = Typeface.createFromAsset( getContext().getAssets(), "font/oswald/Oswald-Regular.ttf" );
-            Typeface bold = Typeface.createFromAsset( getContext().getAssets(), "font/oswald/Oswald-Bold.ttf" );
-            messageText.setTypeface(regular);
-            countText.setTypeface(light);
-            cancelButton.setTypeface(bold);
-            startButton.setTypeface(bold);
-        }
-        catch (Exception e) {}
+        Typeface light = TypefaceManager.get("Oswald-Light");
+        Typeface regular = TypefaceManager.get("Oswald-Regular");
+        Typeface bold = TypefaceManager.get("Oswald-Bold");
+        messageText.setTypeface(regular);
+        countText.setTypeface(light);
+        cancelButton.setTypeface(bold);
+        startButton.setTypeface(bold);
         //List setup stuff
-        adapter = new SetupAdapter( getContext(), 0, isHost );
-        userList.setAdapter( adapter );
+        adapter = new SetupAdapter(getContext(), 0, isHost);
+        userList.setAdapter(adapter);
         //Adding listeners
-        cancelButton.setOnClickListener( this );
-        startButton.setOnClickListener( this );
-
+        cancelButton.setOnClickListener(this);
+        startButton.setOnClickListener(this);
         if (isHost) {
             setupHost();
-        }
-        else {
+        } else {
             setupClient();
         }
     }
@@ -82,50 +83,97 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if (v == addUsr) {
-            ProgressBar loader = (ProgressBar) findViewById(R.id.setup_loader);
-            loader.setVisibility(View.INVISIBLE);
-            if(players >= 8){
-
-            }
-            else {
-                adapter.add( new UserData("User "+((int)(Math.random()*256)),1,null,null) );
-                userList.invalidate();
-                players ++;
-                countText.setText((players + "/8"));
-            }
-        }
-        else if(v == startButton){
-            Intent game = new Intent(this.getContext(), Game.class);
-            game.putExtra("host", isHost);
-            game.putExtra("players", players);
-            game.putExtra("gameNum", gameID);
-            this.closeOptionsMenu();
-            this.getContext().startActivity(game);
-        }
-        else {
-            adapter.clear();
-            userList.invalidate();
+        if (v == startButton) {
+            Intent toGame = new Intent(ownerContext,GameActivity.class);
+            ownerContext.startActivity(toGame);
             cancel();
-            new KickDialog(getContext()).show();
+        } else {
+            addUser(new UserData("dude",0,null,null));
+            //adapter.clear();
+            userList.invalidate();
+            //cancel();
         }
     }
 
 
     //CUSTOM METHODS
 
+    public void addUser(UserData data) {
+        if (!isHost || (isHost && adapter.getCount()+1 < maxPlayers) ) {
+            adapter.add(data);
+            adjustContent();
+        }
+    }
+
+    public void removeUser(UserData data) {
+        adapter.remove(data);
+        adjustContent();
+    }
+
+    //Updates what the list is displaying based on content
+    private void adjustContent() {
+        int count = adapter.getCount();
+        ProgressBar loader = (ProgressBar) findViewById(R.id.setup_loader);
+        //Toggling loader visibility
+        if (count == 0 || joined) {
+            loader.setVisibility(View.VISIBLE);
+            userList.setVisibility(View.INVISIBLE);
+        }
+        else {
+            loader.setVisibility(View.INVISIBLE);
+            userList.setVisibility(View.VISIBLE);
+        }
+        //Adjusting host/client specific content
+        if (isHost) {
+            countText.setText((adapter.getCount() + 1) + "/" + maxPlayers);
+            if (count+1 >= minPlayers) {
+                countText.setTextColor(getContext().getColor(R.color.main_accept));
+                if (count+1 >= maxPlayers) {
+                    messageText.setText(getContext().getString(R.string.setup_host3));
+                }
+                else {
+                    messageText.setText(getContext().getString(R.string.setup_host2));
+                }
+                startButton.setEnabled(true);
+                startButton.setTextColor(getContext().getColor(R.color.main_black));
+            }
+            else {
+                countText.setTextColor(getContext().getColor(R.color.main_white));
+                messageText.setText(getContext().getString(R.string.setup_host1));
+                startButton.setEnabled(false);
+                startButton.setTextColor(getContext().getColor(R.color.main_black_faded));
+            }
+        }
+        else {
+            if (joined) {
+                countText.setText(getContext().getString(R.string.setup_joining));
+                messageText.setText(getContext().getString(R.string.setup_join3));
+            }
+            else {
+                countText.setText(getContext().getString(R.string.setup_searching));
+                if (count > 0) {
+                    messageText.setText(getContext().getString(R.string.setup_join2));
+                } else {
+                    messageText.setText(getContext().getString(R.string.setup_join1));
+                }
+            }
+        }
+        //Then invalidates the list
+        userList.invalidate();
+    }
+
     private void setupHost() {
-        setTitle( getContext().getString(R.string.select_host) );
-        messageText.setText( getContext().getString(R.string.setup_host1) );
-        players ++;
-        countText.setText(players + "/8");
+        setTitle(getContext().getString(R.string.select_host));
+        messageText.setText(getContext().getString(R.string.setup_host1));
+        adjustContent();
     }
 
     private void setupClient() {
-        setTitle( getContext().getString(R.string.select_join) );
-        messageText.setText( getContext().getString(R.string.setup_join1) );
-        countText.setText( getContext().getString(R.string.setup_searching) );
+        setTitle(getContext().getString(R.string.select_join));
+        messageText.setText(getContext().getString(R.string.setup_join1));
+        countText.setText(getContext().getString(R.string.setup_searching));
         buttonArea.removeView(startButton);
+        adjustContent();
     }
 
 }

@@ -23,6 +23,10 @@
     <string name="round1">Round One</string>
     <string name="round2">Round Two</string>
     <string name="round3">Final Round</string>
+    <string name="waiting">Waiting on host...</string>
+    <string name="submit">SUBMIT</string>
+    <string name="play_again">PLAY AGAIN</string>
+    <string name="close_room">CLOSE ROOM</string>
 
     <!--Activity-specific strings. Prefix with the name of the Activity-->
     <string name="title_name_field">enter your name</string>
@@ -35,19 +39,23 @@
     <string name="setup_host3">You\'ve got a full house! Tap START to begin.</string>
     <string name="setup_join1">Please wait as we search for nearby hosts...</string>
     <string name="setup_join2">Hosts found! Pick who you want to play with.</string>
-    <string name="setup_join3">Connected! Waiting on host to start.</string>
+    <string name="setup_join3">Joining! Waiting on the host to start...</string>
     <string name="setup_searching">Searching...</string>
+    <string name="setup_joining">Joining...</string>
     <string name="kick_dialog">The host dropped you from the game you had joined.\nBecause of reasons.</string>
 
     <!--Placeholder text-->
     <string name="na_empty"> </string>
     <string name="na_value">N/A</string>
-    <string name="na_name">&quot;null_person&quot;</string>
+    <string name="na_name">username</string>
+    <string name="na_score">+0000</string>
     <string name="na_device">Unknown device model</string>
-    <string name="na_message">Coming up with a more creative message...</string>
+    <string name="na_message">Coming up with a less blank message...</string>
     <string name="na_filler">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tempor ultricies luctus. In at libero velit. Sed ultrices elit sit amet nulla mattis mattis. Curabitur ultrices justo ut elit iaculis cursus. Aenean a massa scelerisque tellus semper suscipit eu sed justo. Ut facilisis ac nulla sed ultrices. Donec imperdiet lectus vitae venenatis fringilla. Duis interdum ipsum nisi, a suscipit odio iaculis eget. Morbi ut risus vehicula, sollicitudin risus in, venenatis tortor. Donec ultrices lacinia consequat. Donec pretium aliquam velit, sit amet consequat ligula varius non.</string>
 
     <!--Game-specific strings-->
     <string name="wouldchuck_wyr">WOULD YOU RATHER...</string>
     <string name="wouldchuck_or">OR</string>
+    <string name="wouldchuck_directions">Enter 3 things you\'d see on a \'Would You Rather\' question:</string>
+
 </resources>

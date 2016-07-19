@@ -25,7 +25,11 @@
     <color name="main_accept">#50f055</color>
     <color name="main_deny">#f25749</color>
     <color name="main_neutral">#3399f0</color>
+    <color name="place_gold">#dfc816</color>
+    <color name="place_silver">#d1cfcb</color>
+    <color name="place_bronze">#b98e32</color>
 
     <!--Game colors-->
+    <color name="more">#98d3d9</color>
     <color name="wouldchuck">#acd8ac</color>
 </resources>

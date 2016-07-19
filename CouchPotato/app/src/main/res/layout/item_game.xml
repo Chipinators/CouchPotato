@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/padding_medium">
+
+    <ImageView
+        android:id="@+id/item_game_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/padding_large" />
+
+    <LinearLayout
+        android:id="@+id/item_game_players"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/size_small"
+            android:layout_height="@dimen/size_small"
+            android:src="@drawable/ic_group_white_48dp"
+            android:tint="@color/main_black" />
+
+        <Space
+            android:layout_width="@dimen/padding_medium"
+            android:layout_height="@dimen/size_small" />
+
+        <TextView
+            android:id="@+id/item_game_count"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/size_small"
+            android:gravity="center"
+            android:text="3-8"
+            android:textColor="@color/main_black"
+            android:textSize="@dimen/font_medium"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/size_small"
+            android:gravity="center"
+            android:text=" Players"
+            android:textColor="@color/main_black"
+            android:textSize="@dimen/font_medium"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</RelativeLayout>

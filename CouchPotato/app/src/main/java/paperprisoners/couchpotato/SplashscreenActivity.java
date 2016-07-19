@@ -19,15 +19,18 @@ public class SplashscreenActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splashscreen);
-        //Shows the Paper Prisoners logo for a couple seconds
-        new Handler().postDelayed(new Runnable(){
+        //Sets a timer to show the Paper Prisoners logo for a couple seconds
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 /* Create an Intent that will start the Menu-Activity. */
                 Intent toTitle = new Intent(SplashscreenActivity.this, TitleActivity.class);
-                startActivity( toTitle );
+                startActivity(toTitle);
                 finish();
             }
         }, SPLASH_LENGTH_MILLIS);
+        //Loads in game's fonts
+        TypefaceManager.manualLoadFonts(getAssets());
+        TypefaceManager.loadFonts(getAssets(),"fonts");
     }
 }

@@ -32,9 +32,11 @@ public class SetupAdapter extends ArrayAdapter<UserData> {
         TextView name;
         name = (TextView) view.findViewById(R.id.item_setup_name);
         name.setText(item.username);
+        name.setTypeface(TypefaceManager.get("Oswald-Bold"));
         // Set comment
         TextView device;
         device = (TextView) view.findViewById(R.id.item_setup_device);
+        device.setTypeface(TypefaceManager.get("Oswald-Regular"));
         if (item.device != null)
             device.setText(item.device.getName());
         else

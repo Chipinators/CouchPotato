@@ -3,6 +3,7 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <dimen name="size_xsmall">20dp</dimen>
     <dimen name="size_small">35dp</dimen>
     <dimen name="size_medium">50dp</dimen>
     <dimen name="size_large">65dp</dimen>
@@ -22,5 +23,6 @@
 
     <!--Sizes for specfic things-->
     <dimen name="setup">196dp</dimen>
+    <dimen name="dots">15dp</dimen>
     <dimen name="loader">100dp</dimen>
 </resources>

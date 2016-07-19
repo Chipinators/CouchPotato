@@ -2,6 +2,7 @@ package paperprisoners.couchpotato;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
@@ -40,34 +41,30 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_setup);
         //Gets elements
-        messageText = (TextView) findViewById( R.id.setup_message );
-        countText = (TextView) findViewById( R.id.setup_count );
-        cancelButton = (Button) findViewById( R.id.setup_cancel );
-        startButton = (Button) findViewById( R.id.setup_start );
+        messageText = (TextView) findViewById(R.id.setup_message);
+        countText = (TextView) findViewById(R.id.setup_count);
+        cancelButton = (Button) findViewById(R.id.setup_cancel);
+        startButton = (Button) findViewById(R.id.setup_start);
         buttonArea = (LinearLayout) findViewById(R.id.setup_buttons);
         userList = (ListView) findViewById(R.id.setup_list);
         //Setting fonts
-        try {
-            Typeface light = Typeface.createFromAsset( getContext().getAssets(), "font/oswald/Oswald-Light.ttf" );
-            Typeface regular = Typeface.createFromAsset( getContext().getAssets(), "font/oswald/Oswald-Regular.ttf" );
-            Typeface bold = Typeface.createFromAsset( getContext().getAssets(), "font/oswald/Oswald-Bold.ttf" );
-            messageText.setTypeface(regular);
-            countText.setTypeface(light);
-            cancelButton.setTypeface(bold);
-            startButton.setTypeface(bold);
-        }
-        catch (Exception e) {}
+        Typeface light = TypefaceManager.get("Oswald-Light");
+        Typeface regular = TypefaceManager.get("Oswald-Regular");
+        Typeface bold = TypefaceManager.get("Oswald-Bold");
+        messageText.setTypeface(regular);
+        countText.setTypeface(light);
+        cancelButton.setTypeface(bold);
+        startButton.setTypeface(bold);
         //List setup stuff
-        adapter = new SetupAdapter( getContext(), 0, isHost );
-        userList.setAdapter( adapter );
+        adapter = new SetupAdapter(getContext(), 0, isHost);
+        userList.setAdapter(adapter);
         //Adding listeners
-        cancelButton.setOnClickListener( this );
-        startButton.setOnClickListener( this );
+        cancelButton.setOnClickListener(this);
+        startButton.setOnClickListener(this);
 
         if (isHost) {
             setupHost();
-        }
-        else {
+        } else {
             setupClient();
         }
     }
@@ -75,26 +72,15 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v == startButton) {
-<<<<<<< HEAD
-            if(countText.getText().toString().toCharArray()[0] == '1'){
-
-            }
-            else {
-                switchToComplete();
-            }
-=======
             //TODO: Start the game
             ProgressBar loader = (ProgressBar) findViewById(R.id.setup_loader);
             loader.setVisibility(View.INVISIBLE);
-            adapter.add( new UserData("User "+((int)(Math.random()*256)),1,null,null) );
+            adapter.add(new UserData("User " + ((int) (Math.random() * 256)), 1, null, null));
             userList.invalidate();
->>>>>>> origin/UI_Overhaul
-        }
-        else {
+        } else {
             adapter.clear();
             userList.invalidate();
             cancel();
-            new KickDialog(getContext()).show();
         }
     }
 
@@ -102,15 +88,15 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener {
     //CUSTOM METHODS
 
     private void setupHost() {
-        setTitle( getContext().getString(R.string.select_host) );
-        messageText.setText( getContext().getString(R.string.setup_host1) );
-        countText.setText( "1/8" );
+        setTitle(getContext().getString(R.string.select_host));
+        messageText.setText(getContext().getString(R.string.setup_host1));
+        countText.setText("1/8");
     }
 
     private void setupClient() {
-        setTitle( getContext().getString(R.string.select_join) );
-        messageText.setText( getContext().getString(R.string.setup_join1) );
-        countText.setText( getContext().getString(R.string.setup_searching) );
+        setTitle(getContext().getString(R.string.select_join));
+        messageText.setText(getContext().getString(R.string.setup_join1));
+        countText.setText(getContext().getString(R.string.setup_searching));
         buttonArea.removeView(startButton);
     }
 

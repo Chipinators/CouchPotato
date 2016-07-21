@@ -50,7 +50,10 @@ public class GameActivity extends Activity implements View.OnClickListener {
         if (username != null)
             name.setText(username);
         //Other junk
+
         manager = getFragmentManager();
+        Fragment wcFrag = new WouldChuck();
+        setFragment(wcFrag);
     }
 
 
@@ -59,6 +62,8 @@ public class GameActivity extends Activity implements View.OnClickListener {
     public void setFragment(Fragment fragment) {
         FragmentTransaction swapper = manager.beginTransaction();
         swapper.replace(R.id.game_container, fragment);
+        swapper.addToBackStack(null);
+        swapper.commit();
     }
 
 

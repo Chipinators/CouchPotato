@@ -76,7 +76,12 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener {
             ProgressBar loader = (ProgressBar) findViewById(R.id.setup_loader);
             loader.setVisibility(View.INVISIBLE);
             adapter.add(new UserData("User " + ((int) (Math.random() * 256)), 1, null, null));
+            adapter.add(new UserData("User " + ((int) (Math.random() * 256)), 1, null, null));
+            adapter.add(new UserData("User " + ((int) (Math.random() * 256)), 1, null, null));
             userList.invalidate();
+
+            Intent intent = new Intent(this.getContext(), GameActivity.class);
+            this.getContext().startActivity(intent);
         } else {
             adapter.clear();
             userList.invalidate();

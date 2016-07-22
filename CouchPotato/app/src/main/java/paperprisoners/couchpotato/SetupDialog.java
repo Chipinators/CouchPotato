@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,6 +23,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 /**
  * The dialog that appears upon creating
@@ -212,6 +215,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
             cancel();
         } else if (v == cancelButton) {
             //addUser(new UserData("dude", 0, null, null));
+            BluetoothService.stop();
             adapter.clear();
             userList.invalidate();
             cancel();
@@ -240,7 +244,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
             adapter.clear();
         }
         BluetoothService.getmAdapter().cancelDiscovery();
-
+        BluetoothService.writeToClients(Constants.USER_CONNECTED,userData.toArray());
         if (true)
             joined = true;
         adjustContent();
@@ -264,6 +268,12 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
                     }
                 }
             }
+            if(BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)){
+                Log.i(TAG, "USER CONNECTED TO SERVER - adding user to list");
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                UserData connectedDevice = new UserData(device.getName());
+                addUser(connectedDevice);
+            }
         }
     };
 
@@ -282,11 +292,14 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
                 Log.i(TAG, content.toString());
                 ownerContext.unregisterReceiver(bCReciever);
                 BluetoothService.getmAdapter().cancelDiscovery();
+                //TODO: ADD BUNDLED DATA TO SEND TO GAME ACTIVITY
                 Intent toGame = new Intent(ownerContext, GameActivity.class);
                 ownerContext.startActivity(toGame);
                 break;
-            case Constants.MESSAGE_DEVICE_NAME:
-
+            case Constants.USER_CONNECTED:
+                Log.i(TAG, "USER_CONNECTED: PROCESSING USER DATA");
+                UserData user = new UserData((String)content[0], Integer.getInteger((String)content[1]));
+                adapter.add(user);
                 break;
 
 

@@ -3,6 +3,7 @@ package paperprisoners.couchpotato;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.graphics.Color;
+import android.text.TextUtils;
 
 /**
  * Created by Ian on 7/13/2016.
@@ -10,7 +11,7 @@ import android.graphics.Color;
 public class UserData {
 
     protected String username;
-    protected int gameID;
+    protected int score;
     protected int player = -1;
     protected BluetoothDevice device;
     protected BluetoothAdapter adapter;
@@ -24,12 +25,17 @@ public class UserData {
         this.username = username;
     }
 
+    public UserData(String username, int score){
+        this.username = username;
+        this.score = score;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
 
-    public void setGameID(int gameID) {
-        this.gameID = gameID;
+    public void setScore(int score) {
+        this.score = score;
     }
 
     public void setPlayer(int player) {
@@ -49,8 +55,8 @@ public class UserData {
         return username;
     }
 
-    public int getGameID() {
-        return gameID;
+    public int getScore() {
+        return score;
     }
 
     public int getPlayer() {
@@ -63,5 +69,12 @@ public class UserData {
 
     public BluetoothAdapter getAdapter() {
         return adapter;
+    }
+
+    public String[] toArray() {
+        String[] output = new String[2];
+        output[0] = username;
+        output[1] = ""+score;
+        return output;
     }
 }

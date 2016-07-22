@@ -108,14 +108,6 @@ public class BluetoothService {
         }
         mConnectedDevices.add(mConnectedThread);
 
-        /*
-        Message msg = mHandler.obtainMessage(MainActivity.MESSAGE_DEVICE_NAME);
-        Bundle bundle = new Bundle();
-        bundle.putString(MainActivity.DEVICE_NAME, device.getName());
-        msg.setData(bundle);
-        msg.
-        mHandler.sendMessage(msg);
-        */
         Log.d(TAG, "Number of Devices: " + mConnectedDevices.size());
         mConnectedThread.start();
 

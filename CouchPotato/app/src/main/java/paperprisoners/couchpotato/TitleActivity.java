@@ -1,8 +1,11 @@
 package paperprisoners.couchpotato;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * The title screen Activity of Couch Potato.
@@ -57,6 +61,11 @@ public class TitleActivity extends Activity implements View.OnClickListener, Tex
         submit.setOnClickListener(this);
         submit.setEnabled(false);
 
+        if (BluetoothService.getmAdapter()== null) {
+            // No Bluetooth on device.
+            Toast.makeText(getApplicationContext(), "Your device does not support Bluetooth", Toast.LENGTH_LONG).show();
+        }
+
         //Setting values
         String username = this.getIntent().getStringExtra("username");
         if (username != null)
@@ -76,7 +85,7 @@ public class TitleActivity extends Activity implements View.OnClickListener, Tex
             easter ++;
             if (easter == 4) {
                 logo.setEnabled(false);
-                logo.setBackground(getDrawable(R.drawable.cool_512));
+                logo.setBackground(ContextCompat.getDrawable(this,R.drawable.cool_512));
                 titleText.setText(getString(R.string.easter));
             }
         }

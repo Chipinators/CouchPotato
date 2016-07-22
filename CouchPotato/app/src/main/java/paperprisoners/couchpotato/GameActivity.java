@@ -6,6 +6,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -64,7 +65,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
     }
 
     public void setColor(int resID) {
-        container.setBackgroundColor(getColor(resID));
+        container.setBackgroundColor(ContextCompat.getColor(this,resID));
     }
 
 

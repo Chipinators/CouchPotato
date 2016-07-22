@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 /**
  * Created by Ian on 7/13/2016.
  */
@@ -23,6 +25,13 @@ public class SetupAdapter extends ArrayAdapter<UserData> {
         this.isHost = isHost;
         this.dialog = dialog;
         mInflater = (LayoutInflater) dialog.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
+
+    public ArrayList<UserData> getItems() {
+        ArrayList<UserData> list = new ArrayList<>();
+        for (int i=0; i<list.size(); i++)
+            list.add( getItem(i) );
+        return list;
     }
 
     @Override

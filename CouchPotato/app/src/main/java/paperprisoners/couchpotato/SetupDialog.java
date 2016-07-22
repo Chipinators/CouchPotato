@@ -1,10 +1,19 @@
 package paperprisoners.couchpotato;
 
+import android.Manifest;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Message;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,11 +28,13 @@ import android.widget.TextView;
  *
  * @author Ian
  */
-public class SetupDialog extends AlertDialog implements View.OnClickListener, AdapterView.OnItemClickListener {
-
-    private int minPlayers = 3, maxPlayers = 8;
+public class SetupDialog extends AlertDialog implements View.OnClickListener, AdapterView.OnItemClickListener, DialogInterface.OnCancelListener, MessageListener{
+    private static final String TAG = "SetupDialog";
+    private int minPlayers = 1, maxPlayers = 8;
     private boolean isHost = false;
     private boolean joined = false;
+
+    private UserData userData;
 
     private TextView messageText, countText;
     private Button cancelButton, startButton;
@@ -34,16 +45,18 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
 
     private Context ownerContext;
 
-    public SetupDialog(Context context, int minPlayers, int maxPlayers, boolean isHost) {
+    public SetupDialog(Context context, int minPlayers, int maxPlayers, boolean isHost, UserData userData) {
         super(context);
         this.minPlayers = minPlayers;
         this.maxPlayers = maxPlayers;
         this.isHost = isHost;
         this.ownerContext = context;
+        this.userData = userData;
+        BluetoothService.listeners.add(this);
     }
 
-    public SetupDialog(Context context, boolean isHost) {
-        this(context, 3, 8, isHost);
+    public SetupDialog(Context context, boolean isHost, UserData userData) {
+        this(context, 1, 8, isHost, userData);
     }
 
     //CUSTOM METHODS
@@ -87,19 +100,19 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
         if (isHost) {
             countText.setText((adapter.getCount() + 1) + "/" + maxPlayers);
             if (count + 1 >= minPlayers) {
-                countText.setTextColor(getContext().getColor(R.color.main_accept));
+                countText.setTextColor(ContextCompat.getColor(getContext(),R.color.main_accept));
                 if (count + 1 >= maxPlayers) {
                     messageText.setText(getContext().getString(R.string.setup_host3));
                 } else {
                     messageText.setText(getContext().getString(R.string.setup_host2));
                 }
                 startButton.setEnabled(true);
-                startButton.setTextColor(getContext().getColor(R.color.main_black));
+                startButton.setTextColor(ContextCompat.getColor(getContext(),R.color.main_black));
             } else {
-                countText.setTextColor(getContext().getColor(R.color.main_white));
+                countText.setTextColor(ContextCompat.getColor(getContext(),R.color.main_white));
                 messageText.setText(getContext().getString(R.string.setup_host1));
                 startButton.setEnabled(false);
-                startButton.setTextColor(getContext().getColor(R.color.main_black_faded));
+                startButton.setTextColor(ContextCompat.getColor(getContext(),R.color.main_black_faded));
             }
         } else {
             if (joined) {
@@ -132,6 +145,10 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     private void setupHost() {
         setTitle(getContext().getString(R.string.select_host));
         adjustContent();
+        //BLUETOOTH
+        BluetoothService.getmAdapter().setName(Constants.app_name + " - " + userData.getUsername());
+        BluetoothService.makeDiscoverable(ownerContext, bCReciever);
+        BluetoothService.start();
     }
 
     private void setupClient() {
@@ -139,6 +156,14 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
         userList.setOnItemClickListener(this);
         buttonArea.removeView(startButton);
         adjustContent();
+        //BLUETOOTH
+        BluetoothService.getmAdapter().setName(userData.getUsername());
+        BluetoothService.getmAdapter().cancelDiscovery();
+        adapter.clear();
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        ownerContext.registerReceiver(bCReciever, filter);
+
+        BluetoothService.startSearching(ownerContext, bCReciever);
     }
 
 
@@ -179,14 +204,17 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     @Override
     public void onClick(View v) {
         if (v == startButton) {
+            String[] startMsg = new String[1];
+            startMsg[0] = "This is a Start Game Message!";
+            BluetoothService.writeToClients(Constants.START, startMsg);
             Intent toGame = new Intent(ownerContext, GameActivity.class);
             ownerContext.startActivity(toGame);
             cancel();
         } else if (v == cancelButton) {
-            addUser(new UserData("dude", 0, null, null));
-            //adapter.clear();
+            //addUser(new UserData("dude", 0, null, null));
+            adapter.clear();
             userList.invalidate();
-            //cancel();
+            cancel();
         } else {
             try {
                 //This should only run for the host
@@ -201,11 +229,68 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         //Should only fire off for client.
-        UserData user = getUser(position);
         // TODO: Connect client to selected host as described in user object
+
+        UserData selected = adapter.getItem(position);
+        Log.i("Log", "Item clicked trying to connect");
+        try {
+            BluetoothService.connect(selected.getDevice());
+        } catch (Exception e) {
+            Log.e(TAG, "Cannot connect to server, server not available?");
+            adapter.clear();
+        }
+        BluetoothService.getmAdapter().cancelDiscovery();
 
         if (true)
             joined = true;
         adjustContent();
+    }
+
+
+    //BLUETOOTH METHODS
+    private final BroadcastReceiver bCReciever = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            Log.i(TAG, action);
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                Log.i(TAG,"Device Name: " + device.getName());
+                UserData foundDevice = new UserData(device, device.getName());
+                if (!adapter.getItems().contains(foundDevice) && device.getName() != null) {
+                    Log.i(TAG, "USER IS NOT ON LIST");
+                    if (foundDevice.getUsername().contains(Constants.app_name)) {
+                        Log.i(TAG, "USERNAME CONTAINS APP NAME - ADDED TO AVAILABLE DEVICES");
+                        addUser(foundDevice);
+                    }
+                }
+            }
+        }
+    };
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        //TODO: Send message to host saying user dropped
+        ownerContext.unregisterReceiver(bCReciever);
+        BluetoothService.getmAdapter().cancelDiscovery();
+        BluetoothService.stop();
+    }
+
+    @Override
+    public void onReceiveMessage(int player, int messageType, Object[] content) {
+        switch(messageType){
+            case Constants.START:
+                Log.i(TAG, content.toString());
+                ownerContext.unregisterReceiver(bCReciever);
+                BluetoothService.getmAdapter().cancelDiscovery();
+                Intent toGame = new Intent(ownerContext, GameActivity.class);
+                ownerContext.startActivity(toGame);
+                break;
+            case Constants.MESSAGE_DEVICE_NAME:
+
+                break;
+
+
+
+        }
     }
 }

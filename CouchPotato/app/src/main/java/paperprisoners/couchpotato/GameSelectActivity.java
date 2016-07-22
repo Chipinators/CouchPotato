@@ -1,27 +1,45 @@
 package paperprisoners.couchpotato;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Arrays;
+import java.util.regex.Pattern;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class GameSelectActivity extends Activity implements View.OnClickListener, ViewPager.OnPageChangeListener {
-
+public class GameSelectActivity extends Activity implements View.OnClickListener, ViewPager.OnPageChangeListener, MessageListener {
+    private static final String TAG = "GameSelectActivity";
     protected String username;
+
+    private UserData userData;
 
     private TextView nameText;
     private Button backButton, infoButton, hostButton, joinButton;
@@ -29,6 +47,7 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
     private PagedFragment pages;
 
     private SetupDialog setup;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +84,10 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
         pages.setListener(this);
         //Filling in values
         username = this.getIntent().getStringExtra("username");
-        if (username != null)
+        if (username != null) {
             ((TextView) this.findViewById(R.id.select_name)).setText(username);
+            userData = new UserData(username);
+        }
 
         Bitmap wcLogo = BitmapFactory.decodeResource(getResources(), R.drawable.wouldchuck_512);
         Bitmap moreLogo = BitmapFactory.decodeResource(getResources(), R.drawable.more_512);
@@ -74,6 +95,10 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
         GameData more = new GameData(moreLogo, 0, 0);
         pages.addPage(PagedGameAdapter.generateView(getBaseContext(), wc));
         pages.addPage(PagedGameAdapter.generateView(getBaseContext(), more));
+
+        //Bluetooth
+        BluetoothService.listeners.add(this);
+       // BluetoothService.setHandler(mHandler);
     }
 
     @Override
@@ -87,14 +112,34 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
             toInfo.putExtra("gameID", 0);
             this.startActivity(toInfo);
         } else if (v == hostButton) {
-            setup = new SetupDialog(this, true);
+            setup = new SetupDialog(this, true, userData);
             setup.show();
+            BluetoothService.start();
         } else if (v == joinButton) {
-            setup = new SetupDialog(this, false);
+            requestLocation();
+            setup = new SetupDialog(this, false, userData);
             setup.show();
             //Intent t = new Intent(this, GameActivity.class);
             //t.putExtra("username", username);
             //startActivity(t);
+        }
+    }
+
+    public void requestLocation(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 1;
+            ActivityCompat.requestPermissions(GameSelectActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        BluetoothService.addMessageListener(this);
+        if (!BluetoothService.getmAdapter().isEnabled()) {
+            //Bluetooth not enabled on device, request it.
+            Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBT, Constants.REQUEST_BLUETOOTH);
         }
     }
 
@@ -106,18 +151,18 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
     @Override
     public void onPageSelected(int position) {
         if (position == 0) {
-            bg.setBackgroundColor(getColor(R.color.wouldchuck));
+            bg.setBackgroundColor(ContextCompat.getColor(this,R.color.wouldchuck));
             hostButton.setEnabled(true);
-            hostButton.setBackgroundColor(getColor(R.color.main_black));
+            hostButton.setBackgroundColor(ContextCompat.getColor(this,R.color.main_black));
             joinButton.setEnabled(true);
-            joinButton.setBackgroundColor(getColor(R.color.main_black));
+            joinButton.setBackgroundColor(ContextCompat.getColor(this,R.color.main_black));
         }
         else if (position == 1) {
-            bg.setBackgroundColor(getColor(R.color.more));
+            bg.setBackgroundColor(ContextCompat.getColor(this,R.color.more));
             hostButton.setEnabled(false);
-            hostButton.setBackgroundColor(getColor(R.color.main_black_faded));
+            hostButton.setBackgroundColor(ContextCompat.getColor(this,R.color.main_black_faded));
             joinButton.setEnabled(false);
-            joinButton.setBackgroundColor(getColor(R.color.main_black_faded));
+            joinButton.setBackgroundColor(ContextCompat.getColor(this,R.color.main_black_faded));
         }
 
     }
@@ -125,5 +170,21 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BluetoothService.getmAdapter().cancelDiscovery();
+    }
+
+    //BLUETOOTH METHODS
+
+
+    @Override
+    public void onReceiveMessage(int player, int messageType, Object[] content) {
+        if (messageType == 1) {
+            Log.i(TAG, "Message received from remote device! - " + content.toString());
+        }
     }
 }

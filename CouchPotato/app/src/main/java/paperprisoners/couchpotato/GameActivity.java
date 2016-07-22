@@ -52,7 +52,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
         //Other junk
 
         manager = getFragmentManager();
-        Fragment wcFrag = new WouldChuck();
+        Fragment wcFrag = new WouldChuckFragment();
         setFragment(wcFrag);
     }
 

@@ -10,23 +10,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.Arrays;
 import java.util.Random;
 
-public class WouldChuck extends Fragment {
+public class WouldChuckFragment extends Fragment {
     Handler handler = new Handler();
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     //GLOBAL VARS
     private boolean host = false;
-    private int gameID = 1;
-    private int gameRound = 1;
+    private int gameRound;
     private TextView clock;
-    private String[][] Responses;
+    private String[][] responses;
     private String[] rathers;
-    private int questionSets, responsesLeft;
+    private int responsesLeft;
     private int vtePlayer1, vtePlayer2;//store the oners of votes1 and votes2
     private int votes1, votes2;
-
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     private Thread start;
 
@@ -34,7 +31,6 @@ public class WouldChuck extends Fragment {
     public synchronized void onStart() {
         super.onStart();
         clock = (TextView) getView().findViewById(R.id.clock);
-        Arrays.fill(Responses, "");//initalize and fill the array with nothing
 
         //*ADD END GAME METHOD FOR IF LOBBY NEEDS TO QUIT NOW*
 
@@ -42,24 +38,31 @@ public class WouldChuck extends Fragment {
             @Override
             public void run() {
                 try {
+                    gameRound = 1;
+
                     //Show Intro frag
                     //close Intro frag
                     while (gameRound <= 3) {
-                        questionSets = 0;
+                        //responsesLeft = playerNumber * 2;
 
                         usersEnterValues();
-                        //get num of questionsets
-                        while (questionSets > 0) {
+                        while (responsesLeft > 0) {
                             playerVoting();
                             showVotingResults();
+                            responsesLeft = responsesLeft - 2;
                         }
-                        showRoundResults();
+                        if(gameRound != 3){
+                            showRoundResults();
+                        }
+                        else{
+                            showFinalResults();
+                            break;
+                        }
                         gameRound++;
                     }
-                    showFinalResults();
                     gameOver();
                 } catch (Exception e) {
-                    Log.v("ERROR WITH WAITING", e.getMessage());
+                    Log.v("WC_ERROR", e.getMessage());
                 }
             }
         };
@@ -93,9 +96,8 @@ public class WouldChuck extends Fragment {
 
     public void getDataFromUsers() {
         /*
-        questionSets = number of players;
-        Responses = new String[Number of Players][2]; //here so if players drop out we dont expect stuff from them. also clears array
-        Array.fill(Responses, "");
+        responses = new String[Number of Players][2]; //here so if players drop out we dont expect stuff from them. also clears array
+        Array.fill(responses, "");
 
         responsesLeft = numPlayers * 2;
 
@@ -103,10 +105,10 @@ public class WouldChuck extends Fragment {
             //store host's data
             while(waiting on users){
              if(data recieved){
-                store data into Responses
+                store data into responses
 
-                Responses[playerID][0] = response1;
-                Responses[playerID][0] = response2;
+                responses[playerID][0] = response1;
+                responses[playerID][0] = response2;
               }
             }
         }
@@ -128,14 +130,17 @@ public class WouldChuck extends Fragment {
         vtePlayer2 = Integer.parseInt(rathers[3]);//store the owner ints
         rathers = new String[]{rathers[0], rathers[1]};//remove the ints
 
+        boolean[] input = new boolean[2];
+
         if (/*one of values is user's*/) {
             //show selection screen , disable options
         } else {
             //show selection screen
             //close selection screen when timer runs out or input
+            //true for selected value, false for other;
         }
-        getUserVotes();
-        ;
+        getUserVotes(input);
+
     }
 
     public String[] selectRathers() {
@@ -144,8 +149,8 @@ public class WouldChuck extends Fragment {
         Random rand = new Random();
 
         while (true) {
-            randPlayer1 = rand.nextInt(Responses.length);
-            randPlayer2 = rand.nextInt(Responses.length);
+            randPlayer1 = rand.nextInt(responses.length);
+            randPlayer2 = rand.nextInt(responses.length);
             if (randPlayer1 == randPlayer2) {
                 //loop again
             } else {
@@ -158,9 +163,7 @@ public class WouldChuck extends Fragment {
                     updateResponses(randPlayer1, randQ1);
                     updateResponses(randPlayer2, randQ2);
 
-                    responsesLeft = responsesLeft - 2;
-
-                    return new String[]{Responses[randPlayer1][randQ1], Responses[randPlayer2][randQ2], "" + randPlayer1, "" + randPlayer2};
+                    return new String[]{responses[randPlayer1][randQ1], responses[randPlayer2][randQ2], "" + randPlayer1, "" + randPlayer2};
                 } else {
                     //loop again
                 }
@@ -170,9 +173,9 @@ public class WouldChuck extends Fragment {
 
     public int responsesRemaining(int index) { //returns the number of responses a user has left
         int i = 2;
-        if (Responses[index][0].equals(""))
+        if (responses[index][0].equals(""))
             i--;
-        if (Responses[index][1].equals(""))
+        if (responses[index][1].equals(""))
             i--;
 
         return i;
@@ -180,20 +183,23 @@ public class WouldChuck extends Fragment {
 
     public void updateResponses(int index, int response) { //if the user gave a response, shift so Response[user][0] always has a response (makes rand easier)
         if (response == 1) {
-            Responses[index][1] = "";
+            responses[index][1] = "";
         } else {
-            String tmp = Responses[index][1];
-            Responses[index][1] = "";
-            Responses[index][0] = tmp;
+            String tmp = responses[index][1];
+            responses[index][1] = "";
+            responses[index][0] = tmp;
         }
     }
 
-    public void getUserVotes() {
+    public void getUserVotes( boolean[] vteResults) {
         if (host) {
             /*
             while(waiting for users){
                 if(data recieved){ //want data in form of bool, bool
-                  if(data[0] == true){
+                  if(data[0] == false && data[1] == false){
+                   //no vote, was user's response
+                  }
+                  else if(data[0] == true){
                    votes1 ++;
                   }
                   else{
@@ -222,21 +228,24 @@ public class WouldChuck extends Fragment {
 
     public void savePlayerPoints() {
         /*
+        int points = gameRound * 500;
         int winner;
         if(vote1 > vote2){
             winner = vtePlayer1;
         }
-        else{
+        else if (vote1 < vote2{
             winner = vtePlayer2;
         }
-        if(gameRound == 1){
-         playerList[winner].setPoints(playerList[winner].getPoints() + 500);
+        else{
+            winner = -1;
+            points = points / 2;
         }
-        else if(gameRound == 2){
-         playerList[winner].setPoints(playerList[winner].getPoints() + 1000);
+        if(winner == -1){
+         playerList[vtePlayer1].setPoints(playerList[winner].getPoints() + points);
+         playerList[vtePlayer2].setPoints(playerList[winner].getPoints() + points);
         }
         else{
-         playerList[winner].setPoints(playerList[winner].getPoints() + 1500);
+         playerList[winner].setPoints(playerList[winner].getPoints() + points);
         }
          */
     }
@@ -249,7 +258,7 @@ public class WouldChuck extends Fragment {
     }
 
     public int[][] playerOrder() {
-        int[][] order = new int[Responses.length][2];
+        int[][] order = new int[responses.length][2];
 
         /*
         for(int i = 0; i < numPlayers; i++){

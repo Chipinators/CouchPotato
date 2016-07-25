@@ -32,6 +32,7 @@
     <!--Activity-specific strings. Prefix with the name of the Activity-->
     <string name="title_name_field">enter your name</string>
     <string name="title_play">PLAY</string>
+    <string name="title_sorry">To play Couch Potato, your device needs to be Bluetooth-ready. If we\'re wrong, let us know; we\'ll get to the bottom of it!</string>
     <string name="info_bar_title">GAME INFO</string>
     <string name="select_host">HOST A GAME</string>
     <string name="select_join">JOIN A GAME</string>

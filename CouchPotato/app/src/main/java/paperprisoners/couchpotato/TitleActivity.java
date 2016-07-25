@@ -2,6 +2,7 @@ package paperprisoners.couchpotato;
 
 import android.Manifest;
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -76,9 +77,23 @@ public class TitleActivity extends Activity implements View.OnClickListener, Tex
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.title_submit) {
-            Intent toSelect = new Intent( this, GameSelectActivity.class );
-            toSelect.putExtra("username", ((EditText)findViewById(R.id.title_name_field)).getText().toString());
-            this.startActivity( toSelect );
+            boolean canPlay = true;
+            try {
+                if (BluetoothAdapter.getDefaultAdapter() == null)
+                    canPlay = false;
+                else {
+                    Intent toSelect = new Intent(this, GameSelectActivity.class);
+                    toSelect.putExtra("username", ((EditText) findViewById(R.id.title_name_field)).getText().toString());
+                    this.startActivity(toSelect);
+                }
+            }
+            catch (NoClassDefFoundError e) {
+                canPlay = false;    //Compatibility fallback
+            }
+            if (!canPlay) {
+                MessageDialog sorryMsg = new MessageDialog(this, getString(R.string.title_sorry));
+                sorryMsg.show();
+            }
         }
         else {
             //Easter egg

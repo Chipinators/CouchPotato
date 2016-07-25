@@ -97,9 +97,10 @@ public class PagedFragment extends Fragment implements ViewPager.OnPageChangeLis
     private void addIndicator() {
         ImageView dot = new ImageView(getActivity().getBaseContext());
         int size = (int) (getResources().getDimension(R.dimen.dots) * getResources().getDisplayMetrics().density);
-        dot.setLayoutParams(new ViewGroup.LayoutParams(size, size));
         dot.getAdjustViewBounds();
         dot.setMaxWidth(size);
+        dot.setMaxHeight(size);
+        dot.setLayoutParams(new ViewGroup.LayoutParams(size, size));
         Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.ic_pagination_white_48dp);
         dot.setImageBitmap(img);
         dot.setColorFilter(ContextCompat.getColor(getActivity().getBaseContext(),R.color.main_black));
@@ -128,7 +129,7 @@ public class PagedFragment extends Fragment implements ViewPager.OnPageChangeLis
 
     private void adjustIndicator() {
         int p = (int) (getResources().getDimension(R.dimen.padding_xsmall) * getResources().getDisplayMetrics().density);
-        //p *= PADDING_MODIFIER;
+        p *= PADDING_MODIFIER;
         if (getPageCount() > 1) {
             if (hidden)
                 unhideIndicator();

@@ -1,8 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/p1_col" >
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_medium">
+
+    <TextView
+        android:id="@+id/wc_results_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="RESULTS"
+        android:textColor="@color/main_black"
+        android:textSize="@dimen/font_xlarge"
+        android:textStyle="bold" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/padding_medium" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="2">
+
+        <RelativeLayout
+            android:id="@+id/wc_results_1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@color/main_black_faded"
+            android:paddingBottom="@dimen/padding_medium"
+            android:paddingLeft="@dimen/padding_small"
+            android:paddingRight="@dimen/padding_small"
+            android:paddingTop="@dimen/padding_medium">
+
+            <TextView
+                android:id="@+id/wc_results_content1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:lines="1"
+                android:text="@string/na_message"
+                android:textColor="@color/main_white"
+                android:textSize="@dimen/font_medium"
+                android:textStyle="bold" />
+
+            <RelativeLayout
+                android:id="@+id/wc_results_container1"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/wc_results_content1"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/wc_results_count1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@color/main_white"
+                    android:textSize="150dp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/wc_results_content1"
+                android:layout_toRightOf="@+id/wc_results_container1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/wc_results_score1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/na_score"
+                    android:textColor="@color/main_white"
+                    android:textSize="90dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/wc_results_user1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/na_name"
+                    android:textColor="@color/main_white"
+                    android:textSize="@dimen/font_large"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/padding_medium" />
+
+        <RelativeLayout
+            android:id="@+id/wc_results_2"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@color/main_black_faded"
+            android:paddingBottom="@dimen/padding_medium"
+            android:paddingLeft="@dimen/padding_small"
+            android:paddingRight="@dimen/padding_small"
+            android:paddingTop="@dimen/padding_medium">
+
+            <TextView
+                android:id="@+id/wc_results_content2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:lines="1"
+                android:text="@string/na_message"
+                android:textColor="@color/main_white"
+                android:textSize="@dimen/font_medium"
+                android:textStyle="bold" />
+
+            <RelativeLayout
+                android:id="@+id/wc_results_container2"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/wc_results_content2"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/wc_results_count2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@color/main_white"
+                    android:textSize="150dp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/wc_results_content2"
+                android:layout_toRightOf="@+id/wc_results_container2"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/wc_results_score2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/na_score"
+                    android:textColor="@color/main_white"
+                    android:textSize="90dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/wc_results_user2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/na_name"
+                    android:textColor="@color/main_white"
+                    android:textSize="@dimen/font_large"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -14,7 +14,7 @@
     <LinearLayout
         android:id="@+id/pager_indicator"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/size_small"
         android:orientation="horizontal"
         android:gravity="center"/>
     </RelativeLayout>

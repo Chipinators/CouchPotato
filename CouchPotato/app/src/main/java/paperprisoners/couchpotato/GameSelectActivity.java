@@ -142,6 +142,7 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
             Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBT, Constants.REQUEST_BLUETOOTH);
         }
+
     }
 
     @Override

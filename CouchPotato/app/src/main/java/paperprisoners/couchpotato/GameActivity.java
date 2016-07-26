@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -52,7 +50,10 @@ public class GameActivity extends Activity implements View.OnClickListener {
         if (username != null)
             name.setText(username);
         //Other junk
+
         manager = getFragmentManager();
+        Fragment wcFrag = new WouldChuckFragment();
+        setFragment(wcFrag);
     }
 
 
@@ -61,11 +62,8 @@ public class GameActivity extends Activity implements View.OnClickListener {
     public void setFragment(Fragment fragment) {
         FragmentTransaction swapper = manager.beginTransaction();
         swapper.replace(R.id.game_container, fragment);
-        screen = fragment;
-    }
-
-    public void setColor(int resID) {
-        container.setBackgroundColor(ContextCompat.getColor(this,resID));
+        swapper.addToBackStack(null);
+        swapper.commit();
     }
 
 
@@ -74,8 +72,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v == menu) {
-            MessageDialog whoops = new MessageDialog(this,"We'll um... We'll finish this menu soon(tm). Sorry about that.");
-            whoops.show();
+
         }
     }
 }

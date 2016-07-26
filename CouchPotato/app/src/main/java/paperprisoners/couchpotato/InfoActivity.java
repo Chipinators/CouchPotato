@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 public class InfoActivity extends Activity implements View.OnClickListener {
 
+    private String username;            //saved to be referenced on return
     private Button back;
     private TextView text, barTitle;
 
@@ -23,6 +24,9 @@ public class InfoActivity extends Activity implements View.OnClickListener {
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN );
         setContentView( R.layout.activity_info );
+        //Retrieves username
+        username = getIntent().getStringExtra("username");
+        //Gets  elements
         back = (Button) findViewById( R.id.info_back );
         text = (TextView) findViewById( R.id.info_text );
         barTitle = (TextView) findViewById( R.id.info_bar_title ) ;
@@ -39,6 +43,7 @@ public class InfoActivity extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         if ( v == back ) {
             Intent toSelect = new Intent( this, GameSelectActivity.class );
+            toSelect.putExtra("username",username);
             this.startActivity( toSelect );
         }
     }

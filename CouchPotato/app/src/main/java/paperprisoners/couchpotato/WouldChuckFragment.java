@@ -8,8 +8,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class WouldChuckFragment extends Fragment {
@@ -17,6 +20,7 @@ public class WouldChuckFragment extends Fragment {
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     //GLOBAL VARS
     private boolean host = false;
+    private UserData me; //Will be passed to GameActivity, pull from there later
     private int gameRound;
     private TextView clock;
     private String[][] responses;
@@ -24,6 +28,8 @@ public class WouldChuckFragment extends Fragment {
     private int responsesLeft;
     private int vtePlayer1, vtePlayer2;//store the oners of votes1 and votes2
     private int votes1, votes2;
+    private LayoutInflater inflater;
+    private ArrayList<UserData> players;
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     private Thread start;
 
@@ -32,46 +38,52 @@ public class WouldChuckFragment extends Fragment {
         super.onStart();
         clock = (TextView) getView().findViewById(R.id.clock);
 
-        //*ADD END GAME METHOD FOR IF LOBBY NEEDS TO QUIT NOW*
-
+        players = ((GameActivity) getActivity()).getPlayers(); //store the players
+        //region Start Thread
         start = new Thread() {
             @Override
             public void run() {
                 try {
-                    gameRound = 1;
+                    //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+                    gameRound = 1; //initalize the starting round
+                    //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+                    inflater = LayoutInflater.from(getActivity().getBaseContext()); //create the inflater
+                    View theInflatedView = inflater.inflate(R.layout.wouldchuck_waiting, null); //Show Intro frag
+                    //NEED TO DELAY THIS FOR X TIME
+                    theInflatedView.setVisibility(View.GONE);//close Intro frag
+                    //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+                    while (gameRound <= 3) { //loop through the rounds!
 
-                    //Show Intro frag
-                    //close Intro frag
-                    while (gameRound <= 3) {
-                        //responsesLeft = playerNumber * 2;
+                        responsesLeft = players.size() * 2; //number of responses
 
-                        usersEnterValues();
-                        while (responsesLeft > 0) {
-                            playerVoting();
-                            showVotingResults();
-                            responsesLeft = responsesLeft - 2;
+                        usersEnterValues();//get the user's rathers
+
+                        while (responsesLeft > 0) { //loop through the rathers to let user's vote
+                            playerVoting(); //playerID's cast votes
+                            showVotingResults(); //results of vote are shown
+                            responsesLeft = responsesLeft - 2; //update responses to pars
                         }
-                        if(gameRound != 3){
-                            showRoundResults();
-                        }
-                        else{
-                            showFinalResults();
+                        if (gameRound != 3) {//if the last round
+                            showRoundResults();//show the final winner screen
+                        } else {//otherwise
+                            showFinalResults(); //show the end of round screen
                             break;
                         }
                         gameRound++;
                     }
-                    gameOver();
+                    gameOver();//call the game over screen!
                 } catch (Exception e) {
-                    Log.v("WC_ERROR", e.getMessage());
+                    Log.v("WC_ERROR", e.getMessage()); //ERROR (in case you fuck heads didn't know)
                 }
             }
         };
-        start.start();
+        start.start(); //Run the game thread!
+        //endregion
     }
 
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     //region Game Code
-    public void countClockDownVisual(final int time, int delay) {
+    public void countClockDownVisual(final int time, int delay) { //IGNORE ME IM USELESS
         Runnable timer = new Runnable() {
             int t = time;
 
@@ -89,33 +101,35 @@ public class WouldChuckFragment extends Fragment {
     }
 
     public void usersEnterValues() {
-        //show frag with input options
+        View theInflatedView = inflater.inflate(R.layout.wouldchuck_choice, null);  //show frag with input options
+        //NEED TO DELAY THIS FOR X TIME
+        theInflatedView.setVisibility(View.GONE);//close input frag
+
+        String input1 = ((TextView) getActivity().findViewById(R.id.wc_input_1)).getText().toString();//store rather 1
+        String input2 = ((TextView) getActivity().findViewById(R.id.wc_input_2)).getText().toString();//store rather 2
+        ((TextView) getActivity().findViewById(R.id.wc_input_1)).setText("");//clear
+        ((TextView) getActivity().findViewById(R.id.wc_input_2)).setText("");//clear
         //when submit hit or time run out
-        getDataFromUsers();
+        getDataFromUsers(input1, input2);//parse and store the data
     }
 
-    public void getDataFromUsers() {
-        /*
-        responses = new String[Number of Players][2]; //here so if players drop out we dont expect stuff from them. also clears array
-        Array.fill(responses, "");
+    public void getDataFromUsers(String input1, String input2) {
 
-        responsesLeft = numPlayers * 2;
+        responses = new String[players.size()][2]; //here so if players drop out we dont expect stuff from them. also clears array
+        Arrays.fill(responses, "");
 
         if (host) {
-            //store host's data
-            while(waiting on users){
-             if(data recieved){
-                store data into responses
+            responses[0][0] = input1;
+            responses[0][1] = input2;
 
-                responses[playerID][0] = response1;
-                responses[playerID][0] = response2;
-              }
-            }
+            //while(waiting on users){
+            //if(data recieved){
+            // store data into response
+            //}
+            //}
+        } else {
+            //  write to host
         }
-        else {
-            write to host
-        }
-        */
     }
 
     public void playerVoting() {
@@ -130,17 +144,41 @@ public class WouldChuckFragment extends Fragment {
         vtePlayer2 = Integer.parseInt(rathers[3]);//store the owner ints
         rathers = new String[]{rathers[0], rathers[1]};//remove the ints
 
-        boolean[] input = new boolean[2];
+        final boolean[] input = new boolean[2];
 
-        if (/*one of values is user's*/) {
-            //show selection screen , disable options
+        View theInflatedView = inflater.inflate(R.layout.wouldchuck_choice, null);  //show frag with voting options
+
+        //NEED TO DELAY THIS FOR X TIME
+        if (vtePlayer1 == me.playerID || vtePlayer2 == me.playerID) {
+
+
         } else {
             //show selection screen
             //close selection screen when timer runs out or input
             //true for selected value, false for other;
         }
-        getUserVotes(input);
 
+        Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
+        Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_2);
+        ch1.setText(rathers[0]); //set option 1
+        ch2.setText(rathers[1]); //set option 2
+
+        //NEED TIME LOOPED
+        getActivity().findViewById(R.id.wc_choice_layout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v == getActivity().findViewById(R.id.wc_choice_1)) {
+                    input[0] = true;
+                    input[1] = false;
+                } else {
+                    input[1] = true;
+                    input[0] = false;
+                }
+            }
+        });
+
+        theInflatedView.setVisibility(View.GONE);//close input frag
+        getUserVotes(input);
     }
 
     public String[] selectRathers() {
@@ -191,7 +229,7 @@ public class WouldChuckFragment extends Fragment {
         }
     }
 
-    public void getUserVotes( boolean[] vteResults) {
+    public void getUserVotes(boolean[] vteResults) {
         if (host) {
             /*
             while(waiting for users){
@@ -221,67 +259,86 @@ public class WouldChuckFragment extends Fragment {
             //votes1 = data[0]
             //votes2 = data[1];
         }
-
         //show results
+        View theInflatedView = inflater.inflate(R.layout.wouldchuck_results, null); //Show Intro frag
+        ((TextView) getActivity().findViewById(R.id.wc_results_content1)).setText(rathers[0]);
+        ((TextView) getActivity().findViewById(R.id.wc_results_content2)).setText(rathers[1]);
+        ((TextView) getActivity().findViewById(R.id.wc_results_count1)).setText("" + votes1);
+        ((TextView) getActivity().findViewById(R.id.wc_results_count2)).setText("" + votes2);
+        ((TextView) getActivity().findViewById(R.id.wc_results_user1)).setText(players.get(vtePlayer1).username);
+        ((TextView) getActivity().findViewById(R.id.wc_results_user1)).setText(players.get(vtePlayer2).username);
+
+        if (votes1 > votes2) {
+            ((TextView) getActivity().findViewById(R.id.wc_results_score1)).setText("" + (500 * gameRound));
+            ((TextView) getActivity().findViewById(R.id.wc_results_score2)).setText("0");
+        } else {
+            ((TextView) getActivity().findViewById(R.id.wc_results_score1)).setText("0");
+            ((TextView) getActivity().findViewById(R.id.wc_results_score2)).setText("" + (500 * gameRound));
+        }
+        theInflatedView.setVisibility(View.GONE);//close Intro frag
+
         savePlayerPoints();
     }
 
     public void savePlayerPoints() {
-        /*
+
         int points = gameRound * 500;
         int winner;
-        if(vote1 > vote2){
+
+        if (votes1 > votes2) {
             winner = vtePlayer1;
-        }
-        else if (vote1 < vote2{
+        } else if (votes1 < votes2) {
             winner = vtePlayer2;
-        }
-        else{
+        } else {
             winner = -1;
             points = points / 2;
         }
-        if(winner == -1){
-         playerList[vtePlayer1].setPoints(playerList[winner].getPoints() + points);
-         playerList[vtePlayer2].setPoints(playerList[winner].getPoints() + points);
+        if (winner == -1) {
+            players.get(vtePlayer1).points += points;
+            players.get(vtePlayer2).points += points;
+        } else {
+            players.get(winner).points += points;
         }
-        else{
-         playerList[winner].setPoints(playerList[winner].getPoints() + points);
-        }
-         */
     }
 
     public void showRoundResults() {
         int[][] order = playerOrder();
 
         //Show round splash screen
+        View theInflatedView = inflater.inflate(R.layout.wouldchuck_round, null); //Show Intro frag
+        //NEED TO DELAY THIS FOR X TIME
+        for (int i = 0; i < order.length; i++) {
+            ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_name" + i, "id", "paperprisoners.couchpotato"))).setText(players.get(order[i][0]).username); //SEARCH STRING TO RESOURCE ID
+            ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_score" + i, "id", "paperprisoners.couchpotato"))).setText("" + order[i][1]);
+        }
+
+        theInflatedView.setVisibility(View.GONE);//close Intro frag
 
     }
 
     public int[][] playerOrder() {
         int[][] order = new int[responses.length][2];
 
-        /*
-        for(int i = 0; i < numPlayers; i++){
-            order[i][0] = playerList.get(i).getID();
-            order[i][1] = playerList.get(i).getPoints();
+        for (int i = 0; i < players.size(); i++) {
+            order[i][0] = players.get(i).playerID;
+            order[i][1] = players.get(i).points;
         }
 
         int tempID, tempPoints;
         for (int i = 1; i < order.length; i++) { //sort by points (highest to lowest)
-            for(int j = i ; j > 0 ; j--){
-                if(order[j][1] > order[j-1][1]){
-                    tempID = input[j][0];
-                    tempPoints = input[j][1];
+            for (int j = i; j > 0; j--) {
+                if (order[j][1] > order[j - 1][1]) {
+                    tempID = order[j][0];
+                    tempPoints = order[j][1];
 
-                    order[j][0] = order[j-1][0];
-                    order[j][1] = order[j-1][1];
+                    order[j][0] = order[j - 1][0];
+                    order[j][1] = order[j - 1][1];
 
-                    input[j-1][0] = tempID;
-                    input[j-1][1] = tempPoints
+                    order[j - 1][0] = tempID;
+                    order[j - 1][1] = tempPoints;
                 }
             }
         }
-        */
         return order;
     }
 

@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -146,6 +147,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     }
 
     private void setupHost() {
+        isHost = true;
         setTitle(getContext().getString(R.string.select_host));
         adjustContent();
         //BLUETOOTH
@@ -155,6 +157,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     }
 
     private void setupClient() {
+        isHost = false;
         setTitle(getContext().getString(R.string.select_join));
         userList.setOnItemClickListener(this);
         buttonArea.removeView(startButton);
@@ -262,6 +265,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
                 UserData foundDevice = new UserData(device, device.getName());
                 if (!adapter.getItems().contains(foundDevice) && device.getName() != null) {
                     Log.i(TAG, "USER IS NOT ON LIST");
+                    //TODO: MAKE IT SO THAT IT LOOKS FOR THE GAME NAME, NOT APP NAME.
                     if (foundDevice.getUsername().contains(Constants.app_name)) {
                         Log.i(TAG, "USERNAME CONTAINS APP NAME - ADDED TO AVAILABLE DEVICES");
                         addUser(foundDevice);
@@ -274,12 +278,26 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
                 UserData connectedDevice = new UserData(device.getName());
                 addUser(connectedDevice);
             }
+            if(BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)){
+                Log.i(TAG, "USER DISCONNECTED");
+                if(isHost){
+                    //TODO: REMOVE DISCONNECTED USER FROM USER LIST
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    UserData user = new UserData(device.getName());
+                    removeUser(user);
+                }else{
+                    BluetoothService.stop();
+                    adapter.clear();
+                    userList.invalidate();
+                    Toast.makeText(ownerContext,"You were disconnected from the host.",Toast.LENGTH_LONG).show();
+                    cancel();
+                }
+            }
         }
     };
 
     @Override
     public void onCancel(DialogInterface dialog) {
-        //TODO: Send message to host saying user dropped
         ownerContext.unregisterReceiver(bCReciever);
         BluetoothService.getmAdapter().cancelDiscovery();
         BluetoothService.stop();

@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 
 /**
  * Created by chris on 7/16/2016.
+ * Creates a Bluetooth service that allows a one-to-many Bluetooth connection up to 7 devices
  */
 public class BluetoothService {
     private static final String TAG = "BluetoothService";
@@ -318,6 +319,8 @@ public class BluetoothService {
         context.startActivity(discoverableIntent);
         IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
         context.registerReceiver(bCReciever, intentFilter);
+        IntentFilter disconnect = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        context.registerReceiver(bCReciever,disconnect);
         Log.i("Log", "Discoverable ");
     }
 
@@ -326,6 +329,8 @@ public class BluetoothService {
         Log.i("Log", "in the start searching method");
         IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         context.registerReceiver(bCReciever, intentFilter);
+        IntentFilter disconnect = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        context.registerReceiver(bCReciever,disconnect);
         mAdapter.startDiscovery();
     }
 

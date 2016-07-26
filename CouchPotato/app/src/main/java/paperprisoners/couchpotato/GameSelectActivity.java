@@ -109,6 +109,7 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
             this.startActivity(toTitle);
         } else if (v == infoButton) {
             Intent toInfo = new Intent(this, InfoActivity.class);
+            toInfo.putExtra("username", username);
             toInfo.putExtra("gameID", 0);
             this.startActivity(toInfo);
         } else if (v == hostButton) {

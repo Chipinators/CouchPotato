@@ -27,10 +27,12 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
+
 /**
  * The dialog that appears upon creating
  *
- * @author Ian
+ * @author Ian Base Code / Chris Bluetooth
  */
 public class SetupDialog extends AlertDialog implements View.OnClickListener, AdapterView.OnItemClickListener, DialogInterface.OnCancelListener, MessageListener{
     private static final String TAG = "SetupDialog";
@@ -47,6 +49,8 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     private ListView userList;
     private SetupAdapter adapter;
 
+    private ArrayList<UserData> finalUserList;
+
     private Context ownerContext;
 
     public SetupDialog(Context context, int minPlayers, int maxPlayers, boolean isHost, UserData userData) {
@@ -57,6 +61,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
         this.ownerContext = context;
         this.userData = userData;
         BluetoothService.listeners.add(this);
+        finalUserList = new ArrayList<>();
     }
 
     public SetupDialog(Context context, boolean isHost, UserData userData) {
@@ -147,6 +152,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     }
 
     private void setupHost() {
+        userData.setPlayer(0);
         isHost = true;
         setTitle(getContext().getString(R.string.select_host));
         adjustContent();
@@ -210,6 +216,12 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     @Override
     public void onClick(View v) {
         if (v == startButton) {
+            createFinalPlayerList();
+            //Send Player ID To Clients
+            for(UserData user : finalUserList){
+                BluetoothService.write(Integer.toString(user.getPlayer()), Constants.USER_ID, new String[] {"Player ID Sent"});
+            }
+            //TODO: Send Final Player List to all devices in the START message
             String[] startMsg = new String[1];
             startMsg[0] = "This is a Start Game Message!";
             BluetoothService.writeToClients(Constants.START, startMsg);
@@ -262,7 +274,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 Log.i(TAG,"Device Name: " + device.getName());
-                UserData foundDevice = new UserData(device, device.getName());
+                UserData foundDevice = new UserData(device, device.getAddress(), device.getName());
                 if (!adapter.getItems().contains(foundDevice) && device.getName() != null) {
                     Log.i(TAG, "USER IS NOT ON LIST");
                     //TODO: MAKE IT SO THAT IT LOOKS FOR THE GAME NAME, NOT APP NAME.
@@ -275,7 +287,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
             if(BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)){
                 Log.i(TAG, "USER CONNECTED TO SERVER - adding user to list");
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                UserData connectedDevice = new UserData(device.getName());
+                UserData connectedDevice = new UserData(device,device.getAddress(), device.getName());
                 addUser(connectedDevice);
             }
             if(BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)){
@@ -283,8 +295,11 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
                 if(isHost){
                     //TODO: REMOVE DISCONNECTED USER FROM USER LIST
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    UserData user = new UserData(device.getName());
-                    removeUser(user);
+                    for(UserData user : adapter.getItems()){
+                        if(device.getAddress().equals(user.getAddress())){
+                            removeUser(user);
+                        }
+                    }
                 }else{
                     BluetoothService.stop();
                     adapter.clear();
@@ -319,9 +334,19 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
                 UserData user = new UserData((String)content[0], Integer.getInteger((String)content[1]));
                 adapter.add(user);
                 break;
+            case Constants.USER_ID:
+                userData.setPlayer(player);
+                break;
+        }
+    }
 
-
-
+    public void createFinalPlayerList(){
+        finalUserList.add(userData);
+        finalUserList.addAll(adapter.getItems());
+        int i = 0;
+        for(UserData user : finalUserList){
+            user.setPlayer(i);
+            i++;
         }
     }
 }

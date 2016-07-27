@@ -24,9 +24,10 @@ public interface Constants {
     public static final int EDIT_SCORE = 5;             //Server to Client - tells the client to change the UserData.Score of a user in the UserData Array
     public static final int USER_CONNECTED = 6;         //Client to Server - Client send its own UserData to the host
     public static final int USER_DISCONNECTED = 7;      //Not sure if going to use
-    public static final int START = 8;                  //Server to Client - Tells Clients to start the game
-    public static final int RESTART = 9;                //Server to Client - Restart the game
-    public static final int EXIT = 10;                  //Server to Client - Tells Client to Exit the current game
+    public static final int USER_ID = 8;                //Server to Client - sends client their user ID
+    public static final int START = 9;                  //Server to Client - Tells Clients to start the game
+    public static final int RESTART = 10;                //Server to Client - Restart the game
+    public static final int EXIT = 11;                  //Server to Client - Tells Client to Exit the current game
 
     //REQUIRE TYPE - Used When A REQ Type Call Is Made - Stored on the content part of the Write call
     public static final int USER = 0;

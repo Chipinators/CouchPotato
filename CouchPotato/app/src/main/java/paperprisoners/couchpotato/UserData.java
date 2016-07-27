@@ -11,6 +11,7 @@ import android.text.TextUtils;
 public class UserData {
 
     protected String username;
+    protected String address;
     protected int score;
     protected int player = -1;
     protected BluetoothDevice device;
@@ -20,14 +21,23 @@ public class UserData {
         this.username = username;
     }
 
-    public UserData (BluetoothDevice device, String username){
+    public UserData (BluetoothDevice device,String address, String username){
         this.device = device;
+        this.address = address;
         this.username = username;
     }
 
     public UserData(String username, int score){
         this.username = username;
         this.score = score;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public void setUsername(String username) {

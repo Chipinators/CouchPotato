@@ -146,6 +146,12 @@ public class BluetoothService {
         }
     }
 
+    public static void write(String player, int type, String[] content){
+        String output = player + DELIM + type + DELIM + TextUtils.join(DELIM, content);
+        ConnectedThread r = mConnectedThread;
+        r.write(output.getBytes());
+    }
+
     private static class AcceptThread extends Thread {
         private final BluetoothServerSocket mServerSocket;
 

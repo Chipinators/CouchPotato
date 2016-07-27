@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +48,7 @@ public class PagedFragment extends Fragment implements ViewPager.OnPageChangeLis
         pager = (ViewPager) v.findViewById(R.id.pager_view);
         wrapper = (RelativeLayout) v.findViewById(R.id.pager_wrapper);
         indicator = (LinearLayout) v.findViewById(R.id.pager_indicator);
-        adapter = new PagedGameAdapter(getContext());
+        adapter = new PagedGameAdapter(this.getActivity().getBaseContext());
         //Applies important stuff
         pager.addOnPageChangeListener(this);
         pager.setAdapter(adapter);
@@ -94,14 +95,15 @@ public class PagedFragment extends Fragment implements ViewPager.OnPageChangeLis
     }
 
     private void addIndicator() {
-        ImageView dot = new ImageView(getContext());
+        ImageView dot = new ImageView(this.getActivity().getBaseContext());
         int size = (int) (getResources().getDimension(R.dimen.dots) * getResources().getDisplayMetrics().density);
-        dot.setLayoutParams(new ViewGroup.LayoutParams(size, size));
         dot.getAdjustViewBounds();
         dot.setMaxWidth(size);
+        dot.setMaxHeight(size);
+        dot.setLayoutParams(new ViewGroup.LayoutParams(size, size));
         Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.ic_pagination_white_48dp);
         dot.setImageBitmap(img);
-        dot.setColorFilter(getResources().getColor(R.color.main_black, null));
+        dot.setColorFilter(ContextCompat.getColor(this.getActivity().getBaseContext(),R.color.main_black));
         dots.add(dot);
         resetIndicator();
     }
@@ -127,7 +129,7 @@ public class PagedFragment extends Fragment implements ViewPager.OnPageChangeLis
 
     private void adjustIndicator() {
         int p = (int) (getResources().getDimension(R.dimen.padding_xsmall) * getResources().getDisplayMetrics().density);
-        //p *= PADDING_MODIFIER;
+        p *= PADDING_MODIFIER;
         if (getPageCount() > 1) {
             if (hidden)
                 unhideIndicator();

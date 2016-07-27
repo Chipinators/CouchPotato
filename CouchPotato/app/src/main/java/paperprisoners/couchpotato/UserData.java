@@ -2,17 +2,22 @@ package paperprisoners.couchpotato;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.graphics.Color;
 import android.text.TextUtils;
+import android.util.Log;
+
+import org.w3c.dom.Text;
+
+import java.util.Arrays;
 
 /**
  * Created by Ian on 7/13/2016.
  */
 public class UserData {
-
+    private static final String TAG = "UserData";
     protected String username;
+    protected String address;
     protected int score;
-    protected int player = -1;
+    protected int playerID = -1;
     protected BluetoothDevice device;
     protected BluetoothAdapter adapter;
 
@@ -20,14 +25,30 @@ public class UserData {
         this.username = username;
     }
 
-    public UserData (BluetoothDevice device, String username){
+    public UserData (BluetoothDevice device,String address, String username){
         this.device = device;
+        this.address = address;
         this.username = username;
     }
 
     public UserData(String username, int score){
         this.username = username;
         this.score = score;
+    }
+    public UserData(String[] data){
+        Log.i(TAG, "USER DATA STRING ARRAY CONSTRUCTOR CALLED:   " + TextUtils.join(",",data));
+        username = data[0];
+        address = data[1];
+        score = Integer.parseInt(data[2]);
+        playerID = Integer.parseInt(data[3]);
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public void setUsername(String username) {
@@ -38,8 +59,8 @@ public class UserData {
         this.score = score;
     }
 
-    public void setPlayer(int player) {
-        this.player = player;
+    public void setPlayerID(int playerID) {
+        this.playerID = playerID;
     }
 
     public void setDevice(BluetoothDevice device) {
@@ -59,8 +80,8 @@ public class UserData {
         return score;
     }
 
-    public int getPlayer() {
-        return player;
+    public int getPlayerID() {
+        return playerID;
     }
 
     public BluetoothDevice getDevice() {
@@ -76,5 +97,12 @@ public class UserData {
         output[0] = username;
         output[1] = ""+score;
         return output;
+    }
+
+    public static String toString(UserData u){
+        String delim = "||||";
+        String temp = u.username + delim + u.address + delim + u.score + delim + u.playerID;
+        Log.i(TAG, "TO STRING CALLED - OUTPUT: " + temp);
+        return temp;
     }
 }

@@ -5,6 +5,8 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -13,20 +15,26 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.regex.Pattern;
+
 /**
  * @Auther Ian Donovan
  */
 public class GameActivity extends Activity implements View.OnClickListener {
-
+    private static String DELIM1 = "\\|/";
+    private static String DELIM2 = "||||";
+    private static final String TAG = "GameActivity";
     private String username;
-
     private TextView name;
     private ImageView rank;
     private Button menu;
     private RelativeLayout container;
-
     private Fragment screen;
     private FragmentManager manager;
+
+    private UserData me;
+    private ArrayList<UserData> players;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +59,19 @@ public class GameActivity extends Activity implements View.OnClickListener {
             name.setText(username);
         //Other junk
 
+        Bundle extras = getIntent().getExtras();
+
+        ArrayList<String> tmp = extras.getStringArrayList("PlayerArray");
+        players = new ArrayList<UserData>();
+
+        for(int i = 0; i < tmp.size(); i++){
+            String[] split = TextUtils.split(tmp.get(i), Pattern.quote(GameActivity.DELIM2));
+            players.add(new UserData(split));
+        }
+        Log.i(TAG,"FINISHED GETTING PLAYER ARRAY DATA FROM BUNDLE");
+        me = new UserData( TextUtils.split(extras.getString("me"), Pattern.quote(GameActivity.DELIM2) ));
+        Log.i(TAG,"FINISHED GETTING USER DATA FROM BUNDLE");
+        Log.i(TAG, "PLAYER DATA ----- " + TextUtils.join(",",players));
         manager = getFragmentManager();
         Fragment wcFrag = new WouldChuckFragment();
         setFragment(wcFrag);
@@ -74,5 +95,12 @@ public class GameActivity extends Activity implements View.OnClickListener {
         if (v == menu) {
 
         }
+    }
+
+    public ArrayList<UserData> getPlayers() {
+        return players;
+    }
+    public UserData getMe(){
+        return me;
     }
 }

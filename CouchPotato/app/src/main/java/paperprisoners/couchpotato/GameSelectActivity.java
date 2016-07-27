@@ -28,6 +28,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
@@ -40,7 +41,6 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
     protected String username;
 
     private UserData userData;
-
     private TextView nameText;
     private Button backButton, infoButton, hostButton, joinButton;
     private RelativeLayout bg;

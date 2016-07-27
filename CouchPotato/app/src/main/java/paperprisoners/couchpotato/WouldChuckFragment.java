@@ -39,6 +39,7 @@ public class WouldChuckFragment extends Fragment {
         clock = (TextView) getView().findViewById(R.id.clock);
 
         players = ((GameActivity) getActivity()).getPlayers(); //store the players
+        me = ((GameActivity) getActivity()).getMe();
         //region Start Thread
         start = new Thread() {
             @Override
@@ -79,6 +80,7 @@ public class WouldChuckFragment extends Fragment {
         };
         start.start(); //Run the game thread!
         //endregion
+
     }
 
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -294,10 +296,10 @@ public class WouldChuckFragment extends Fragment {
             points = points / 2;
         }
         if (winner == -1) {
-            players.get(vtePlayer1).points += points;
-            players.get(vtePlayer2).points += points;
+            players.get(vtePlayer1).score += points;
+            players.get(vtePlayer2).score += points;
         } else {
-            players.get(winner).points += points;
+            players.get(winner).score += points;
         }
     }
 
@@ -321,7 +323,7 @@ public class WouldChuckFragment extends Fragment {
 
         for (int i = 0; i < players.size(); i++) {
             order[i][0] = players.get(i).playerID;
-            order[i][1] = players.get(i).points;
+            order[i][1] = players.get(i).score;
         }
 
         int tempID, tempPoints;
@@ -376,7 +378,6 @@ public class WouldChuckFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override

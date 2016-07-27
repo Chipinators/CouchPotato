@@ -1,6 +1,5 @@
 package paperprisoners.couchpotato;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -9,12 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Message;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,11 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -331,7 +322,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
                     BluetoothService.stop();
                     adapter.clear();
                     userList.invalidate();
-                    Toast.makeText(ownerContext,"You were disconnected from the host.",Toast.LENGTH_LONG).show();
+                    new MessageToast(ownerContext,"You were disconnected from the host.").show();
                     cancel();
                 }
             }

@@ -41,7 +41,6 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     private boolean joined = false;
 
     private UserData userData;
-    private ArrayList<UserData> finalUserList;
     private TextView messageText, countText;
     private Button cancelButton, startButton;
     private LinearLayout buttonArea;
@@ -153,7 +152,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     }
 
     private void setupHost() {
-        userData.setPlayer(0);
+        userData.setPlayerID(0);
         isHost = true;
         setTitle(getContext().getString(R.string.select_host));
         adjustContent();
@@ -220,7 +219,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
             createFinalPlayerList();
             //Send Player ID To Clients
             for(UserData user : finalUserList){
-                BluetoothService.write(Integer.toString(user.getPlayer()), Constants.USER_ID, new String[] {"Player ID Sent"});
+                BluetoothService.write(Integer.toString(user.getPlayerID()), Constants.USER_ID, new String[] {"Player ID Sent"});
             }
             //TODO: Send Final Player List to all devices in the START message
             String[] startMsg = new String[1];
@@ -353,7 +352,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
                 adapter.add(user);
                 break;
             case Constants.USER_ID:
-                userData.setPlayer(player);
+                userData.setPlayerID(player);
                 break;
         }
     }
@@ -363,7 +362,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
         finalUserList.addAll(adapter.getItems());
         int i = 0;
         for(UserData user : finalUserList){
-            user.setPlayer(i);
+            user.setPlayerID(i);
             i++;
         }
     }

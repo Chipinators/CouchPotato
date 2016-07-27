@@ -27,6 +27,8 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
+
 /**
  * The dialog that appears upon creating
  *
@@ -39,7 +41,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     private boolean joined = false;
 
     private UserData userData;
-
+    private ArrayList<UserData> finalUserList;
     private TextView messageText, countText;
     private Button cancelButton, startButton;
     private LinearLayout buttonArea;
@@ -61,6 +63,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
 
     public SetupDialog(Context context, boolean isHost, UserData userData) {
         this(context, 1, 8, isHost, userData);
+        finalUserList = new ArrayList<UserData>();
     }
 
     //CUSTOM METHODS
@@ -214,6 +217,15 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
             startMsg[0] = "This is a Start Game Message!";
             BluetoothService.writeToClients(Constants.START, startMsg);
             Intent toGame = new Intent(ownerContext, GameActivity.class);
+
+
+            ArrayList<String> players = new ArrayList<String>();
+            for(int i = 0; i < players.size(); i++){
+                players.add(UserData.toString(finalUserList.get(i)));
+            }
+            toGame.putStringArrayListExtra("PlayerArray", players);
+            toGame.putExtra("me", UserData.toString(userData));
+            
             ownerContext.startActivity(toGame);
             cancel();
         } else if (v == cancelButton) {
@@ -312,6 +324,14 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
                 BluetoothService.getmAdapter().cancelDiscovery();
                 //TODO: ADD BUNDLED DATA TO SEND TO GAME ACTIVITY
                 Intent toGame = new Intent(ownerContext, GameActivity.class);
+
+                ArrayList<String> players = new ArrayList<String>();
+                for(int i = 0; i < players.size(); i++){
+                    players.add(UserData.toString(finalUserList.get(i)));
+                }
+                toGame.putStringArrayListExtra("PlayerArray", players);
+                toGame.putExtra("me", UserData.toString(userData));
+
                 ownerContext.startActivity(toGame);
                 break;
             case Constants.USER_CONNECTED:

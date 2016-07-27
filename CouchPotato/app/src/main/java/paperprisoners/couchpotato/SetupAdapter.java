@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -20,19 +21,20 @@ public class SetupAdapter extends ArrayAdapter<UserData> {
     private LayoutInflater mInflater;
     private SetupDialog dialog;
 
-    public SetupAdapter(SetupDialog dialog, int resource, boolean isHost) {
-        super(dialog.getContext(), resource);
+    public SetupAdapter(SetupDialog dialog, boolean isHost, ArrayList<UserData> list) {
+        super(dialog.getContext(), R.layout.item_setup, list);
         this.isHost = isHost;
         this.dialog = dialog;
         mInflater = (LayoutInflater) dialog.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public ArrayList<UserData> getItems() {
+    /*public ArrayList<UserData> getItems() {
         ArrayList<UserData> list = new ArrayList<>();
-        for (int i=0; i<list.size(); i++)
-            list.add( getItem(i) );
+        for (int i=0; i<connectedUsers.size(); i++)
+            list.add( connectedUsers.get(i) );
         return list;
     }
+    */
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

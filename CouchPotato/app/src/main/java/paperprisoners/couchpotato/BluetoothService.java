@@ -139,8 +139,9 @@ public class BluetoothService {
 
     public static void writeToClients(int type, String[] content) {
         String output;
+        Log.i(TAG, "NUMBER OF CONNECTED DEVICES: " + mConnectedDevices.size());
         for (ConnectedThread device : mConnectedDevices) {
-            output = 1 + DELIM + type + DELIM + TextUtils.join(DELIM, content);
+            output = "0" + DELIM + type + DELIM + TextUtils.join(DELIM, content);
             Log.i(TAG, "CREATING WRITE MESSAGE - "+ output);
             device.write(output.getBytes());
         }

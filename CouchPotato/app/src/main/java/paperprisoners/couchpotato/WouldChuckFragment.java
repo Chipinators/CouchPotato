@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -40,6 +42,9 @@ public class WouldChuckFragment extends Fragment {
 
         players = ((GameActivity) getActivity()).getPlayers(); //store the players
         me = ((GameActivity) getActivity()).getMe();
+
+        TextView tv = (TextView) getActivity().findViewById(R.id.clock);
+        tv.setText(me.username);
         //region Start Thread
         start = new Thread() {
             @Override

@@ -2,12 +2,18 @@ package paperprisoners.couchpotato;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.text.TextUtils;
+import android.util.Log;
+
+import org.w3c.dom.Text;
+
+import java.util.Arrays;
 
 /**
  * Created by Ian on 7/13/2016.
  */
 public class UserData {
-
+    private static final String TAG = "UserData";
     protected String username;
     protected String address;
     protected int score;
@@ -30,6 +36,7 @@ public class UserData {
         this.score = score;
     }
     public UserData(String[] data){
+        Log.i(TAG, "USER DATA STRING ARRAY CONSTRUCTOR CALLED:   " + TextUtils.join(",",data));
         username = data[0];
         address = data[1];
         score = Integer.parseInt(data[2]);
@@ -93,8 +100,9 @@ public class UserData {
     }
 
     public static String toString(UserData u){
-        String delim = "||";
+        String delim = "||||";
         String temp = u.username + delim + u.address + delim + u.score + delim + u.playerID;
+        Log.i(TAG, "TO STRING CALLED - OUTPUT: " + temp);
         return temp;
     }
 }

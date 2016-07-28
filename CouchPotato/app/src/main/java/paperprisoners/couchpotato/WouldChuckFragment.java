@@ -81,6 +81,12 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                         }
                         while (responsesLeft > 0) { //loop through the rathers to let user's vote
                             playerVoting(); //playerID's cast votes
+
+                            while (true) {
+                                if (stage == 3) {
+                                    break;
+                                }
+                            }
                             showVotingResults(); //results of vote are shown
                             responsesLeft = responsesLeft - 2; //update responses to pars
                         }
@@ -113,14 +119,14 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                         Runnable r2 = new Runnable() {
                             @Override
                             public void run() {
-                                Log.i(TAG, "I MADE IT BITCHES");
+                                Log.i(TAG, "Start Second Runnable (Pre data from users)");
                                 String input1 = ((TextView) getActivity().findViewById(R.id.wc_input_1)).getText().toString();//store rather 1
                                 String input2 = ((TextView) getActivity().findViewById(R.id.wc_input_2)).getText().toString();//store rather 2
                                 ((TextView) getActivity().findViewById(R.id.wc_input_1)).setText("");//clear
                                 ((TextView) getActivity().findViewById(R.id.wc_input_2)).setText("");//clear
                                 //when submit hit or time run out
                                 getDataFromUsers(input1, input2);//parse and store the data
-                                Log.i(TAG, "I MADE IT PAST BITCHES");
+                                Log.i(TAG, "End Second Runnable (Post data from users)");
                             }
                         };
                         getActivity().setContentView(R.layout.wouldchuck_input);
@@ -133,22 +139,21 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
     }
 
     public void getDataFromUsers(String input1, String input2) {
-        Log.i(TAG, "DATA BITCHES");
+        Log.i(TAG, "getDataFromUsers called");
         responses = new String[players.size()][2]; //here so if players drop out we dont expect stuff from them. also clears array
         Arrays.fill(responses, new String[]{"", ""});
         recieved = new ArrayList<Boolean>();
 
-        for (int i = 0; i < responses.length; i++) {
-            recieved.add(false);
-        }
-        Log.i(TAG, "RESPONSES");
-        responses[0][0] = input1;//SET THE HOSTS STUFF
-        responses[0][1] = input2;
-        recieved.set(0, true);
-        Log.i(TAG, "HOST DATA");
+        clearRecieved();
 
         if (host) {
-            Log.i(TAG, "HOST");
+            Log.i(TAG, "Set host's responses");
+            responses[0][0] = input1;//SET THE HOSTS STUFF
+            responses[0][1] = input2;
+            recieved.set(0, true);
+            Log.i(TAG, "host's responses written");
+
+            Log.i(TAG, "In host - HOST");
             while (true) {
                 if (recieved.indexOf(false) == -1) {
                     stage = 2;
@@ -159,7 +164,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             BluetoothService.writeToClients(Constants.NEXT, new String[]{"true"});
 
         } else {
-            Log.i(TAG, "CLIENT");
+            Log.i(TAG, "Not in host - CLIENT");
             BluetoothService.writeToServer("" + me.playerID, Constants.WC_SUBMISSION, new String[]{input1, input2});
             Log.i(TAG, me.playerID + ": WROTE TO HOST: " + input1 + ", " + input2);
             while (true) {
@@ -174,12 +179,11 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
     }
 
     public void playerVoting() {
-        stage = 3;
         if (host) {
             rathers = selectRathers(); //generate rathers
-            for (int i = 0; i < recieved.size(); i++) { //clear the recieved array
-                recieved.set(i, false);
-            }
+
+            clearRecieved();
+
             vtePlayer1 = Integer.parseInt(rathers[2]);//store the owner ints //HOSTS ONLY
             vtePlayer2 = Integer.parseInt(rathers[3]);//store the owner ints
             rathers = new String[]{rathers[0], rathers[1]};//remove the ints
@@ -222,7 +226,6 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             //do nothing
         }
 
-
         ch1.setText(rathers[0]); //set option 1
         ch2.setText(rathers[1]); //set option 2
 
@@ -262,6 +265,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         });
 
         getUserVotes(input);
+        stage = 3;
     }
 
     public String[] selectRathers() {
@@ -413,18 +417,48 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
     }
 
     public void showRoundResults() {
-        int[][] order = playerOrder();
+        cont = false;
+        Handler handler1 = new Handler();
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                int[][] order = playerOrder();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        getActivity().setContentView(R.layout.wouldchuck_leaderboard);
+                    }
+                });
+                for (int i = 0; i < order.length; i++) {
+                    ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_name" + i, "id", "paperprisoners.couchpotato"))).setText(players.get(order[i][0]).username); //SEARCH STRING TO RESOURCE ID
+                    ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_score" + i, "id", "paperprisoners.couchpotato"))).setText("" + order[i][1]);
+                }
+                cont = true;
+            }
+        };
+        handler1.postDelayed(r, 10000);//wait to display leaderboard
 
-        //Show round splash screen
-        View theInflatedView = inflater.inflate(R.layout.wouldchuck_round, null); //Show Intro frag
-        //NEED TO DELAY THIS FOR X TIME
-        for (int i = 0; i < order.length; i++) {
-            ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_name" + i, "id", "paperprisoners.couchpotato"))).setText(players.get(order[i][0]).username); //SEARCH STRING TO RESOURCE ID
-            ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_score" + i, "id", "paperprisoners.couchpotato"))).setText("" + order[i][1]);
+        while (true) { //dont continue till its shown
+            if (cont) {
+                cont = false;
+                break;
+            }
         }
 
-        theInflatedView.setVisibility(View.GONE);//close Intro frag
+        Runnable delay = new Runnable() {
+            @Override
+            public void run() {
+                cont = true;
+            }
+        };
+        handler1.postDelayed(delay, 30000);
 
+        while (true) { //dont continue till its shown
+            if (cont) {
+                cont = false;
+                break;
+            }
+        }
     }
 
     public int[][] playerOrder() {
@@ -460,29 +494,6 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 getActivity().setContentView(R.layout.activity_select);
             }
         });
-        /*if (host) {
-            /*
-            show play again option
-            if(play again){
-
-
-            Thread temp = start;
-            temp.start();//start a new "start" thread
-            start.interrupt();//close current thread
-
-            }
-            else(){
-             go to main menu
-            }
-
-        } else {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    getActivity().setContentView(R.layout.wouldchuck_waiting);
-                }
-            });
-        }*/
 
     }
 

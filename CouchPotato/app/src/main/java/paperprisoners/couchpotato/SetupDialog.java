@@ -236,8 +236,9 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
             BluetoothService.writeToClients(Constants.START,values);
             Log.i(TAG, "HOST WROTE ARRAY TO CLIENTS");
             toGame.putStringArrayListExtra("PlayerArray", players);
+
             toGame.putExtra("me", UserData.toString(userData));
-            
+            toGame.putExtra("host", isHost);
             ownerContext.startActivity(toGame);
             cancel();
         } else if (v == cancelButton) {
@@ -351,8 +352,9 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
                     players.add((String)content[i]);
                 }
                 toGame.putStringArrayListExtra("PlayerArray", players);
+                Log.i(TAG, "USER ID:" + userData.playerID);
                 toGame.putExtra("me", UserData.toString(userData));
-
+                toGame.putExtra("host", isHost);
                 ownerContext.startActivity(toGame);
                 break;
             case Constants.USER_CONNECTED:
@@ -369,9 +371,12 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     public void createFinalPlayerList(){
         finalUserList.add(userData);
         finalUserList.addAll(connectedUsers);
+        Log.i(TAG, "SETTING IDS, count " +  finalUserList.size());
         int i = 0;
         for(UserData user : finalUserList){
+            Log.i(TAG, "PRE SET: " + user.username + " | " + user.playerID + "");
             user.setPlayerID(i);
+            Log.i(TAG, "AFTER SET: " + userData.playerID + "");
             i++;
         }
     }

@@ -133,8 +133,10 @@ public class BluetoothService {
 
     public static void writeToServer(String player, int type, String[] content) {
         String output = player + DELIM + type + DELIM + TextUtils.join(DELIM, content);
+        Log.i(TAG, "CLIENT WRITING TO HOST: " + output);
         ConnectedThread r = mConnectedThread;
         r.write(output.getBytes());
+        Log.i(TAG, "CLIENT WRITING TO HOST: " + r.getName() + "    ---   OUTPUT:  "+ output);
     }
 
     public static void writeToClients(int type, String[] content) {
@@ -292,7 +294,10 @@ public class BluetoothService {
                     if(mHandler == null) {
                         Log.e(TAG, "mHandler received a null");
                     }else {
-                        mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+                        Log.i(TAG, "Obtain Message Reached");
+                        Message msg = mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer);
+                        mHandler.sendMessage(msg);
+                        Log.i(TAG, "Obtain Message Finished");
                     }
 
                 } catch (IOException e) {

@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
+    android:background="@color/main_white_faded"
     android:padding="@dimen/padding_large">
 
     <LinearLayout
@@ -77,24 +78,22 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/padding_small" />
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/padding_small" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/padding_small" />
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/padding_small" />
         <EditText
             android:id="@+id/wc_input_2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:digits="@string/chars_response"
-            android:hint="another thing here"
-            android:textAlignment="center" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/padding_small" />
-
-        <EditText
-            android:id="@+id/wc_input_3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:digits="@string/chars_response"
-            android:hint="one last thing here"
+            android:hint="put a second thing here"
             android:textAlignment="center" />
     </LinearLayout>
 

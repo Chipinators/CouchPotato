@@ -295,7 +295,8 @@ public class BluetoothService {
                         Log.e(TAG, "mHandler received a null");
                     }else {
                         Log.i(TAG, "Obtain Message Reached");
-                        mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+                        Message msg = mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer);
+                        mHandler.sendMessage(msg);
                         Log.i(TAG, "Obtain Message Finished");
                     }
 

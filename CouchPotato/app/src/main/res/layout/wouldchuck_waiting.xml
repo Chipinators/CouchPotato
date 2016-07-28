@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/main_white_faded"
     android:padding="@dimen/padding_xlarge">
 
     <LinearLayout
@@ -15,7 +16,7 @@
             android:id="@+id/wc_waiting_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/waiting"
+            android:text="@string/waitingH"
             android:textAlignment="center"
             android:textSize="@dimen/font_xlarge"
             android:textColor="@color/main_black"

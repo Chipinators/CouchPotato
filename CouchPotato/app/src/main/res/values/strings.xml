@@ -24,7 +24,8 @@
     <string name="round1">Round One</string>
     <string name="round2">Round Two</string>
     <string name="round3">Final Round</string>
-    <string name="waiting">Waiting on host...</string>
+    <string name="waitingH">Waiting on host...</string>
+    <string name="waitingL">Setting up the game...</string>
     <string name="submit">SUBMIT</string>
     <string name="play_again">PLAY AGAIN</string>
     <string name="close_room">CLOSE ROOM</string>
@@ -58,6 +59,6 @@
     <!--Game-specific strings-->
     <string name="wouldchuck_wyr">WOULD YOU RATHER...</string>
     <string name="wouldchuck_or">OR</string>
-    <string name="wouldchuck_directions">Enter 3 things you\'d see on a \'Would You Rather\' question:</string>
+    <string name="wouldchuck_directions">Enter 2 things you\'d see on a \'Would You Rather\' question:</string>
 
 </resources>

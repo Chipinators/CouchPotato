@@ -9,19 +9,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-public class WouldChuckFragment extends Fragment {
-    Handler handler = new Handler();
+public class WouldChuckFragment extends Fragment implements MessageListener {
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     //GLOBAL VARS
-    private boolean host = false;
+    private static final String TAG = "WC_Fragment";
+    Handler handler = new Handler();
+    int stage;
+    private boolean host, cont = false;
     private UserData me; //Will be passed to GameActivity, pull from there later
     private int gameRound;
     private TextView clock;
@@ -32,115 +33,169 @@ public class WouldChuckFragment extends Fragment {
     private int votes1, votes2;
     private LayoutInflater inflater;
     private ArrayList<UserData> players;
+    private ArrayList<Boolean> recieved;
+    private SetupAdapter adapter;
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     private Thread start;
 
     @Override
     public synchronized void onStart() {
         super.onStart();
-        clock = (TextView) getView().findViewById(R.id.clock);
+        loading();
 
         players = ((GameActivity) getActivity()).getPlayers(); //store the players
         me = ((GameActivity) getActivity()).getMe();
+        host = ((GameActivity) getActivity()).getHost();
 
-        TextView tv = (TextView) getActivity().findViewById(R.id.clock);
-        tv.setText(me.username);
         //region Start Thread
         start = new Thread() {
             @Override
             public void run() {
+                Log.i(TAG, "IN THREAD");
                 try {
+                    stage = 0;
                     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
                     gameRound = 1; //initalize the starting round
                     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-                    inflater = LayoutInflater.from(getActivity().getBaseContext()); //create the inflater
-                    View theInflatedView = inflater.inflate(R.layout.wouldchuck_waiting, null); //Show Intro frag
                     //NEED TO DELAY THIS FOR X TIME
-                    theInflatedView.setVisibility(View.GONE);//close Intro frag
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            getActivity().setContentView(R.layout.wouldchuck_round);
+                            int dRID = getActivity().getResources().getIdentifier("@drawable/round" + gameRound + "_512", "drawable", "paperprisoners.couchpotato");
+                            ImageView rv = (ImageView) getActivity().findViewById(R.id.wc_round_img);
+                            Log.i(TAG, "DRID: " + dRID);
+                            rv.setImageResource(dRID);
+                        }
+                    });
+
                     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
                     while (gameRound <= 3) { //loop through the rounds!
 
                         responsesLeft = players.size() * 2; //number of responses
-
+                        stage = 1;
                         usersEnterValues();//get the user's rathers
+                        while (true) {
+                            if (stage % 2 == 0) {
+                                Log.i(TAG, me.username + " Stage " + stage);
 
+                                if (host) {
+                                    for (int i = 0; i < responses.length; i++) {
+                                        Log.i(TAG, responses[i][0] + " | " + responses[i][1]);
+                                    }
+                                }
+
+                                break;
+                            }
+                        }
                         while (responsesLeft > 0) { //loop through the rathers to let user's vote
                             playerVoting(); //playerID's cast votes
-                            showVotingResults(); //results of vote are shown
+                            // showVotingResults(); //results of vote are shown
                             responsesLeft = responsesLeft - 2; //update responses to pars
                         }
+                        stage = 3;
                         if (gameRound != 3) {//if the last round
-                            showRoundResults();//show the final winner screen
+                            // showRoundResults();//show the final winner screen
                         } else {//otherwise
-                            showFinalResults(); //show the end of round screen
-                            break;
+                            //showFinalResults(); //show the end of round screen
+                            // break;
                         }
                         gameRound++;
                     }
-                    gameOver();//call the game over screen!
+                    //gameOver();//call the game over screen!
                 } catch (Exception e) {
-                    Log.v("WC_ERROR", e.getMessage()); //ERROR (in case you fuck heads didn't know)
+                    Log.e(TAG, e.getMessage()); //ERROR (in case you fuck heads didn't know)
                 }
             }
         };
+        Log.i(TAG, "THREAD START");
         start.start(); //Run the game thread!
+        Log.i(TAG, "THREAD END");
         //endregion
 
     }
 
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     //region Game Code
-    public void countClockDownVisual(final int time, int delay) { //IGNORE ME IM USELESS
-        Runnable timer = new Runnable() {
-            int t = time;
-
+    public void usersEnterValues() {
+        getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (t > 0) {
-                    clock.setText("" + t);
-                    clock.invalidate();
-                    t--;
-                    handler.postDelayed(this, 1000);
-                }
+                Handler handler1 = new Handler();
+                Runnable r = new Runnable() {
+                    public void run() {
+                        Handler handler2 = new Handler();
+                        Runnable r2 = new Runnable() {
+                            public void run() {
+                                String input1 = ((TextView) getActivity().findViewById(R.id.wc_input_1)).getText().toString();//store rather 1
+                                String input2 = ((TextView) getActivity().findViewById(R.id.wc_input_2)).getText().toString();//store rather 2
+                                ((TextView) getActivity().findViewById(R.id.wc_input_1)).setText("");//clear
+                                ((TextView) getActivity().findViewById(R.id.wc_input_2)).setText("");//clear
+                                //when submit hit or time run out
+                                loading();//show loading screen
+                                getDataFromUsers(input1, input2);//parse and store the data
+                            }
+                        };
+                        getActivity().setContentView(R.layout.wouldchuck_input);
+                        handler2.postDelayed(r2, 30000);
+                    }
+                };
+                handler1.postDelayed(r, 2500);
             }
-        };
-        handler.postDelayed(timer, delay * 1000);
-    }
-
-    public void usersEnterValues() {
-        View theInflatedView = inflater.inflate(R.layout.wouldchuck_choice, null);  //show frag with input options
-        //NEED TO DELAY THIS FOR X TIME
-        theInflatedView.setVisibility(View.GONE);//close input frag
-
-        String input1 = ((TextView) getActivity().findViewById(R.id.wc_input_1)).getText().toString();//store rather 1
-        String input2 = ((TextView) getActivity().findViewById(R.id.wc_input_2)).getText().toString();//store rather 2
-        ((TextView) getActivity().findViewById(R.id.wc_input_1)).setText("");//clear
-        ((TextView) getActivity().findViewById(R.id.wc_input_2)).setText("");//clear
-        //when submit hit or time run out
-        getDataFromUsers(input1, input2);//parse and store the data
+        });
     }
 
     public void getDataFromUsers(String input1, String input2) {
-
         responses = new String[players.size()][2]; //here so if players drop out we dont expect stuff from them. also clears array
-        Arrays.fill(responses, "");
+        Arrays.fill(responses, new String[]{"", ""});
+        recieved = new ArrayList<Boolean>();
+
+        for (int i = 0; i < responses.length; i++) {
+            recieved.add(false);
+        }
+
+        responses[0][0] = input1;//SET THE HOSTS STUFF
+        responses[0][1] = input2;
+        recieved.set(0, true);
+
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().setContentView(R.layout.wouldchuck_waiting);
+                ((TextView) getActivity().findViewById(R.id.wc_waiting_text)).setText(getResources().getString(R.string.waitingL));
+            }
+        });
 
         if (host) {
-            responses[0][0] = input1;
-            responses[0][1] = input2;
+            while (true) {
+                if (recieved.indexOf(false) == -1) {
+                    stage = 2;
+                    break;
+                }
+            }
+            BluetoothService.writeToClients(Constants.NEXT, new String[]{"true"});
 
-            //while(waiting on users){
-            //if(data recieved){
-            // store data into response
-            //}
-            //}
         } else {
-            //  write to host
+            BluetoothService.writeToServer("" + me.playerID, Constants.WC_SUBMISSION, new String[]{input1, input2});
+            Log.i(TAG, me.playerID + ": WROTE TO HOST: " + input1 + ", " + input2);
+            while (true) {
+                if (cont) {
+                    stage = 2;
+                    break;
+                }
+            }
+            cont = false;
         }
     }
 
     public void playerVoting() {
-
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().setContentView(R.layout.wouldchuck_choice);
+            }
+        });
         if (host) {
             rathers = selectRathers();
             //send data
@@ -383,6 +438,7 @@ public class WouldChuckFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BluetoothService.addMessageListener(this);
     }
 
     @Override
@@ -404,4 +460,44 @@ public class WouldChuckFragment extends Fragment {
     }
     //endregion (N
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+    @Override
+    public void onReceiveMessage(int player, int messageType, Object[] content) {
+        Log.i(TAG, "RECIEVED MESSAGE " + messageType);
+        switch (messageType) {
+            case Constants.NEXT:
+                cont = true;
+                break;
+            case Constants.WC_SUBMISSION:
+                //int index = findPlayerIndex(player);
+                int index = 1;
+                String v1 = (String) content[0];
+                String v2 = (String) content[1];
+
+                responses[index][0] = (String) content[0];
+                responses[index][1] = (String) content[1];
+                recieved.set(index, true);
+                Log.i(TAG, me.playerID + ": GOT INFO: " + v1 + " | " + v2);
+                break;
+        }
+    }
+
+    public int findPlayerIndex(int id) {
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i).playerID == id) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public void loading() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().setContentView(R.layout.wouldchuck_waiting);
+                ((TextView) getActivity().findViewById(R.id.wc_waiting_text)).setText(getResources().getString(R.string.waitingL));
+            }
+        });
+    }
 }

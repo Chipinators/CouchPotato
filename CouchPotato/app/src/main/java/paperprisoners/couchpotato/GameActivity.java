@@ -25,6 +25,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
     private static String DELIM1 = "\\|/";
     private static String DELIM2 = "||||";
     private static final String TAG = "GameActivity";
+    private boolean host;
     private String username;
     private TextView name;
     private ImageView rank;
@@ -70,6 +71,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
         }
         Log.i(TAG,"FINISHED GETTING PLAYER ARRAY DATA FROM BUNDLE");
         me = new UserData( TextUtils.split(extras.getString("me"), Pattern.quote(GameActivity.DELIM2) ));
+        host = extras.getBoolean("host");
         Log.i(TAG,"FINISHED GETTING USER DATA FROM BUNDLE");
         Log.i(TAG, "PLAYER DATA ----- " + TextUtils.join(",",players));
         manager = getFragmentManager();
@@ -102,5 +104,8 @@ public class GameActivity extends Activity implements View.OnClickListener {
     }
     public UserData getMe(){
         return me;
+    }
+    public boolean getHost(){
+        return  host;
     }
 }

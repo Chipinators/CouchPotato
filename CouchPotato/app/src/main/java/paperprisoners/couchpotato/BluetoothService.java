@@ -149,10 +149,9 @@ public class BluetoothService {
         }
     }
 
-    public static void write(String player, int type, String[] content){
+    public static void write(int playerID,String player, int type, String[] content){
         String output = player + DELIM + type + DELIM + TextUtils.join(DELIM, content);
-        ConnectedThread r = mConnectedThread;
-        r.write(output.getBytes());
+        mConnectedDevices.get(playerID-1).write(output.getBytes());
     }
 
     private static class AcceptThread extends Thread {
@@ -295,8 +294,10 @@ public class BluetoothService {
                         Log.e(TAG, "mHandler received a null");
                     }else {
                         Log.i(TAG, "Obtain Message Reached");
-                        Message msg = mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer);
+                        /*Message msg = mHandler.obtainMessage(100, bytes, -1, buffer).;
                         mHandler.sendMessage(msg);
+                        */
+                        mHandler.obtainMessage(100, bytes,-1,buffer).sendToTarget();
                         Log.i(TAG, "Obtain Message Finished");
                     }
 
@@ -312,6 +313,7 @@ public class BluetoothService {
             try {
                 mOutStream.write(out);
             } catch (IOException e) {
+                Log.e(TAG, "COULD NOT WRITE TO CLIENT");
             }
         }
 

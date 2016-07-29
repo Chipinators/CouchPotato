@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,9 +44,23 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         super.onStart();
         loading();
 
+        BluetoothService.listeners.add(this);
+
         players = ((GameActivity) getActivity()).getPlayers(); //store the players
         me = ((GameActivity) getActivity()).getMe();
         host = ((GameActivity) getActivity()).getHost();
+
+        Log.i(TAG, "PLAYERS:" + players.size());
+        for(int i = 0; i < players.size(); i++){
+            Log.i(TAG, players.get(i).username + " - " + me.username + ": " + players.get(i).username.equals(me.username));
+            if(players.get(i).username.equals(me.username)){
+                Log.i(TAG, "I AM HERE");
+                me.setPlayerID(players.get(i).playerID);
+                break;
+            }
+        }
+
+        Log.i(TAG, "ME ID: " + me.getPlayerID());
 
         //region Start Thread
         start = new Thread() {
@@ -74,6 +89,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                         responsesLeft = players.size() * 2; //number of responses
                         stage = 1;
                         usersEnterValues();//get the user's rathers
+
                         while (true) {
                             if (stage % 2 == 0) {
                                 break;
@@ -109,112 +125,101 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     //region Game Code
     public void usersEnterValues() {
-        getActivity().runOnUiThread(new Runnable() {
+        try {
+            Thread.sleep(2500);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.i(TAG, "HERE!");
+                    getActivity().setContentView(R.layout.wouldchuck_input);
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "ERROR WITH TIMES");
+        }
+        Handler handler2 = new Handler(Looper.getMainLooper());
+        Runnable r2 = new Runnable() {
             @Override
             public void run() {
-                Handler handler1 = new Handler();
-                Runnable r = new Runnable() {
-                    public void run() {
-                        Handler handler2 = new Handler();
-                        Runnable r2 = new Runnable() {
-                            @Override
-                            public void run() {
-                                Log.i(TAG, "Start Second Runnable (Pre data from users)");
-                                String input1 = ((TextView) getActivity().findViewById(R.id.wc_input_1)).getText().toString();//store rather 1
-                                String input2 = ((TextView) getActivity().findViewById(R.id.wc_input_2)).getText().toString();//store rather 2
-                                ((TextView) getActivity().findViewById(R.id.wc_input_1)).setText("");//clear
-                                ((TextView) getActivity().findViewById(R.id.wc_input_2)).setText("");//clear
-                                //when submit hit or time run out
-                                getDataFromUsers(input1, input2);//parse and store the data
-                                Log.i(TAG, "End Second Runnable (Post data from users)");
-                            }
-                        };
-                        getActivity().setContentView(R.layout.wouldchuck_input);
-                        handler2.postDelayed(r2, 30000);
-                    }
-                };
-                handler1.postDelayed(r, 2500);
+                Log.i(TAG, "Start Second Runnable (Pre data from users)");
+                String input1 = ((TextView) getActivity().findViewById(R.id.wc_input_1)).getText().toString();//store rather 1
+                String input2 = ((TextView) getActivity().findViewById(R.id.wc_input_2)).getText().toString();//store rather 2
+                ((TextView) getActivity().findViewById(R.id.wc_input_1)).setText("");//clear
+                ((TextView) getActivity().findViewById(R.id.wc_input_2)).setText("");//clear
+                getActivity().findViewById(R.id.wc_input_1).invalidate();//clear
+                getActivity().findViewById(R.id.wc_input_2).invalidate();//clear
+                //when submit hit or time run out
+                getDataFromUsers(input1, input2);//parse and store the data
+                Log.i(TAG, "End Second Runnable (Post data from users)");
             }
-        });
+        };
+        handler2.postDelayed(r2, 30000);
     }
 
     public void getDataFromUsers(String input1, String input2) {
         Log.i(TAG, "getDataFromUsers called");
         responses = new String[players.size()][2]; //here so if players drop out we dont expect stuff from them. also clears array
         Arrays.fill(responses, new String[]{"", ""});
-        recieved = new ArrayList<Boolean>();
-
-        clearRecieved();
 
         if (host) {
             Log.i(TAG, "Set host's responses");
-            responses[0][0] = input1;//SET THE HOSTS STUFF
-            responses[0][1] = input2;
-            recieved.set(0, true);
-            Log.i(TAG, "host's responses written");
+            responses[0] = new String[]{input1,input2};
 
+            Log.i(TAG, "host's responses written");
+            stage = 2;
             Log.i(TAG, "In host - HOST");
-            while (true) {
-                if (recieved.indexOf(false) == -1) {
-                    stage = 2;
-                    Log.i(TAG, "BREAK-H");
-                    break;
-                }
-            }
-            BluetoothService.writeToClients(Constants.NEXT, new String[]{"true"});
+            cont = false;
 
         } else {
             Log.i(TAG, "Not in host - CLIENT");
             BluetoothService.writeToServer("" + me.playerID, Constants.WC_SUBMISSION, new String[]{input1, input2});
             Log.i(TAG, me.playerID + ": WROTE TO HOST: " + input1 + ", " + input2);
-            while (true) {
-                if (cont) {
-                    Log.i(TAG, "BREAK-C");
-                    stage = 2;
-                    break;
-                }
-            }
+            stage = 2;
             cont = false;
         }
     }
 
     public void playerVoting() {
-        if (host) {
-            rathers = selectRathers(); //generate rathers
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().setContentView(R.layout.wouldchuck_choice);
 
-            clearRecieved();
+            }
+        });
+
+        if (host) {
+            Log.i(TAG, "LENGTH HOST: " + responses[0][0]);
+            Log.i(TAG, "LENGTH CLIENT: " + responses[1][0]);
+
+            rathers = selectRathers(); //generate rathers
+            Log.i(TAG, "RATHERS: " + rathers[0] + " | " + rathers[1] + " | " + rathers[2] + " | " + rathers[3]);
+
+            BluetoothService.writeToClients(Constants.WC_QUESTION, rathers);//send the data over to clients
 
             vtePlayer1 = Integer.parseInt(rathers[2]);//store the owner ints //HOSTS ONLY
             vtePlayer2 = Integer.parseInt(rathers[3]);//store the owner ints
             rathers = new String[]{rathers[0], rathers[1]};//remove the ints
 
-            BluetoothService.writeToClients(Constants.WC_QUESTION, rathers);//send the data over to clients
-            while (true) {
+            /*while (true) {
                 if (recieved.indexOf(false) == -1) { //loop until all have sent recieved
                     BluetoothService.writeToClients(Constants.NEXT, new String[]{"NEXT"});//time to continue
                     break;
                 }
-            }
+            }*/
         } else {
-            while (true) {
+            /*while (true) {
                 if (cont) {
                     cont = false;
                     break;
                 }
-            }
+            }*/
         }
 
         final boolean[] input = new boolean[2];
 
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getActivity().setContentView(R.layout.wouldchuck_choice);
-            }
-        });
-
-        Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
-        Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_2);
+        final Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
+        final Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_2);
 
         //NEED TO DELAY THIS FOR X TIME
         if (vtePlayer1 == me.playerID || vtePlayer2 == me.playerID) {
@@ -228,12 +233,15 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
 
         ch1.setText(rathers[0]); //set option 1
         ch2.setText(rathers[1]); //set option 2
+        ch1.invalidate();
+        ch2.invalidate();
+
 
         //NEED TIME LOOPED
         getActivity().findViewById(R.id.wc_choice_layout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (v == getActivity().findViewById(R.id.wc_choice_1)) {
+                if (v == ch1) {
                     input[0] = true;
                     input[1] = false;
                 } else {
@@ -534,11 +542,10 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 cont = true;
                 break;
             case Constants.WC_SUBMISSION:
+                Log.i(TAG, "SUBMISSION");
                 //int index = findPlayerIndex(player);
                 int index = 1;
-                responses[index][0] = (String) content[0];
-                responses[index][1] = (String) content[1];
-                recieved.set(index, true);
+                responses[index] = new String[]{(String) content[0],(String) content[1]};
                 break;
             case Constants.WC_QUESTION:
                 vtePlayer1 = Integer.parseInt((String) content[2]);//store the owner ints

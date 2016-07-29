@@ -211,9 +211,10 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
         if (v == startButton) {
             createFinalPlayerList();
             //Send Player ID To Clients
+            Log.i(TAG, "FINAL USER LIST SIZE BEFORE WRITE: " + finalUserList.size());
             for(int i = 1; i < finalUserList.size(); i++){
-                Log.i(TAG, "ID SENT TO PLAYER: " + finalUserList.get(i).getUsername());
-                BluetoothService.write(Integer.toString(finalUserList.get(i).getPlayerID()), Constants.USER_ID, new String[] {"Player ID Sent"});
+                Log.i(TAG, "ID SENT TO PLAYER: " + finalUserList.get(i).getUsername() + "  ID: "+ finalUserList.get(i).getPlayerID());
+                BluetoothService.write(i,Integer.toString(finalUserList.get(i).getPlayerID()), Constants.USER_ID, new String[] {"Player ID Sent"});
             }
             //TODO: Send Final Player List to all devices in the START message
             /* String[] startMsg = new String[1];
@@ -332,9 +333,9 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
 
     @Override
     public void onCancel(DialogInterface dialog) {
-        ownerContext.unregisterReceiver(bCReciever);
+        //ownerContext.unregisterReceiver(bCReciever);
         BluetoothService.getmAdapter().cancelDiscovery();
-        BluetoothService.stop();
+        //BluetoothService.stop();
     }
 
     @Override
@@ -363,6 +364,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
                 adapter.add(user);
                 break;
             case Constants.USER_ID:
+                Log.i(TAG, "USER ID RECEIVED: " + player);
                 userData.setPlayerID(player);
                 break;
         }
@@ -376,8 +378,9 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
         for(UserData user : finalUserList){
             Log.i(TAG, "PRE SET: " + user.username + " | " + user.playerID + "");
             user.setPlayerID(i);
-            Log.i(TAG, "AFTER SET: " + userData.playerID + "");
+            Log.i(TAG, "AFTER SET: " + user.playerID + "");
             i++;
         }
+        userData.setPlayerID(0);
     }
 }

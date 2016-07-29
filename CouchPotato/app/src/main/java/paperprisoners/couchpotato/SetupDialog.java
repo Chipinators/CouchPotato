@@ -212,32 +212,26 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
             createFinalPlayerList();
             //Send Player ID To Clients
             Log.i(TAG, "FINAL USER LIST SIZE BEFORE WRITE: " + finalUserList.size());
-            for(int i = 1; i < finalUserList.size(); i++){
-                Log.i(TAG, "ID SENT TO PLAYER: " + finalUserList.get(i).getUsername() + "  ID: "+ finalUserList.get(i).getPlayerID());
-                BluetoothService.write(i,Integer.toString(finalUserList.get(i).getPlayerID()), Constants.USER_ID, new String[] {"Player ID Sent"});
-            }
             //TODO: Send Final Player List to all devices in the START message
-            /* String[] startMsg = new String[1];
-            startMsg[0] = "This is a Start Game Message!";
-            BluetoothService.writeToClients(Constants.START, startMsg);
-            */
-            Intent toGame = new Intent(ownerContext, GameActivity.class);
             Log.i(TAG, "CREATING PLAYERS TEMP ARRAYLIST");
+            //Create ArrayList that gets sent over to the next activity
             ArrayList<String> players = new ArrayList<String>();
-            for(int i = 0; i < finalUserList.size(); i++){
-                players.add(UserData.toString(finalUserList.get(i)));
+            for(UserData user : finalUserList){
+                players.add(UserData.toString(user));
             }
-            Log.i(TAG, "PLAYERS TEMP ARRAYLIST CREATED --- CREATING VALUES STRING ARRAY");
+            Log.i(TAG, "PLAYERS TEMP ARRAYLIST CREATED WITH SIZE: " + players.size() + "   --- CREATING VALUES STRING ARRAY");
+            //Create String Array of all players that gets sent to all of the clients
             String[] values = new String[players.size()];
-            for(int i = 0; i < values.length; i ++){
+            for(int i = 0; i < players.size(); i++){
                 values[i] = players.get(i);
             }
-            Log.i(TAG, "VALUES STRING ARRAY CREATED");
+            Log.i(TAG, "VALUES STRING ARRAY CREATED WITH SIZE: " + values.length);
             //TODO: HOST SEND FINAL USER LIST TO CLIENTS
             BluetoothService.writeToClients(Constants.START,values);
-            Log.i(TAG, "HOST WROTE ARRAY TO CLIENTS");
+            Log.i(TAG, "HOST WROTE FINAL USER LIST TO CLIENTS");
+            //Game Intent Stuff
+            Intent toGame = new Intent(ownerContext, GameActivity.class);
             toGame.putStringArrayListExtra("PlayerArray", players);
-
             toGame.putExtra("me", UserData.toString(userData));
             toGame.putExtra("host", isHost);
             ownerContext.startActivity(toGame);
@@ -347,11 +341,12 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
                 BluetoothService.getmAdapter().cancelDiscovery();
                 //TODO: ADD BUNDLED DATA TO SEND TO GAME ACTIVITY
                 Intent toGame = new Intent(ownerContext, GameActivity.class);
-
+                Log.i(TAG, "RECREATING PLAYER LIST SENT FROM HOST WITH SIZE: " + content.length);
                 ArrayList<String> players = new ArrayList<String>();
-                for(int i = 0; i < content.length-1; i++){
+                for(int i = 0; i < content.length; i++){
                     players.add((String)content[i]);
                 }
+                Log.i(TAG, "RECREATED PLAYER LIST SENT FROM HOST WITH SIZE: " + players.size());
                 toGame.putStringArrayListExtra("PlayerArray", players);
                 Log.i(TAG, "USER ID:" + userData.playerID);
                 toGame.putExtra("me", UserData.toString(userData));

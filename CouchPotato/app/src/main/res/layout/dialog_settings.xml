@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/settings_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/main_black"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/settings_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/padding_small"
+        android:text="@string/settings_title"
+        android:textSize="@dimen/font_large"
+        android:textColor="@color/main_white"
+        android:textStyle="bold"/>
+
+    <!--Voice Control-->
+    <LinearLayout
+        android:id="@+id/settings_voice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/padding_small"
+        android:paddingLeft="@dimen/padding_medium"
+        android:paddingRight="@dimen/padding_medium"
+        android:paddingTop="@dimen/padding_medium" >
+
+        <TextView
+            android:id="@+id/settings_voice_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_voice"
+            android:textColor="@color/main_white"
+            android:textSize="@dimen/font_medium"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            >
+
+            <Button
+                android:id="@+id/settings_voice_mute"
+                android:layout_width="@dimen/size_small"
+                android:layout_height="@dimen/size_small"
+                android:background="@drawable/ic_volume_up_white_48dp"
+                android:backgroundTint="@color/main_white"/>
+
+            <SeekBar
+                android:id="@+id/settings_voice_slider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/padding_small"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!--SFX Control-->
+    <LinearLayout
+        android:id="@+id/settings_sfx"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/padding_small"
+        android:paddingLeft="@dimen/padding_medium"
+        android:paddingRight="@dimen/padding_medium"
+        android:paddingTop="@dimen/padding_medium" >
+
+        <TextView
+            android:id="@+id/settings_sfx_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_sfx"
+            android:textColor="@color/main_white"
+            android:textSize="@dimen/font_medium"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            >
+
+            <Button
+                android:id="@+id/settings_sfx_mute"
+                android:layout_width="@dimen/size_small"
+                android:layout_height="@dimen/size_small"
+                android:background="@drawable/ic_volume_up_white_48dp"/>
+
+            <SeekBar
+                android:id="@+id/settings_sfx_slider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/padding_small"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!--Core buttons-->
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/padding_small" />
+
+    <Button
+        android:id="@+id/settings_exit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/main_deny"
+        android:text="@string/disconnect"
+        android:textColor="@color/main_black"
+        android:textSize="@dimen/font_large"
+        android:textStyle="bold" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/padding_small" />
+
+    <Button
+        android:id="@+id/settings_close"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/main_neutral"
+        android:text="@string/back"
+        android:textSize="@dimen/font_large"
+        android:textStyle="bold" />
+
+</LinearLayout>

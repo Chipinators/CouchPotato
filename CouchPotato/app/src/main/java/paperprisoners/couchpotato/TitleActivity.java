@@ -71,6 +71,8 @@ public class TitleActivity extends Activity implements View.OnClickListener, Tex
         String username = this.getIntent().getStringExtra("username");
         if (username != null)
             ((EditText)findViewById(R.id.title_name_field)).setText(username);
+
+        AudioManager.playVoice(this,"audio/testLoop.wav",false);
     }
 
 
@@ -91,7 +93,8 @@ public class TitleActivity extends Activity implements View.OnClickListener, Tex
                 canPlay = false;    //Compatibility fallback
             }
             if (!canPlay) {
-                MessageDialog sorryMsg = new MessageDialog(this, getString(R.string.title_sorry));
+                //MessageDialog sorryMsg = new MessageDialog(this, getString(R.string.title_sorry));
+                SettingsDialog sorryMsg = new SettingsDialog(TitleActivity.this, SettingsDialog.MenuState.HOST);
                 sorryMsg.show();
             }
         }

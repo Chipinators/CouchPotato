@@ -180,6 +180,8 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
     }
 
     public void playerVoting() {
+        vtePlayer2 = -1;
+        vtePlayer1 = -1;
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -200,57 +202,63 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             vtePlayer1 = Integer.parseInt(rathers[2]);//store the owner ints //HOSTS ONLY
             vtePlayer2 = Integer.parseInt(rathers[3]);//store the owner ints
             rathers = new String[]{rathers[0], rathers[1]};//remove the ints
-
-            /*while (true) {
-                if (recieved.indexOf(false) == -1) { //loop until all have sent recieved
-                    BluetoothService.writeToClients(Constants.NEXT, new String[]{"NEXT"});//time to continue
-                    break;
-                }
-            }*/
-        } else {
-            /*while (true) {
-                if (cont) {
-                    cont = false;
-                    break;
-                }
-            }*/
+        }else{
+            while(vtePlayer1 == -1 || vtePlayer2 == -1){
+                Log.i(TAG, "WAITING FOR INPUT");
+            }
         }
+        Log.i(TAG, "PAST THE WAITING");
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().setContentView(R.layout.wouldchuck_choice);
+                Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
+                Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_2);
+                //NEED TO DELAY THIS FOR X TIME
+                if (vtePlayer1 == me.playerID || vtePlayer2 == me.playerID) {
+                    //grey out options if one of rathers is yours
+                    ch1.setEnabled(false);
+                    ch2.setEnabled(false);
 
+                } else {
+                    //do nothing
+                }
+                ch1.setText(rathers[0]); //set option 1
+                ch2.setText(rathers[1]); //set option 2
+                ch1.invalidate();
+                ch2.invalidate();
+            }
+        });
+        Log.i(TAG, "PAST THE UI THREAD");
         final boolean[] input = new boolean[2];
 
-        final Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
-        final Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_2);
-
-        //NEED TO DELAY THIS FOR X TIME
-        if (vtePlayer1 == me.playerID || vtePlayer2 == me.playerID) {
-            //grey out options if one of rathers is yours
-            ch1.setEnabled(false);
-            ch2.setEnabled(false);
-
-        } else {
-            //do nothing
-        }
-
-        ch1.setText(rathers[0]); //set option 1
-        ch2.setText(rathers[1]); //set option 2
-        ch1.invalidate();
-        ch2.invalidate();
-
-
-        //NEED TIME LOOPED
-        getActivity().findViewById(R.id.wc_choice_layout).setOnClickListener(new View.OnClickListener() {
+        getActivity().findViewById(R.id.wc_choice_1).setOnClickListener(new View.OnClickListener() {
+            Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
+            Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_1);
             @Override
             public void onClick(View v) {
-                if (v == ch1) {
-                    input[0] = true;
-                    input[1] = false;
-                } else {
-                    input[1] = true;
-                    input[0] = false;
-                }
+                Log.i(TAG, "VOTED FOR 1st Element");
+                input[0] = true;
+                input[1] = false;
+                ch2.setEnabled(true);
+                ch1.setEnabled(false);
+            }
+        });
+        getActivity().findViewById(R.id.wc_choice_2).setOnClickListener(new View.OnClickListener() {
+            Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
+            Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_1);
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "VOTED FOR 2nd Element");
+                input[1] = true;
+                input[0] = false;
+                ch2.setEnabled(false);
+                ch1.setEnabled(true);
             }
         });
 
+        cont = false;
+        Log.i(TAG, "DELAY");
         Handler h = new Handler();
         h.postDelayed(new Runnable() {
             @Override
@@ -261,6 +269,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
 
         while (true) {
             if (cont) {
+                Log.i(TAG, "PAST DELAY");
                 cont = false;
                 break;
             }
@@ -293,10 +302,13 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                     randQ1 = rand.nextInt(tmp1);
                     randQ2 = rand.nextInt(tmp2);
 
+                    String res1 = responses[randPlayer1][randQ1];
+                    String res2 = responses[randPlayer2][randQ2];
+
                     updateResponses(randPlayer1, randQ1);
                     updateResponses(randPlayer2, randQ2);
 
-                    return new String[]{responses[randPlayer1][randQ1], responses[randPlayer2][randQ2], "" + randPlayer1, "" + randPlayer2};
+                    return new String[]{res1, res2, ""+randPlayer1, ""+randPlayer2};
                 } else {
                     //loop again
                 }
@@ -543,22 +555,16 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 break;
             case Constants.WC_SUBMISSION:
                 Log.i(TAG, "SUBMISSION");
-                //int index = findPlayerIndex(player);
-                int index = 1;
+                int index = findPlayerIndex(player);
                 responses[index] = new String[]{(String) content[0],(String) content[1]};
                 break;
             case Constants.WC_QUESTION:
                 vtePlayer1 = Integer.parseInt((String) content[2]);//store the owner ints
                 vtePlayer2 = Integer.parseInt((String) content[3]);//store the owner ints
                 rathers = new String[]{(String) content[0], (String) content[1]};//remove the ints
-                BluetoothService.writeToServer(me.playerID + "", Constants.MESSAGE_READ, new String[]{"Got Questions"});
-                break;
-            case Constants.MESSAGE_READ:
-                recieved.set(player, true);
+                Log.i(TAG, "IMPORTED: " + vtePlayer1 + " | " + vtePlayer2 + " | " + rathers[0] + " | " + rathers[1]);
                 break;
             case Constants.WC_VOTE:
-                recieved.set(player, true);
-
                 if (Boolean.valueOf((String) content[0]) == true) {
                     votes1++;
                 } else {

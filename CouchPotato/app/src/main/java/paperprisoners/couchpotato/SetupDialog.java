@@ -330,6 +330,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
         //ownerContext.unregisterReceiver(bCReciever);
         BluetoothService.getmAdapter().cancelDiscovery();
         //BluetoothService.stop();
+        BluetoothService.listeners.remove(this);
     }
 
     @Override

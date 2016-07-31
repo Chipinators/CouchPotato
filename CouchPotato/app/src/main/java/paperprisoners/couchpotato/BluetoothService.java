@@ -16,6 +16,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
@@ -45,8 +46,8 @@ public class BluetoothService {
             Log.i(TAG, "HANDLER handleMessage called");
 
             byte[] msg = (byte[]) msgRead.obj;
-            //String msg = new String(Arrays.copyOfRange(buffer, 0, bytes)); //TODO: CHECK
-            String[] split = TextUtils.split(new String(msg), Pattern.quote(BluetoothService.DELIM));
+            String str = new String(Arrays.copyOfRange(msg, 0, msgRead.arg1));
+            String[] split = TextUtils.split(str, Pattern.quote(BluetoothService.DELIM));
             Log.i(TAG, "Message: " + TextUtils.join("---", split));
             try {
                 int player = Integer.parseInt(split[0]);
@@ -54,7 +55,12 @@ public class BluetoothService {
                 int type = Integer.parseInt(split[1]);
                 Log.i(TAG, "Message Type: " + type);
                 String[] content = Arrays.copyOfRange(split, 2, split.length);
-                Log.i(TAG, "Message Content: " + content.toString());
+                /*/Cuts off nulls
+                int cutoff = content[content.length-1].indexOf('\0');
+                if (cutoff >= 0) {
+                    content[content.length-1] = content[content.length-1].substring(0, cutoff);
+                }*/
+                Log.i(TAG, "Message Content: " + Arrays.toString(split));
                 for (MessageListener m : BluetoothService.listeners) {
                     if (m != null)
                         m.onReceiveMessage(player, type, content);
@@ -149,10 +155,9 @@ public class BluetoothService {
         }
     }
 
-    public static void write(String player, int type, String[] content){
+    public static void write(int playerID,String player, int type, String[] content){
         String output = player + DELIM + type + DELIM + TextUtils.join(DELIM, content);
-        ConnectedThread r = mConnectedThread;
-        r.write(output.getBytes());
+        mConnectedDevices.get(playerID-1).write(output.getBytes());
     }
 
     private static class AcceptThread extends Thread {
@@ -295,8 +300,10 @@ public class BluetoothService {
                         Log.e(TAG, "mHandler received a null");
                     }else {
                         Log.i(TAG, "Obtain Message Reached");
-                        Message msg = mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer);
+                        /*Message msg = mHandler.obtainMessage(100, bytes, -1, buffer).;
                         mHandler.sendMessage(msg);
+                        */
+                        mHandler.obtainMessage(Constants.MESSAGE_READ, bytes,-1,buffer).sendToTarget();
                         Log.i(TAG, "Obtain Message Finished");
                     }
 
@@ -312,6 +319,7 @@ public class BluetoothService {
             try {
                 mOutStream.write(out);
             } catch (IOException e) {
+                Log.e(TAG, "COULD NOT WRITE TO CLIENT");
             }
         }
 

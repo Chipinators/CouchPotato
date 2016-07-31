@@ -232,34 +232,38 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         Log.i(TAG, "PAST THE UI THREAD");
         final boolean[] input = new boolean[2];
 
-        getActivity().findViewById(R.id.wc_choice_1).setOnClickListener(new View.OnClickListener() {
-            Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
-            Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_1);
+        getActivity().runOnUiThread(new Runnable() {
             @Override
-            public void onClick(View v) {
-                Log.i(TAG, "VOTED FOR 1st Element");
-                input[0] = true;
-                input[1] = false;
-                ch2.setEnabled(true);
-                ch1.setEnabled(false);
-            }
-        });
-        getActivity().findViewById(R.id.wc_choice_2).setOnClickListener(new View.OnClickListener() {
-            Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
-            Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_1);
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "VOTED FOR 2nd Element");
-                input[1] = true;
-                input[0] = false;
-                ch2.setEnabled(false);
-                ch1.setEnabled(true);
+            public void run() {
+                final Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
+                final Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_1);
+
+                ch1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.i(TAG, "VOTED FOR 1st Element");
+                        input[0] = true;
+                        input[1] = false;
+                        ch2.setEnabled(true);
+                        ch1.setEnabled(false);
+                    }
+                });
+                ch2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.i(TAG, "VOTED FOR 2nd Element");
+                        input[1] = true;
+                        input[0] = false;
+                        ch2.setEnabled(false);
+                        ch1.setEnabled(true);
+                    }
+                });
             }
         });
 
         cont = false;
         Log.i(TAG, "DELAY");
-        Handler h = new Handler();
+        Handler h = new Handler(Looper.getMainLooper());
         h.postDelayed(new Runnable() {
             @Override
             public void run() {

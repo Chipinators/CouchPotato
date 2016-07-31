@@ -12,6 +12,7 @@
     <string name="start">START</string>
     <string name="cancel">CANCEL</string>
     <string name="ok">OK</string>
+    <string name="back">BACK</string>
     <string name="winner">WINNER</string>
     <string name="p1">P1</string>
     <string name="p2">P2</string>
@@ -29,6 +30,7 @@
     <string name="submit">SUBMIT</string>
     <string name="play_again">PLAY AGAIN</string>
     <string name="close_room">CLOSE ROOM</string>
+    <string name="disconnect">DISCONNECT</string>
 
     <!--Activity-specific strings. Prefix with the name of the Activity-->
     <string name="title_name_field">enter your name</string>
@@ -46,6 +48,9 @@
     <string name="setup_searching">Searching...</string>
     <string name="setup_joining">Joining...</string>
     <string name="kick_dialog">The host dropped you from the game you had joined.\nBecause of reasons.</string>
+    <string name="settings_title">SETTINGS</string>
+    <string name="settings_voice">VOICE VOLUME</string>
+    <string name="settings_sfx">SFX VOLUME</string>
 
     <!--Placeholder text-->
     <string name="na_empty"> </string>

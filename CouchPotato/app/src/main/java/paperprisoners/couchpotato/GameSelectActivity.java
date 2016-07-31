@@ -42,7 +42,7 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
 
     private UserData userData;
     private TextView nameText;
-    private Button backButton, infoButton, hostButton, joinButton;
+    private Button backButton, menuButton, infoButton, hostButton, joinButton;
     private RelativeLayout bg;
     private PagedFragment pages;
 
@@ -62,6 +62,7 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
         //playersText = (TextView) findViewById(R.id.select_players);
         //playersText2 = (TextView) findViewById(R.id.select_players2);
         backButton = (Button) findViewById(R.id.select_back);
+        menuButton = (Button) findViewById(R.id.select_menu);
         infoButton = (Button) findViewById(R.id.select_info);
         hostButton = (Button) findViewById(R.id.select_host);
         joinButton = (Button) findViewById(R.id.select_join);
@@ -107,6 +108,8 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
             Intent toTitle = new Intent(this, TitleActivity.class);
             toTitle.putExtra("username", username);
             this.startActivity(toTitle);
+        }else if (v == menuButton) {
+            new SettingsDialog(this, SettingsDialog.MenuState.MAIN);
         } else if (v == infoButton) {
             Intent toInfo = new Intent(this, InfoActivity.class);
             toInfo.putExtra("username", username);

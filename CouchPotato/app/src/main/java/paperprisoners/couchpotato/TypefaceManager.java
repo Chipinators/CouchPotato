@@ -90,14 +90,12 @@ public class TypefaceManager {
                 //If path a location is a file
                 String extension = location;
                 extension = extension.substring(extension.length() - EXTENSION_OFFSET);
-                Log.v("TFM", "Ext... "+extension);
                 if (extension.equalsIgnoreCase(FONT_EXTENSION)) {
                     String path = location;
                     int index = path.indexOf(ASSETS_DIRECTORY);
                     if (index >= 0)
                         path = path.substring(index + ASSETS_DIRECTORY.length());
                     fontList.add(path);
-                    Log.v("TFM", "Font added!");
                 }
             }
         }

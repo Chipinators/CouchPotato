@@ -95,7 +95,11 @@ public class GameActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v == menu) {
-
+            SettingsDialog settings;
+            if (host)
+                settings = new SettingsDialog(this, SettingsDialog.MenuState.HOST);
+            else
+                settings = new SettingsDialog(this, SettingsDialog.MenuState.CLIENT);
         }
     }
 

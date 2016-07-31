@@ -10,10 +10,13 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +29,7 @@ public class TitleActivity extends Activity implements View.OnClickListener, Tex
 
     private int easter = 0;
 
+    private RelativeLayout root;
     private Button logo;
     private TextView titleText;
     private EditText nameField;
@@ -40,6 +44,7 @@ public class TitleActivity extends Activity implements View.OnClickListener, Tex
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_title);
         //Element setup
+        root = (RelativeLayout) this.findViewById(R.id.title_root);
         logo = (Button) this.findViewById(R.id.title_image);
         titleText = (TextView) this.findViewById(R.id.title_text);
         nameField = (EditText) this.findViewById(R.id.title_name_field);
@@ -54,8 +59,10 @@ public class TitleActivity extends Activity implements View.OnClickListener, Tex
         }
         catch (Exception e) {}
         //Adding listeners
+        root.setOnClickListener(new KeyboardHidingListener(this,root));
         logo.setOnClickListener(this);
         nameField.addTextChangedListener(this);
+        nameField.setOnFocusChangeListener(new KeyboardHidingListener(this,root));
         submit.setOnClickListener(this);
         submit.setEnabled(false);
 

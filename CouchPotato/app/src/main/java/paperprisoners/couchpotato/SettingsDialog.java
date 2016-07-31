@@ -3,18 +3,13 @@ package paperprisoners.couchpotato;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -48,9 +43,9 @@ public class SettingsDialog extends AlertDialog implements View.OnClickListener,
     //CUSTOM METHODS BELOW
 
     private void adjustContent() {
-        Log.v("AudioManager",AudioManager.isVoiceMuted()+" "+AudioManager.isSFXMuted());
+        Log.v("SoundManager", SoundManager.isVoiceMuted()+" "+ SoundManager.isSFXMuted());
         //Voice volume
-        if (AudioManager.isVoiceMuted()){
+        if (SoundManager.isVoiceMuted()){
             //voiceMute.setImageBitmap(mute);
             voiceMute.setBackgroundResource(R.drawable.ic_volume_off_white_48dp);
             voiceMute.setBackgroundTintList(muted);
@@ -60,7 +55,7 @@ public class SettingsDialog extends AlertDialog implements View.OnClickListener,
             voiceMute.setBackgroundTintList(active);
         }
         //SFX volume
-        if (AudioManager.isSFXMuted()){
+        if (SoundManager.isSFXMuted()){
             sfxMute.setBackgroundResource(R.drawable.ic_volume_off_white_48dp);
             sfxMute.setBackgroundTintList(muted);
         }
@@ -102,8 +97,8 @@ public class SettingsDialog extends AlertDialog implements View.OnClickListener,
         //Sets up values
         active = new ColorStateList(new int[1][0], new int[]{ContextCompat.getColor(getContext(),R.color.main_white)});
         muted = new ColorStateList(new int[1][0], new int[]{ContextCompat.getColor(getContext(),R.color.main_deny)});
-        voiceSlider.setProgress((int)(AudioManager.getVoiceVolume()*100));
-        sfxSlider.setProgress((int)(AudioManager.getSFXVolume()*100));
+        voiceSlider.setProgress((int)(SoundManager.getVoiceVolume()*100));
+        sfxSlider.setProgress((int)(SoundManager.getSFXVolume()*100));
         adjustContent();
         //Adding listeners
         voiceMute.setOnClickListener(this);
@@ -123,24 +118,24 @@ public class SettingsDialog extends AlertDialog implements View.OnClickListener,
     @Override
     public void onClick(View v) {
         if (v == voiceMute) {
-            if (!AudioManager.isVoiceMuted())
-                AudioManager.muteVoice();
+            if (!SoundManager.isVoiceMuted())
+                SoundManager.muteVoice();
             else {
-                AudioManager.unmuteVoice();
+                SoundManager.unmuteVoice();
             }
             adjustContent();
         }
         else if (v == sfxMute) {
-            if (!AudioManager.isSFXMuted())
-                AudioManager.muteSFX();
+            if (!SoundManager.isSFXMuted())
+                SoundManager.muteSFX();
             else {
-                AudioManager.unmuteSFX();
+                SoundManager.unmuteSFX();
             }
             adjustContent();
         }
         else if (v == quitButton) {
             //TODO: Leave game
-            AudioManager.playVoice(getContext(),"audio/testVoice.wav",false);
+
         }
         else if (v == backButton) {
             cancel();
@@ -154,10 +149,10 @@ public class SettingsDialog extends AlertDialog implements View.OnClickListener,
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        if (seekBar == voiceSlider && AudioManager.isVoiceMuted())
-            AudioManager.unmuteVoice();
-        else if (seekBar == sfxSlider && AudioManager.isSFXMuted())
-            AudioManager.unmuteSFX();
+        if (seekBar == voiceSlider && SoundManager.isVoiceMuted())
+            SoundManager.unmuteVoice();
+        else if (seekBar == sfxSlider && SoundManager.isSFXMuted())
+            SoundManager.unmuteSFX();
         adjustContent();
     }
 
@@ -165,8 +160,8 @@ public class SettingsDialog extends AlertDialog implements View.OnClickListener,
     public void onStopTrackingTouch(SeekBar seekBar) {
         float newVolume = seekBar.getProgress()/100f;
         if (seekBar == voiceSlider)
-            AudioManager.setVoiceVolume(newVolume);
+            SoundManager.setVoiceVolume(newVolume);
         else if (seekBar == sfxSlider)
-            AudioManager.setSFXVolume(newVolume);
+            SoundManager.setSFXVolume(newVolume);
     }
 }

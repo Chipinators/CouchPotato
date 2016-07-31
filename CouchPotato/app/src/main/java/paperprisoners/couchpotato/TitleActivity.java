@@ -1,22 +1,19 @@
 package paperprisoners.couchpotato;
 
-import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.os.Build;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,8 +68,6 @@ public class TitleActivity extends Activity implements View.OnClickListener, Tex
         String username = this.getIntent().getStringExtra("username");
         if (username != null)
             ((EditText)findViewById(R.id.title_name_field)).setText(username);
-
-        AudioManager.playVoice(this,"audio/testLoop.wav",false);
     }
 
 
@@ -93,8 +88,7 @@ public class TitleActivity extends Activity implements View.OnClickListener, Tex
                 canPlay = false;    //Compatibility fallback
             }
             if (!canPlay) {
-                //MessageDialog sorryMsg = new MessageDialog(this, getString(R.string.title_sorry));
-                SettingsDialog sorryMsg = new SettingsDialog(TitleActivity.this, SettingsDialog.MenuState.HOST);
+                MessageDialog sorryMsg = new MessageDialog(this, getString(R.string.title_sorry));
                 sorryMsg.show();
             }
         }

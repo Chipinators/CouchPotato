@@ -21,28 +21,24 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     //GLOBAL VARS
     private static final String TAG = "WC_Fragment";
-    Handler handler = new Handler();
     int stage;
     private boolean host, cont = false;
     private UserData me; //Will be passed to GameActivity, pull from there later
     private int gameRound;
-    private TextView clock;
     private String[][] responses;
     private String[] rathers;
+    private boolean[] input = new boolean[2];
     private int responsesLeft;
     private int vtePlayer1, vtePlayer2;//store the owners of votes1 and votes2
     private int votes1, votes2;
-    private LayoutInflater inflater;
     private ArrayList<UserData> players;
-    private ArrayList<Boolean> recieved;
-    private SetupAdapter adapter;
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     private Thread start;
 
     @Override
     public synchronized void onStart() {
         super.onStart();
-        loading();
+        loading("Setting up the game...");
 
         BluetoothService.listeners.add(this);
 
@@ -51,9 +47,9 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         host = ((GameActivity) getActivity()).getHost();
 
         Log.i(TAG, "PLAYERS:" + players.size());
-        for(int i = 0; i < players.size(); i++){
+        for (int i = 0; i < players.size(); i++) {
             Log.i(TAG, players.get(i).username + " - " + me.username + ": " + players.get(i).username.equals(me.username));
-            if(players.get(i).username.equals(me.username)){
+            if (players.get(i).username.equals(me.username)) {
                 Log.i(TAG, "I AM HERE");
                 me.setPlayerID(players.get(i).playerID);
                 break;
@@ -96,14 +92,19 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                             }
                         }
                         while (responsesLeft > 0) { //loop through the rathers to let user's vote
-                            playerVoting(); //playerID's cast votes
 
+                            playerVoting(); //playerID's cast vote
                             while (true) {
                                 if (stage == 3) {
                                     break;
                                 }
                             }
                             showVotingResults(); //results of vote are shown
+                            votes1 = 0;
+                            votes2 = 0;
+                            vtePlayer1 = -1;
+                            vtePlayer2 = -1;
+
                             responsesLeft = responsesLeft - 2; //update responses to pars
                         }
                         showRoundResults();//show the final winner screen
@@ -120,7 +121,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         start.start(); //Run the game thread!
         Log.i(TAG, "THREAD END");
         //endregion
-    }
+    } //DONE
 
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     //region Game Code
@@ -154,7 +155,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             }
         };
         handler2.postDelayed(r2, 30000);
-    }
+    } //DONE
 
     public void getDataFromUsers(String input1, String input2) {
         Log.i(TAG, "getDataFromUsers called");
@@ -163,7 +164,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
 
         if (host) {
             Log.i(TAG, "Set host's responses");
-            responses[0] = new String[]{input1,input2};
+            responses[0] = new String[]{input1, input2};
 
             Log.i(TAG, "host's responses written");
             stage = 2;
@@ -177,16 +178,16 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             stage = 2;
             cont = false;
         }
-    }
+    } //DONE
 
     public void playerVoting() {
         vtePlayer2 = -1;
         vtePlayer1 = -1;
+        input = null;
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 getActivity().setContentView(R.layout.wouldchuck_choice);
-
             }
         });
 
@@ -202,8 +203,8 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             vtePlayer1 = Integer.parseInt(rathers[2]);//store the owner ints //HOSTS ONLY
             vtePlayer2 = Integer.parseInt(rathers[3]);//store the owner ints
             rathers = new String[]{rathers[0], rathers[1]};//remove the ints
-        }else{
-            while(vtePlayer1 == -1 || vtePlayer2 == -1){
+        } else {
+            while (vtePlayer1 == -1 || vtePlayer2 == -1) {
                 Log.i(TAG, "WAITING FOR INPUT");
             }
         }
@@ -217,8 +218,9 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 //NEED TO DELAY THIS FOR X TIME
                 if (vtePlayer1 == me.playerID || vtePlayer2 == me.playerID) {
                     //grey out options if one of rathers is yours
-                    ch1.setEnabled(false);
-                    ch2.setEnabled(false);
+                    //TODO: re-enable this
+                    //ch1.setEnabled(false);
+                    //ch2.setEnabled(false);
 
                 } else {
                     //do nothing
@@ -230,32 +232,43 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             }
         });
         Log.i(TAG, "PAST THE UI THREAD");
-        final boolean[] input = new boolean[2];
-
+        input = new boolean[2];
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                final Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
-                final Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_1);
+                Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
+                Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_2);
 
                 ch1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
+                        Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_2);
+
                         Log.i(TAG, "VOTED FOR 1st Element");
                         input[0] = true;
                         input[1] = false;
                         ch2.setEnabled(true);
                         ch1.setEnabled(false);
+
+                        ch1.setAlpha((float) .25);
+                        ch2.setAlpha((float) 1);
                     }
                 });
                 ch2.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
+                        Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_2);
+
                         Log.i(TAG, "VOTED FOR 2nd Element");
                         input[1] = true;
                         input[0] = false;
                         ch2.setEnabled(false);
                         ch1.setEnabled(true);
+
+                        ch2.setAlpha((float) .25);
+                        ch1.setAlpha((float) 1);
                     }
                 });
             }
@@ -269,7 +282,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             public void run() {
                 cont = true;
             }
-        }, 30000);
+        }, 15000);
 
         while (true) {
             if (cont) {
@@ -284,10 +297,224 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 getActivity().setContentView(R.layout.wouldchuck_waiting);
             }
         });
-
-        getUserVotes(input);
+        sendUserVotes(input);
         stage = 3;
-    }
+    } //DONE
+
+    public void showVotingResults() {
+        Log.i(TAG, "Show Results");
+        loading("Calculating Results...");
+        cont = false;
+        if (host) {
+            BluetoothService.writeToClients(Constants.WC_RESULTS, new String[]{"" + vtePlayer1, "" + vtePlayer2, "" + votes1, "" + votes2});
+            Log.i(TAG, "Sent Results to Clients: " + vtePlayer1 + " - " + votes1 + ", " + vtePlayer2 + " - " + votes2);
+        } else {
+
+        }
+        Handler wait = new Handler(Looper.getMainLooper());
+        wait.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(TAG, "Viewing Results");
+                        getActivity().setContentView(R.layout.wouldchuck_results);
+                        ((TextView) getActivity().findViewById(R.id.wc_results_content1)).setText(rathers[0]);
+                        getActivity().findViewById(R.id.wc_results_content1).invalidate();
+                        ((TextView) getActivity().findViewById(R.id.wc_results_content2)).setText(rathers[1]);
+                        getActivity().findViewById(R.id.wc_results_content2).invalidate();
+                        ((TextView) getActivity().findViewById(R.id.wc_results_count1)).setText(votes1 + "");
+                        getActivity().findViewById(R.id.wc_results_count1).invalidate();
+                        ((TextView) getActivity().findViewById(R.id.wc_results_count2)).setText(votes2 + "");
+                        getActivity().findViewById(R.id.wc_results_count2).invalidate();
+                        ((TextView) getActivity().findViewById(R.id.wc_results_user1)).setText(players.get(findPlayerIndex(vtePlayer1)).username);
+                        getActivity().findViewById(R.id.wc_results_user1).invalidate();
+                        ((TextView) getActivity().findViewById(R.id.wc_results_user2)).setText(players.get(findPlayerIndex(vtePlayer2)).username);
+                        getActivity().findViewById(R.id.wc_results_user2).invalidate();
+
+                        if (votes1 > votes2) {//number 1 wins
+                            ((TextView) getActivity().findViewById(R.id.wc_results_score1)).setText((500 * gameRound) + "");
+                            getActivity().findViewById(R.id.wc_results_score1).invalidate();
+                            ((TextView) getActivity().findViewById(R.id.wc_results_score2)).setText("0");
+                            getActivity().findViewById(R.id.wc_results_score2).invalidate();
+                        } else if (votes2 > votes1) {//number 2 wins
+                            ((TextView) getActivity().findViewById(R.id.wc_results_score1)).setText("0");
+                            getActivity().findViewById(R.id.wc_results_score1).invalidate();
+                            ((TextView) getActivity().findViewById(R.id.wc_results_score2)).setText((500 * gameRound) + "");
+                            getActivity().findViewById(R.id.wc_results_score2).invalidate();
+                        } else {//tie
+                            ((TextView) getActivity().findViewById(R.id.wc_results_score1)).setText((250 * gameRound) + "");
+                            getActivity().findViewById(R.id.wc_results_score1).invalidate();
+                            ((TextView) getActivity().findViewById(R.id.wc_results_score2)).setText((250 * gameRound) + "");
+                            getActivity().findViewById(R.id.wc_results_score2).invalidate();
+                        }
+                    }
+                });
+            }
+        }, 1000);
+
+        cont = false;
+        Handler h = new Handler(Looper.getMainLooper());
+        h.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                cont = true;
+            }
+        }, 10000);
+        Log.i(TAG, "Delay");
+        while (true) {
+            if (cont) {
+                cont = false;
+                break;
+            }
+        }
+        Log.i(TAG, "Done Delay");
+        savePlayerPoints();
+    }//TODO: FIX?
+
+    public void showRoundResults() {
+        Log.i(TAG, "Round Results");
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.i(TAG, "Set order on leader board");
+                int[][] order = playerOrder();
+                getActivity().setContentView(R.layout.wouldchuck_leaderboard);
+                for (int i = 0; i < order.length; i++) {
+                    Log.i(TAG, "ORDER: ID - " + order[i][0] + ", POINTS - " + order[i][1]);
+                    ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_name" + (i + 1), "id", "paperprisoners.couchpotato"))).setText(players.get(order[i][0]).username); //SEARCH STRING TO RESOURCE ID
+                    ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_score" + (i + 1), "id", "paperprisoners.couchpotato"))).setText("" + order[i][1]);
+                }
+                for(int i = order.length; i < 8; i ++){
+                    ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_name" + (i + 1), "id", "paperprisoners.couchpotato"))).setText(""); //SEARCH STRING TO RESOURCE ID
+                    ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_score" + (i + 1), "id", "paperprisoners.couchpotato"))).setText("");
+                }
+            }
+        });
+
+        cont = false;
+        Handler h = new Handler(Looper.getMainLooper());
+        h.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                cont = true;
+            }
+        }, 15000);
+        Log.i(TAG, "Delay");
+        while (true) {
+            if (cont) {
+                cont = false;
+                break;
+            }
+        }
+        Log.i(TAG, "Done Delay");
+    } //DONE
+
+    public int[][] playerOrder() {
+        Log.i(TAG, "Getting Player Order");
+        int[][] order = new int[responses.length][2];
+
+        for (int i = 0; i < players.size(); i++) {
+            order[i][0] = players.get(i).playerID;
+            order[i][1] = players.get(i).score;
+        }
+
+        int tempID, tempPoints;
+        for (int i = 1; i < order.length; i++) { //sort by points (highest to lowest)
+            for (int j = i; j > 0; j--) {
+                if (order[j][1] > order[j - 1][1]) {
+                    tempID = order[j][0];
+                    tempPoints = order[j][1];
+
+                    order[j][0] = order[j - 1][0];
+                    order[j][1] = order[j - 1][1];
+
+                    order[j - 1][0] = tempID;
+                    order[j - 1][1] = tempPoints;
+                }
+            }
+        }
+        return order;
+    }//DONE
+
+    public void gameOver() {
+        Log.i(TAG, "GAME OVER");
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().setContentView(R.layout.activity_select);
+            }
+        });
+
+    } //TODO: Implement play again function
+
+    //endregion
+    //*********************************************************************************
+    //*********************************************************************************
+    @Override
+    public void onReceiveMessage(int player, int messageType, Object[] content) {
+        Log.i(TAG, "RECIEVED MESSAGE " + messageType);
+        switch (messageType) {
+            case Constants.NEXT:
+                cont = true;
+                break;
+            case Constants.WC_SUBMISSION: //DONE
+                Log.i(TAG, "SUBMISSION");
+                int index = findPlayerIndex(player);
+                responses[index] = new String[]{(String) content[0], (String) content[1]};
+                break;
+            case Constants.WC_QUESTION: //DONE
+                vtePlayer1 = Integer.parseInt((String) content[2]);//store the owner ints
+                vtePlayer2 = Integer.parseInt((String) content[3]);//store the owner ints
+                rathers = new String[]{(String) content[0], (String) content[1]};//remove the ints
+                Log.i(TAG, "IMPORTED: " + vtePlayer1 + " | " + vtePlayer2 + " | " + rathers[0] + " | " + rathers[1]);
+                break;
+            case Constants.WC_VOTE: //TODO: FIX?
+                if (Boolean.valueOf((String) content[0]) == true) {
+                    votes1++;
+                } else if(Boolean.valueOf((String) content[1]) == true){
+                    votes2++;
+                }
+                else{
+                    //no vote
+                }
+                Log.i(TAG, "VOTE COUNT: v1 - " + votes1 + ", v2 - " + votes2);
+                break;
+            case Constants.WC_RESULTS://TODO: FIX?
+                vtePlayer1 = Integer.parseInt((String) content[0]);//store the owner ints
+                vtePlayer2 = Integer.parseInt((String) content[1]);//store the owner ints
+                votes1 = Integer.parseInt((String) content[2]);//store the owner ints
+                votes2 = Integer.parseInt((String) content[3]);//store the owner ints
+                Log.i(TAG, "Results: " + vtePlayer1 + " - " + votes1 + ", " + vtePlayer2 + " - " + votes2);
+                break;
+
+        }
+    } //TODO: FIX?
+    //*********************************************************************************
+    //*********************************************************************************
+
+
+    //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    public int findPlayerIndex(int id) {
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i).playerID == id) {
+                return i;
+            }
+        }
+        return -1;
+    } //DONE
+
+    public void loading(final String Message) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().setContentView(R.layout.wouldchuck_waiting);
+                ((TextView) getActivity().findViewById(R.id.wc_waiting_text)).setText(Message);
+            }
+        });
+    } //DONE
 
     public String[] selectRathers() {
         int randPlayer1, randPlayer2;
@@ -312,13 +539,13 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                     updateResponses(randPlayer1, randQ1);
                     updateResponses(randPlayer2, randQ2);
 
-                    return new String[]{res1, res2, ""+randPlayer1, ""+randPlayer2};
+                    return new String[]{res1, res2, "" + randPlayer1, "" + randPlayer2};
                 } else {
                     //loop again
                 }
             }
         }
-    }
+    } //DONE
 
     public int responsesRemaining(int index) { //returns the number of responses a user has left
         int i = 2;
@@ -328,7 +555,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             i--;
 
         return i;
-    }
+    } //DONE
 
     public void updateResponses(int index, int response) { //if the user gave a response, shift so Response[user][0] always has a response (makes rand easier)
         if (response == 1) {
@@ -338,88 +565,20 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             responses[index][1] = "";
             responses[index][0] = tmp;
         }
-    }
+    } //DONE
 
-    public void getUserVotes(boolean[] vteResults) {
-        clearRecieved();
+    public void sendUserVotes(boolean[] vteResults) {
+        Log.i(TAG, "Get User's Votes");
         if (host) {
-            while (true) {
-                if (recieved.indexOf(false) == -1) {
-                    BluetoothService.writeToClients(Constants.NEXT, new String[]{"Votes are in"});
-                    break;
-                }
-            }
+
         } else {
             BluetoothService.writeToServer("" + me.playerID, Constants.WC_VOTE, new String[]{Boolean.toString(vteResults[0]), Boolean.toString(vteResults[1])});
-            while (true) {
-                if (cont) {
-                    cont = false;
-                    break;
-                }
-            }
+            Log.i(TAG, "Sent Votes to Host");
         }
-    }
-
-    public void showVotingResults() {
-        clearRecieved();
-        if (host) {
-            BluetoothService.writeToClients(Constants.WC_RESULTS, new String[]{"" + vtePlayer1, "" + vtePlayer2, "" + votes1, "" + votes2});
-            while (true) {
-                if (recieved.indexOf(false) == -1) {
-                    BluetoothService.writeToClients(Constants.NEXT, new String[]{"Cont to Points"});
-                    break;
-                }
-            }
-        } else {
-            while (true) {
-                if (cont) {
-                    cont = false;
-                    break;
-                }
-            }
-        }
-
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getActivity().setContentView(R.layout.wouldchuck_results);
-            }
-        });
-
-        ((TextView) getActivity().findViewById(R.id.wc_results_content1)).setText(rathers[0]);
-        ((TextView) getActivity().findViewById(R.id.wc_results_content2)).setText(rathers[1]);
-        ((TextView) getActivity().findViewById(R.id.wc_results_count1)).setText("" + votes1);
-        ((TextView) getActivity().findViewById(R.id.wc_results_count2)).setText("" + votes2);
-        ((TextView) getActivity().findViewById(R.id.wc_results_user1)).setText(players.get(vtePlayer1).username);
-        ((TextView) getActivity().findViewById(R.id.wc_results_user1)).setText(players.get(vtePlayer2).username);
-
-        if (votes1 > votes2) {
-            ((TextView) getActivity().findViewById(R.id.wc_results_score1)).setText("" + (500 * gameRound));
-            ((TextView) getActivity().findViewById(R.id.wc_results_score2)).setText("0");
-        } else {
-            ((TextView) getActivity().findViewById(R.id.wc_results_score1)).setText("0");
-            ((TextView) getActivity().findViewById(R.id.wc_results_score2)).setText("" + (500 * gameRound));
-        }
-
-        cont = false;
-
-        Handler h = new Handler();
-        h.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                cont = true;
-            }
-        }, 30000);
-        while (true) {
-            if (cont) {
-                cont = false;
-                break;
-            }
-        }
-        savePlayerPoints();
-    }
+    } //TODO: FIX?
 
     public void savePlayerPoints() {
+        Log.i(TAG, "Saving points");
 
         int points = gameRound * 500;
         int winner;
@@ -438,90 +597,8 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         } else {
             players.get(winner).score += points;
         }
-    }
+    } //DONE
 
-    public void showRoundResults() {
-        cont = false;
-        Handler handler1 = new Handler();
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                int[][] order = playerOrder();
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        getActivity().setContentView(R.layout.wouldchuck_leaderboard);
-                    }
-                });
-                for (int i = 0; i < order.length; i++) {
-                    ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_name" + i, "id", "paperprisoners.couchpotato"))).setText(players.get(order[i][0]).username); //SEARCH STRING TO RESOURCE ID
-                    ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_score" + i, "id", "paperprisoners.couchpotato"))).setText("" + order[i][1]);
-                }
-                cont = true;
-            }
-        };
-        handler1.postDelayed(r, 10000);//wait to display leaderboard
-
-        while (true) { //dont continue till its shown
-            if (cont) {
-                cont = false;
-                break;
-            }
-        }
-
-        Runnable delay = new Runnable() {
-            @Override
-            public void run() {
-                cont = true;
-            }
-        };
-        handler1.postDelayed(delay, 30000);
-
-        while (true) { //dont continue till its shown
-            if (cont) {
-                cont = false;
-                break;
-            }
-        }
-    }
-
-    public int[][] playerOrder() {
-        int[][] order = new int[responses.length][2];
-
-        for (int i = 0; i < players.size(); i++) {
-            order[i][0] = players.get(i).playerID;
-            order[i][1] = players.get(i).score;
-        }
-
-        int tempID, tempPoints;
-        for (int i = 1; i < order.length; i++) { //sort by points (highest to lowest)
-            for (int j = i; j > 0; j--) {
-                if (order[j][1] > order[j - 1][1]) {
-                    tempID = order[j][0];
-                    tempPoints = order[j][1];
-
-                    order[j][0] = order[j - 1][0];
-                    order[j][1] = order[j - 1][1];
-
-                    order[j - 1][0] = tempID;
-                    order[j - 1][1] = tempPoints;
-                }
-            }
-        }
-        return order;
-    }
-
-    public void gameOver() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getActivity().setContentView(R.layout.activity_select);
-            }
-        });
-
-    }
-
-    //endregion
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     //region Default Fragment Methods
     @Override
@@ -548,66 +625,4 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         super.onDetach();
     }
     //endregion (N
-    //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-    @Override
-    public void onReceiveMessage(int player, int messageType, Object[] content) {
-        Log.i(TAG, "RECIEVED MESSAGE " + messageType);
-        switch (messageType) {
-            case Constants.NEXT:
-                cont = true;
-                break;
-            case Constants.WC_SUBMISSION:
-                Log.i(TAG, "SUBMISSION");
-                int index = findPlayerIndex(player);
-                responses[index] = new String[]{(String) content[0],(String) content[1]};
-                break;
-            case Constants.WC_QUESTION:
-                vtePlayer1 = Integer.parseInt((String) content[2]);//store the owner ints
-                vtePlayer2 = Integer.parseInt((String) content[3]);//store the owner ints
-                rathers = new String[]{(String) content[0], (String) content[1]};//remove the ints
-                Log.i(TAG, "IMPORTED: " + vtePlayer1 + " | " + vtePlayer2 + " | " + rathers[0] + " | " + rathers[1]);
-                break;
-            case Constants.WC_VOTE:
-                if (Boolean.valueOf((String) content[0]) == true) {
-                    votes1++;
-                } else {
-                    votes2++;
-                }
-                break;
-            case Constants.WC_RESULTS:
-                vtePlayer1 = Integer.parseInt((String) content[0]);//store the owner ints
-                vtePlayer2 = Integer.parseInt((String) content[1]);//store the owner ints
-                votes1 = Integer.parseInt((String) content[2]);//store the owner ints
-                votes2 = Integer.parseInt((String) content[3]);//store the owner ints
-                BluetoothService.writeToServer("" + me.playerID, Constants.NEXT, new String[]{"voting results recieved"});
-                break;
-
-        }
-    }
-
-    public int findPlayerIndex(int id) {
-        for (int i = 0; i < players.size(); i++) {
-            if (players.get(i).playerID == id) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    public void loading() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getActivity().setContentView(R.layout.wouldchuck_waiting);
-                ((TextView) getActivity().findViewById(R.id.wc_waiting_text)).setText(getResources().getString(R.string.waitingL));
-            }
-        });
-    }
-
-    public void clearRecieved() {
-        for (int i = 0; i < recieved.size(); i++) {
-            recieved.set(i, false);
-        }
-    }
 }

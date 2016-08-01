@@ -51,6 +51,14 @@
                 android:textSize="@dimen/font_xlarge"
                 android:textStyle="bold" />
 
+            <TextView
+                android:id="@+id/title_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/version"
+                android:textSize="@dimen/font_small"
+                android:textColor="@color/main_black_faded"/>
+
         </LinearLayout>
 
         <LinearLayout

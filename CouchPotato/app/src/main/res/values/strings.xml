@@ -3,6 +3,7 @@
     <string name="app_name">Couch Potato</string>
     <string name="app_name_upper">COUCH POTATO</string>
     <string name="easter">COUCH BROTATO</string>
+    <string name="version">v. 0.5.3</string>
 
     <!--Acceptable character sets-->
     <string name="chars_name">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789.\'&quot;-</string>

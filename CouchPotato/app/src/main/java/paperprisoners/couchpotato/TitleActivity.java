@@ -31,7 +31,7 @@ public class TitleActivity extends Activity implements View.OnClickListener, Tex
 
     private RelativeLayout root;
     private Button logo;
-    private TextView titleText;
+    private TextView titleText, versionText;
     private EditText nameField;
     private Button submit;
 
@@ -47,13 +47,16 @@ public class TitleActivity extends Activity implements View.OnClickListener, Tex
         root = (RelativeLayout) this.findViewById(R.id.title_root);
         logo = (Button) this.findViewById(R.id.title_image);
         titleText = (TextView) this.findViewById(R.id.title_text);
+        versionText = (TextView) this.findViewById(R.id.title_version);
         nameField = (EditText) this.findViewById(R.id.title_name_field);
         submit = (Button) this.findViewById(R.id.title_submit);
         //Setting fonts
         try {
+            Typeface light = TypefaceManager.get("Oswald-Light");
             Typeface regular = TypefaceManager.get("Oswald-Regular");
             Typeface bold = TypefaceManager.get("Oswald-Bold");
             titleText.setTypeface(bold);
+            versionText.setTypeface(light);
             nameField.setTypeface(regular);
             submit.setTypeface(bold);
         }

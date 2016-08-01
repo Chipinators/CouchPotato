@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,8 +42,9 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
     protected String username;
 
     private UserData userData;
-    private TextView nameText;
-    private Button backButton, menuButton, infoButton, hostButton, joinButton;
+    private TextView nameText, infoText;
+    private Button backButton, menuButton, hostButton, joinButton;
+    private LinearLayout infoButton;
     private RelativeLayout bg;
     private PagedFragment pages;
 
@@ -59,11 +61,12 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
         setContentView(R.layout.activity_select);
         //Element setup
         nameText = (TextView) findViewById(R.id.select_name);
+        infoText = (TextView) findViewById(R.id.select_info_subtitle);
         //playersText = (TextView) findViewById(R.id.select_players);
         //playersText2 = (TextView) findViewById(R.id.select_players2);
         backButton = (Button) findViewById(R.id.select_back);
         menuButton = (Button) findViewById(R.id.select_menu);
-        infoButton = (Button) findViewById(R.id.select_info);
+        infoButton = (LinearLayout) findViewById(R.id.select_info);
         hostButton = (Button) findViewById(R.id.select_host);
         joinButton = (Button) findViewById(R.id.select_join);
         bg = (RelativeLayout) findViewById(R.id.select_background_layout);
@@ -73,12 +76,14 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
             Typeface regular = TypefaceManager.get("Oswald-Regular");
             Typeface bold = TypefaceManager.get("Oswald-Bold");
             nameText.setTypeface(regular);
+            infoText.setTypeface(regular);
             hostButton.setTypeface(bold);
             joinButton.setTypeface(bold);
         } catch (Exception e) {
         }
         //Adding listeners
         backButton.setOnClickListener(this);
+        menuButton.setOnClickListener(this);
         infoButton.setOnClickListener(this);
         hostButton.setOnClickListener(this);
         joinButton.setOnClickListener(this);
@@ -109,7 +114,7 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
             toTitle.putExtra("username", username);
             this.startActivity(toTitle);
         }else if (v == menuButton) {
-            new SettingsDialog(this, SettingsDialog.MenuState.MAIN);
+            new SettingsDialog(this, SettingsDialog.MenuState.MAIN).show();
         } else if (v == infoButton) {
             Intent toInfo = new Intent(this, InfoActivity.class);
             toInfo.putExtra("username", username);
@@ -161,6 +166,8 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
             hostButton.setBackgroundColor(ContextCompat.getColor(this,R.color.main_black));
             joinButton.setEnabled(true);
             joinButton.setBackgroundColor(ContextCompat.getColor(this,R.color.main_black));
+            infoButton.setEnabled(true);
+            infoButton.setBackgroundColor(ContextCompat.getColor(this,R.color.main_black));
         }
         else if (position == 1) {
             bg.setBackgroundColor(ContextCompat.getColor(this,R.color.more));
@@ -168,6 +175,8 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
             hostButton.setBackgroundColor(ContextCompat.getColor(this,R.color.main_black_faded));
             joinButton.setEnabled(false);
             joinButton.setBackgroundColor(ContextCompat.getColor(this,R.color.main_black_faded));
+            infoButton.setEnabled(false);
+            infoButton.setBackgroundColor(ContextCompat.getColor(this,R.color.main_black_faded));
         }
 
     }

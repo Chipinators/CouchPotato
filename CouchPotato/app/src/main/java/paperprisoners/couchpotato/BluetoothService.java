@@ -24,13 +24,14 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 /**
- * Created by chris on 7/16/2016.
+ * Created by Chris Potter on 7/16/2016.
  * Creates a Bluetooth service that allows a one-to-many Bluetooth connection up to 7 devices
  */
 public class BluetoothService {
     private static final String TAG = "BluetoothService";
     private static final UUID uuid = UUID.fromString("0b8c8517-39b8-4b97-a53f-821f76661ed6");
     private static final BluetoothAdapter mAdapter = BluetoothAdapter.getDefaultAdapter();
+    private static final String defaultDeviceName = mAdapter.getName();
 
     private static AcceptThread mAcceptThread;
     private static ConnectThread mConnectThread;
@@ -40,6 +41,7 @@ public class BluetoothService {
     public static HashSet<MessageListener> listeners = new HashSet<>();
     private static int maxPlayers = 7;
     public static String DELIM = "\\|/";
+
 
     public static Handler mHandler = new Handler() {
         @Override
@@ -332,7 +334,7 @@ public class BluetoothService {
     } //End ConnectedThread
 
     //Makes the device discoverable for 300 seconds
-    public static void makeDiscoverable(Context context, BroadcastReceiver bCReciever) {
+    public static void startDiscoverable(Context context, BroadcastReceiver bCReciever) {
         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
         context.startActivity(discoverableIntent);
@@ -340,19 +342,34 @@ public class BluetoothService {
         context.registerReceiver(bCReciever, intentFilter);
         IntentFilter disconnect = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         context.registerReceiver(bCReciever,disconnect);
-        Log.i("Log", "Discoverable ");
+        Log.i(TAG, "DEVICE IS NOW DISCOVERABLE");
+    }
+
+    public static void stopDiscoverable(Context context, BroadcastReceiver bCReciever){
+        context.unregisterReceiver(bCReciever);
+        mAdapter.setName(getDefaultDeviceName());
+        Log.i(TAG, "DISCOVERY ENDED");
     }
 
     //Starts a search for nearby Bluetooth devices that are discoverable
     public static void startSearching(Context context, BroadcastReceiver bCReciever) {
-        Log.i("Log", "in the start searching method");
         IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         context.registerReceiver(bCReciever, intentFilter);
         IntentFilter disconnect = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         context.registerReceiver(bCReciever,disconnect);
         mAdapter.startDiscovery();
+        Log.i(TAG, "SEARCHING FOR NEARBY DEVICES");
     }
 
+    public static void stopSearching(Context context, BroadcastReceiver bcReceiver){
+        mAdapter.cancelDiscovery();
+        mAdapter.setName(getDefaultDeviceName());
+        Log.i(TAG, "SEARCHING FOR DEVICES ENDED");
+    }
+
+    public static String getDefaultDeviceName() {
+        return defaultDeviceName;
+    }
 
     public static void addMessageListener(MessageListener m) {
         listeners.add(m);

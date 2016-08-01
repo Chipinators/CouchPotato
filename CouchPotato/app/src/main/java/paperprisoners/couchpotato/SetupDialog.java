@@ -152,7 +152,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
         adjustContent();
         //BLUETOOTH
         BluetoothService.getmAdapter().setName(Constants.app_name + " - " + userData.getUsername());
-        BluetoothService.makeDiscoverable(ownerContext, bCReciever);
+        BluetoothService.startDiscoverable(ownerContext, bCReciever);
         BluetoothService.start();
     }
 
@@ -327,9 +327,13 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
 
     @Override
     public void onCancel(DialogInterface dialog) {
-        //ownerContext.unregisterReceiver(bCReciever);
-        BluetoothService.getmAdapter().cancelDiscovery();
-        //BluetoothService.stop();
+        Log.i(TAG, "ON CANCEL CALLED");
+        if(isHost){
+            BluetoothService.stopDiscoverable(ownerContext, bCReciever);
+        }
+        else{
+            BluetoothService.stopSearching(ownerContext, bCReciever);
+        }
         BluetoothService.listeners.remove(this);
     }
 
@@ -365,6 +369,8 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
                 break;
         }
     }
+
+
 
     public void createFinalPlayerList(){
         finalUserList.add(userData);

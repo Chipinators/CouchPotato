@@ -98,7 +98,6 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
 
         //Bluetooth
         BluetoothService.listeners.add(this);
-       // BluetoothService.setHandler(mHandler);
     }
 
     @Override
@@ -174,15 +173,7 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
 
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        BluetoothService.getmAdapter().cancelDiscovery();
-    }
-
     //BLUETOOTH METHODS
-
-
     @Override
     public void onReceiveMessage(int player, int messageType, Object[] content) {
         if (messageType == 1) {

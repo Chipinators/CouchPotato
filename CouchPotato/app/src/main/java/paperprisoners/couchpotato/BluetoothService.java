@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -36,7 +37,7 @@ public class BluetoothService {
     private static ConnectedThread mConnectedThread;
     private static ArrayList<ConnectedThread> mConnectedDevices = new ArrayList<>();
 
-    public static ArrayList<MessageListener> listeners = new ArrayList<>();
+    public static HashSet<MessageListener> listeners = new HashSet<>();
     private static int maxPlayers = 7;
     public static String DELIM = "\\|/";
 
@@ -55,15 +56,13 @@ public class BluetoothService {
                 int type = Integer.parseInt(split[1]);
                 Log.i(TAG, "Message Type: " + type);
                 String[] content = Arrays.copyOfRange(split, 2, split.length);
-                /*/Cuts off nulls
-                int cutoff = content[content.length-1].indexOf('\0');
-                if (cutoff >= 0) {
-                    content[content.length-1] = content[content.length-1].substring(0, cutoff);
-                }*/
                 Log.i(TAG, "Message Content: " + Arrays.toString(split));
+                Log.i(TAG, "NUMBER OF MESSAGE LISTENERS = " + listeners.size());
                 for (MessageListener m : BluetoothService.listeners) {
-                    if (m != null)
+                    if (m != null) {
                         m.onReceiveMessage(player, type, content);
+                        Log.i(TAG, "Message sent to: " + m.toString());
+                    }
                 }
             } catch (NumberFormatException nf) {
                 Log.e(TAG, "Could not parse message header");

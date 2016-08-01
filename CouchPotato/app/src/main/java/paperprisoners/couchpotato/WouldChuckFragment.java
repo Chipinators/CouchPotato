@@ -175,6 +175,14 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                     }
                 };
                 timer.post(clock);
+
+                Button submit = (Button) getActivity().findViewById(R.id.wc_input_submit);
+                submit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        loading("Please Wait for Others to Submit Their Rathers...");
+                    }
+                });
             }
         });
 
@@ -195,6 +203,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             }
         };
         handler2.postDelayed(r2, 30000);
+
     } //DONE
 
     public void getDataFromUsers(String input1, String input2) {

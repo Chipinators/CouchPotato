@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -93,7 +94,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                             votes2 = 0;
                             vtePlayer1 = -1;
                             vtePlayer2 = -1;
-
+                            rathers = null;
                             responsesLeft = responsesLeft - 2; //update responses to pars
                         }
                         showRoundResults();//show the final winner screen
@@ -450,9 +451,10 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                     ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_name" + (i + 1), "id", "paperprisoners.couchpotato"))).setText(players.get(order[i][0]).username); //SEARCH STRING TO RESOURCE ID
                     ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_score" + (i + 1), "id", "paperprisoners.couchpotato"))).setText("" + order[i][1]);
                 }
+
+                LinearLayout parent = (LinearLayout) getActivity().findViewById(R.id.wc_leaderboard_parentLayout);
                 for (int i = order.length; i < 8; i++) {
-                    ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_name" + (i + 1), "id", "paperprisoners.couchpotato"))).setText(""); //SEARCH STRING TO RESOURCE ID
-                    ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_score" + (i + 1), "id", "paperprisoners.couchpotato"))).setText("");
+                    parent.removeView(getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_layout" + (i + 1), "id", "paperprisoners.couchpotato")));
                 }
             }
         });
@@ -601,6 +603,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                     updateResponses(randPlayer1, randQ1);
                     updateResponses(randPlayer2, randQ2);
 
+                    Log.i(TAG, "RATHER'S DEBUG: r1: " + res1 + "\tr2: " + res2);
                     return new String[]{res1, res2, "" + randPlayer1, "" + randPlayer2};
                 } else {
                     //loop again
@@ -616,6 +619,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         if (responses[index][1].equals(""))
             i--;
 
+        Log.i(TAG, "RATHER'S DEBUG: remaing num: " + i);
         return i;
     } //DONE
 
@@ -627,6 +631,8 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             responses[index][1] = "";
             responses[index][0] = tmp;
         }
+
+        Log.i(TAG, "RATHER'S DEBUG: (" + index +") REMAINING " + responses[index][0] + ", " + responses[index][1]);
     } //DONE
 
     public void sendUserVotes(boolean[] vteResults) {

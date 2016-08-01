@@ -28,7 +28,7 @@
             android:layout_width="@dimen/loader"
             android:layout_height="@dimen/loader"
             android:progressTint="@color/main_white"
-            android:indeterminateTint="@color/main_neutral" />
+            android:indeterminateTint="@color/main_black" />
     </LinearLayout>
 
 </RelativeLayout>

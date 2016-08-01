@@ -111,23 +111,24 @@
             android:layout_height="match_parent" />
 
         <LinearLayout
-            android:id="@+id/select_help"
+            android:id="@+id/select_info"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="@dimen/padding_xsmall"
+            android:clickable="true"
+            android:padding="@dimen/padding_small"
             android:gravity="center"
             android:layout_weight="1"
             android:background="@color/main_black">
 
-            <Button
-                android:id="@+id/select_info"
-                android:layout_width="@dimen/size_medium"
-                android:layout_height="@dimen/size_medium"
-                android:background="@drawable/ic_help_white_48dp"
-                android:backgroundTint="@color/main_white" />
+            <ImageView
+                android:layout_width="@dimen/help"
+                android:layout_height="@dimen/help"
+                android:src="@drawable/ic_help_white_48dp"
+                android:tint="@color/main_white" />
 
             <TextView
+                android:id="@+id/select_info_subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="HELP"

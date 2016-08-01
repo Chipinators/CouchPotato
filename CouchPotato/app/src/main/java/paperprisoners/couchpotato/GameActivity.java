@@ -12,6 +12,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -22,11 +23,17 @@ import java.util.regex.Pattern;
  * @Auther Ian Donovan
  */
 public class GameActivity extends Activity implements View.OnClickListener {
+
     private static String DELIM1 = "\\|/";
     private static String DELIM2 = "||||";
     private static final String TAG = "GameActivity";
+
     private boolean host;
     private String username;
+    private UserData me;
+    private ArrayList<UserData> players;
+
+    private LinearLayout root;
     private TextView name;
     private ImageView rank;
     private Button menu;
@@ -34,8 +41,6 @@ public class GameActivity extends Activity implements View.OnClickListener {
     private Fragment screen;
     private FragmentManager manager;
 
-    private UserData me;
-    private ArrayList<UserData> players;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +51,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_game);
         //Gets necessary elements
+        root = (LinearLayout) this.findViewById(R.id.game_root);
         name = (TextView) findViewById(R.id.game_name);
         rank = (ImageView) findViewById(R.id.game_rank);
         menu = (Button) findViewById(R.id.game_menu);
@@ -53,6 +59,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
         //Sets fonts
         name.setTypeface(TypefaceManager.get("Oswald-Bold"));
         //Adds listeners
+        root.setOnClickListener(new KeyboardHidingListener(this,root));
         menu.setOnClickListener(this);
         //Sets top bar content
         username = this.getIntent().getStringExtra("username");

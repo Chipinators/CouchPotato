@@ -25,8 +25,9 @@
     <dimen name="logo">180dp</dimen>
     <dimen name="setup">196dp</dimen>
     <dimen name="dots">16dp</dimen>
+    <dimen name="help">45dp</dimen>
     <dimen name="loader">100dp</dimen>
-    <dimen name="round">220dp</dimen>
     <dimen name="font_toast">18sp</dimen>
     <dimen name="toastMax">480dp</dimen>
+    <dimen name="round">220dp</dimen>
 </resources>

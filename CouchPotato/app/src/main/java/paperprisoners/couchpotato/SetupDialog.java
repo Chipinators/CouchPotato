@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
@@ -147,29 +148,30 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     }
 
     private void setupHost() {
-        userData.setPlayerID(0);
-        isHost = true;
-        setTitle(getContext().getString(R.string.select_host));
-        adjustContent();
         //BLUETOOTH
         BluetoothService.getmAdapter().setName(Constants.app_name + " - " + userData.getUsername());
         BluetoothService.startDiscoverable(ownerContext, bCReciever);
         BluetoothService.start();
+        //END BLUETOOTH
+        userData.setPlayerID(0);
+        isHost = true;
+        setTitle(getContext().getString(R.string.select_host));
+        adjustContent();
+
     }
 
     private void setupClient() {
+        //BLUETOOTH
+        BluetoothService.getmAdapter().setName(userData.getUsername());
+        BluetoothService.stopSearching(ownerContext, bCReciever);
+        BluetoothService.startSearching(ownerContext, bCReciever);
+        //END BLUETOOTH
         isHost = false;
         setTitle(getContext().getString(R.string.select_join));
         userList.setOnItemClickListener(this);
         buttonArea.removeView(startButton);
-        adjustContent();
-        //BLUETOOTH
-        BluetoothService.getmAdapter().setName(userData.getUsername());
-        BluetoothService.getmAdapter().cancelDiscovery();
         adapter.clear();
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        ownerContext.registerReceiver(bCReciever, filter);
-        BluetoothService.startSearching(ownerContext, bCReciever);
+        adjustContent();
     }
 
 
@@ -283,7 +285,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
 
 
     //BLUETOOTH METHODS
-    private final BroadcastReceiver bCReciever = new BroadcastReceiver() {
+    public  final BroadcastReceiver bCReciever = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             Log.i(TAG, action);
@@ -341,7 +343,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     @Override
     protected void onStop() {
         super.onStop();
-        ownerContext.unregisterReceiver(bCReciever);
+        //ownerContext.unregisterReceiver(bCReciever);
     }
 
     @Override
@@ -390,6 +392,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
                 }
         }
     }
+
 
 
 

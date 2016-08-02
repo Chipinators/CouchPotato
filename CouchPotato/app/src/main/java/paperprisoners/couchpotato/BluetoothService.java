@@ -1,5 +1,6 @@
 package paperprisoners.couchpotato;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -10,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -19,7 +21,9 @@ import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -36,11 +40,12 @@ public class BluetoothService {
     private static AcceptThread mAcceptThread;
     private static ConnectThread mConnectThread;
     private static ConnectedThread mConnectedThread;
-    private static ArrayList<ConnectedThread> mConnectedDevices = new ArrayList<>();
+    private static HashMap<Integer, ConnectedThread> mConnectedDevices = new HashMap<>();
 
     public static HashSet<MessageListener> listeners = new HashSet<>();
     private static int maxPlayers = 7;
     public static String DELIM = "\\|/";
+    private static int tracker = 1;
 
 
     public static Handler mHandler = new Handler() {
@@ -108,16 +113,18 @@ public class BluetoothService {
         }
         // Start the thread to manage the connection and perform transmissions
         mConnectedThread = new ConnectedThread(socket);
-
+        /*
         if (mConnectedDevices.contains(mConnectedThread)) {
-            mConnectedDevices.get(mConnectedDevices.indexOf(mConnectedThread)).cancel();
+            mConnectedThread.cancel();
             Log.d(TAG, "Duplicate Device tried to connect");
             mConnectedDevices.remove(mConnectedThread);
             Log.d(TAG, "Number of Devices: " + mConnectedDevices.size());
         } else {
             Log.d(TAG, "No Duplicate Found, Adding Connection To List");
-            mConnectedDevices.add(mConnectedThread);
-        }
+            */
+            mConnectedDevices.put(tracker, mConnectedThread);
+
+        //}
         Log.d(TAG, "Number of Devices: " + mConnectedDevices.size());
         mConnectedThread.start();
 
@@ -151,13 +158,13 @@ public class BluetoothService {
     public static void writeToClients(int type, String[] content) {
         String output;
         Log.i(TAG, "NUMBER OF CONNECTED DEVICES: " + mConnectedDevices.size());
-        for (ConnectedThread device : mConnectedDevices) {
+        for(Map.Entry<Integer, ConnectedThread> device : mConnectedDevices.entrySet()) {
             try {
                 output = "0" + DELIM + type + DELIM + TextUtils.join(DELIM, content);
                 Log.i(TAG, "CREATING WRITE MESSAGE - " + output);
-                device.write(output.getBytes());
+                device.getValue().write(output.getBytes());
             } catch(Exception e){
-                device.cancel();
+                device.getValue().cancel();
                 mConnectedDevices.remove(device);
             }
         }
@@ -341,11 +348,15 @@ public class BluetoothService {
         }
     } //End ConnectedThread
 
-    //Makes the device discoverable for 300 seconds
-    public static void startDiscoverable(Context context, BroadcastReceiver bCReciever) {
+    public static void getDiscoverablePermissions(Activity activity){
         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 180);
-        context.startActivity(discoverableIntent);
+        //context.startActivity(discoverableIntent);
+        activity.startActivityForResult(discoverableIntent, Constants.REQUEST_DISCOVERABILITY);
+    }
+
+    //Makes the device discoverable for 300 seconds
+    public static void startDiscoverable(Context context, BroadcastReceiver bCReciever) {
         IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
         context.registerReceiver(bCReciever, intentFilter);
         IntentFilter disconnect = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);

@@ -5,6 +5,7 @@ package paperprisoners.couchpotato;
  */
 public interface Constants {
     public String app_name = "Couch Potato";
+    public static final boolean debug = true;
 
     final int range = 14;
 
@@ -45,4 +46,6 @@ public interface Constants {
 
     //BLUETOOTH
     public static final int REQUEST_BLUETOOTH = 100;
+    public static final int REQUEST_DISCOVERABILITY = 200;
+    public static final int REQUEST_COARSE_LOCATION = 300;
 }

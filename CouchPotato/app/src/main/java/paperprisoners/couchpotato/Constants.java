@@ -43,6 +43,7 @@ public interface Constants {
     public static final int WC_VOTE = range + 1;
     public static final int WC_RESULTS = range + 2;
     public static final int WC_SUBMISSION = range + 3;
+    public static final int WC_END = range + 4;
 
     //BLUETOOTH
     public static final int REQUEST_BLUETOOTH = 100;

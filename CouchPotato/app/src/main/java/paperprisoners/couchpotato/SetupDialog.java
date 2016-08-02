@@ -341,7 +341,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     @Override
     protected void onStop() {
         super.onStop();
-        ownerContext.unregisterReceiver(bCReciever);
+        //ownerContext.unregisterReceiver(bCReciever);
     }
 
     @Override

@@ -27,7 +27,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
     private UserData me; //Will be passed to GameActivity, pull from there later
     private int gameRound;
     private String[][] responses;
-    private String[] rathers;
+    private String[] submissions;
     private boolean[] input = new boolean[2];
     private int responsesLeft;
     private int vtePlayer1, vtePlayer2;//store the owners of votes1 and votes2
@@ -74,14 +74,14 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
 
                         responsesLeft = players.size() * 2; //number of responses
                         stage = 1;
-                        usersEnterValues();//get the user's rathers
+                        usersEnterValues();//get the user's submissions
 
                         while (true) {
                             if (stage % 2 == 0) {
                                 break;
                             }
                         }
-                        while (responsesLeft > 0) { //loop through the rathers to let user's vote
+                        while (responsesLeft > 0) { //loop through the submissions to let user's vote
 
                             playerVoting(); //playerID's cast vote
                             while (true) {
@@ -94,7 +94,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                             votes2 = 0;
                             vtePlayer1 = -1;
                             vtePlayer2 = -1;
-                            rathers = null;
+                            submissions = null;
                             responsesLeft = responsesLeft - 2; //update responses to pars
                         }
                         showRoundResults();//show the final winner screen
@@ -144,7 +144,14 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         }
     }//done
 
+
+    private boolean buttonPressed = false;
+    private String input1;
+    private String input2;
+
     public void usersEnterValues() {
+
+        buttonPressed = false;
 
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -180,6 +187,11 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 submit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        input1 = ((TextView) getActivity().findViewById(R.id.wc_input_1)).getText().toString();//store rather 1
+                        input2 = ((TextView) getActivity().findViewById(R.id.wc_input_2)).getText().toString();//store rather 2
+
+                        buttonPressed = true;
+
                         loading("Please Wait for Others to Submit Their Rathers...");
                     }
                 });
@@ -190,15 +202,18 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         Runnable r2 = new Runnable() {
             @Override
             public void run() {
-                Log.i(TAG, "Start Second Runnable (Pre data from users)");
-                String input1 = ((TextView) getActivity().findViewById(R.id.wc_input_1)).getText().toString();//store rather 1
-                String input2 = ((TextView) getActivity().findViewById(R.id.wc_input_2)).getText().toString();//store rather 2
-                ((TextView) getActivity().findViewById(R.id.wc_input_1)).setText("");//clear
-                ((TextView) getActivity().findViewById(R.id.wc_input_2)).setText("");//clear
-                getActivity().findViewById(R.id.wc_input_1).invalidate();//clear
-                getActivity().findViewById(R.id.wc_input_2).invalidate();//clear
-                //when submit hit or time run out
+                if (!buttonPressed) {
+                    Log.i(TAG, "Start Second Runnable (Pre data from users)");
+                    input1 = ((TextView) getActivity().findViewById(R.id.wc_input_1)).getText().toString();//store rather 1
+                    input2 = ((TextView) getActivity().findViewById(R.id.wc_input_2)).getText().toString();//store rather 2
+                    ((TextView) getActivity().findViewById(R.id.wc_input_1)).setText("");//clear
+                    ((TextView) getActivity().findViewById(R.id.wc_input_2)).setText("");//clear
+                    getActivity().findViewById(R.id.wc_input_1).invalidate();//clear
+                    getActivity().findViewById(R.id.wc_input_2).invalidate();//clear
+                    //when submit hit or time run out
+                }
                 getDataFromUsers(input1, input2);//parse and store the data
+
                 Log.i(TAG, "End Second Runnable (Post data from users)");
             }
         };
@@ -244,14 +259,14 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             Log.i(TAG, "LENGTH HOST: " + responses[0][0]);
             Log.i(TAG, "LENGTH CLIENT: " + responses[1][0]);
 
-            rathers = selectRathers(); //generate rathers
-            Log.i(TAG, "RATHERS: " + rathers[0] + " | " + rathers[1] + " | " + rathers[2] + " | " + rathers[3]);
+            submissions = selectRathers(); //generate submissions
+            Log.i(TAG, "RATHERS: " + submissions[0] + " | " + submissions[1] + " | " + submissions[2] + " | " + submissions[3]);
 
-            BluetoothService.writeToClients(Constants.WC_QUESTION, rathers);//send the data over to clients
+            BluetoothService.writeToClients(Constants.WC_QUESTION, submissions);//send the data over to clients
 
-            vtePlayer1 = Integer.parseInt(rathers[2]);//store the owner ints //HOSTS ONLY
-            vtePlayer2 = Integer.parseInt(rathers[3]);//store the owner ints
-            rathers = new String[]{rathers[0], rathers[1]};//remove the ints
+            vtePlayer1 = Integer.parseInt(submissions[2]);//store the owner ints //HOSTS ONLY
+            vtePlayer2 = Integer.parseInt(submissions[3]);//store the owner ints
+            submissions = new String[]{submissions[0], submissions[1]};//remove the ints
         } else {
             while (vtePlayer1 == -1 || vtePlayer2 == -1) {
                 Log.i(TAG, "WAITING FOR INPUT");
@@ -266,7 +281,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_2);
                 //NEED TO DELAY THIS FOR X TIME
                 if (vtePlayer1 == me.playerID || vtePlayer2 == me.playerID) {
-                    //grey out options if one of rathers is yours
+                    //grey out options if one of submissions is yours
                     //TODO: re-enable this
                     //ch1.setEnabled(false);
                     //ch2.setEnabled(false);
@@ -274,8 +289,8 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 } else {
                     //do nothing
                 }
-                ch1.setText(rathers[0]); //set option 1
-                ch2.setText(rathers[1]); //set option 2
+                ch1.setText(submissions[0]); //set option 1
+                ch2.setText(submissions[1]); //set option 2
                 ch1.invalidate();
                 ch2.invalidate();
             }
@@ -393,9 +408,9 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                     public void run() {
                         Log.i(TAG, "Viewing Results");
                         getActivity().setContentView(R.layout.wouldchuck_results);
-                        ((TextView) getActivity().findViewById(R.id.wc_results_content1)).setText(rathers[0]);
+                        ((TextView) getActivity().findViewById(R.id.wc_results_content1)).setText(submissions[0]);
                         getActivity().findViewById(R.id.wc_results_content1).invalidate();
-                        ((TextView) getActivity().findViewById(R.id.wc_results_content2)).setText(rathers[1]);
+                        ((TextView) getActivity().findViewById(R.id.wc_results_content2)).setText(submissions[1]);
                         getActivity().findViewById(R.id.wc_results_content2).invalidate();
                         ((TextView) getActivity().findViewById(R.id.wc_results_count1)).setText(votes1 + "");
                         getActivity().findViewById(R.id.wc_results_count1).invalidate();
@@ -542,8 +557,8 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             case Constants.WC_QUESTION: //DONE
                 vtePlayer1 = Integer.parseInt((String) content[2]);//store the owner ints
                 vtePlayer2 = Integer.parseInt((String) content[3]);//store the owner ints
-                rathers = new String[]{(String) content[0], (String) content[1]};//remove the ints
-                Log.i(TAG, "IMPORTED: " + vtePlayer1 + " | " + vtePlayer2 + " | " + rathers[0] + " | " + rathers[1]);
+                submissions = new String[]{(String) content[0], (String) content[1]};//remove the ints
+                Log.i(TAG, "IMPORTED: " + vtePlayer1 + " | " + vtePlayer2 + " | " + submissions[0] + " | " + submissions[1]);
                 break;
             case Constants.WC_VOTE: //TODO: FIX?
                 if (Boolean.valueOf((String) content[0]) == true) {
@@ -641,7 +656,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             responses[index][0] = tmp;
         }
 
-        Log.i(TAG, "RATHER'S DEBUG: (" + index +") REMAINING " + responses[index][0] + ", " + responses[index][1]);
+        Log.i(TAG, "RATHER'S DEBUG: (" + index + ") REMAINING " + responses[index][0] + ", " + responses[index][1]);
     } //DONE
 
     public void sendUserVotes(boolean[] vteResults) {

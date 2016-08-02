@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -230,7 +231,10 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
             }
             Log.i(TAG, "VALUES STRING ARRAY CREATED WITH SIZE: " + values.length);
             //TODO: HOST SEND FINAL USER LIST TO CLIENTS
-            BluetoothService.writeToClients(Constants.START,values);
+            //BluetoothService.writeToClients(Constants.START,values);
+            for(int i = 1; i < finalUserList.size(); i++){
+                BluetoothService.write(finalUserList.get(i).getAddress(), finalUserList.get(i).getPlayerID() + "",Constants.START, values);
+            }
             Log.i(TAG, "HOST WROTE FINAL USER LIST TO CLIENTS");
             //Game Intent Stuff
             Intent toGame = new Intent(ownerContext, GameActivity.class);
@@ -308,6 +312,9 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
                 UserData connectedDevice = new UserData(device,device.getAddress(), device.getName());
                 addUser(connectedDevice);
                 Log.i(TAG, "USER ADDED TO LIST WITH ADDRESS: " + device.getAddress());
+                if(isHost){
+
+                }
             }
             if(BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)){
                 Log.i(TAG, "USER DISCONNECTED");
@@ -354,6 +361,8 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
                 //ownerContext.unregisterReceiver(bCReciever);
                 BluetoothService.getmAdapter().cancelDiscovery();
                 //TODO: ADD BUNDLED DATA TO SEND TO GAME ACTIVITY
+                userData.setPlayerID(player);
+                Log.i(TAG, "USER ID FROM HOST:" + userData.playerID);
                 Intent toGame = new Intent(ownerContext, GameActivity.class);
                 Log.i(TAG, "RECREATING PLAYER LIST SENT FROM HOST WITH SIZE: " + content.length);
                 ArrayList<String> players = new ArrayList<String>();
@@ -362,7 +371,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
                 }
                 Log.i(TAG, "RECREATED PLAYER LIST SENT FROM HOST WITH SIZE: " + players.size());
                 toGame.putStringArrayListExtra("PlayerArray", players);
-                Log.i(TAG, "USER ID:" + userData.playerID);
+
                 toGame.putExtra("me", UserData.toString(userData));
                 toGame.putExtra("host", isHost);
                 ownerContext.startActivity(toGame);
@@ -390,11 +399,9 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
                     cancel();
                     new MessageToast(ownerContext, "You were kicked by the host.").show();
                 }
+                break;
         }
     }
-
-
-
 
     public void createFinalPlayerList(){
         finalUserList.add(userData);

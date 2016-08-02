@@ -14,7 +14,7 @@
     <string name="cancel">CANCEL</string>
     <string name="ok">OK</string>
     <string name="back">BACK</string>
-    <string name="winner">WINNER</string>
+    <string name="winner">WINNER!</string>
     <string name="p1">P1</string>
     <string name="p2">P2</string>
     <string name="p3">P3</string>
@@ -67,6 +67,8 @@
     <string name="wouldchuck_wyr">WOULD YOU RATHER...</string>
     <string name="wouldchuck_or">OR</string>
     <string name="wouldchuck_directions">Enter 2 things you\'d see on a \'Would You Rather\' question:</string>
+    <string name="wouldchuck_results">RESULTS</string>
+    <string name="wouldchuck_leaderboard">LEADERBOARD</string>
     
     <!--Text for InfoActivity-->
     <string name="info_wouldchuck">Welcome to Wouldchuck - the silliest game of \"Would You Rather\" on this side of the Universe!\n\n

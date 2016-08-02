@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/p8_col"
+    android:gravity="center_horizontal"
+    android:padding="@dimen/padding_medium">
+
+    <TextView
+        android:id="@+id/wc_winner_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:lines="1"
+        android:text="@string/na_name"
+        android:textColor="@color/main_black"
+        android:textSize="@dimen/font_xlarge"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/wc_winner_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/wc_winner_name"
+        android:layout_centerHorizontal="true"
+        android:text="@string/winner"
+        android:textColor="@color/main_black"
+        android:textSize="@dimen/font_xxlarge"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/wc_winner_title">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/star_512"
+            android:tint="@color/main_black" />
+
+        <TextView
+            android:id="@+id/wc_winner_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/padding_medium"
+            android:layout_centerInParent="true"
+            android:text="@string/na_score"
+            android:textColor="@color/place_gold"
+            android:textSize="@dimen/font_xxlarge"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+</RelativeLayout>

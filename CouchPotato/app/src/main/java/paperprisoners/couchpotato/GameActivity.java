@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 /**
- * @Auther Ian Donovan
+ * @Author Ian Donovan
  */
 public class GameActivity extends Activity implements View.OnClickListener {
 
@@ -39,7 +40,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
     private TextView name;
     private ImageView rank;
     private Button menu;
-    private RelativeLayout container;
+    private FrameLayout container;
     private Fragment screen;
     private FragmentManager manager;
 
@@ -57,7 +58,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
         name = (TextView) findViewById(R.id.game_name);
         rank = (ImageView) findViewById(R.id.game_rank);
         menu = (Button) findViewById(R.id.game_menu);
-        container = (RelativeLayout) findViewById(R.id.game_container);
+        container = (FrameLayout) findViewById(R.id.game_container);
         //Sets fonts
         name.setTypeface(TypefaceManager.get("Oswald-Bold"));
         //Adds listeners

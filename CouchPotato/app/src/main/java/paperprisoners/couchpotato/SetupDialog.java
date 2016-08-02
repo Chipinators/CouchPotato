@@ -163,7 +163,6 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     private void setupClient() {
         //BLUETOOTH
         BluetoothService.getmAdapter().setName(userData.getUsername());
-        BluetoothService.getmAdapter().setName(userData.getUsername());
         BluetoothService.stopSearching(ownerContext, bCReciever);
         BluetoothService.startSearching(ownerContext, bCReciever);
         //END BLUETOOTH
@@ -344,7 +343,6 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     @Override
     protected void onStop() {
         super.onStop();
-        BluetoothService.getmAdapter().setName(BluetoothService.getDefaultDeviceName());
         //ownerContext.unregisterReceiver(bCReciever);
     }
 

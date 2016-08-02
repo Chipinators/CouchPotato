@@ -255,13 +255,13 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
     @Override
     protected void onStop() {
         super.onStop();
-        BluetoothService.getmAdapter().setName(BluetoothService.getDefaultDeviceName());
         BluetoothService.listeners.remove(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        BluetoothService.getmAdapter().setName(BluetoothService.getDefaultDeviceName());
         BluetoothService.getmAdapter().cancelDiscovery();
         if (wcLogo != null)
             wcLogo.recycle();

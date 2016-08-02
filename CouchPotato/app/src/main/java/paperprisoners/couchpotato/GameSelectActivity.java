@@ -12,10 +12,12 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -158,15 +160,35 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
                     Log.i(TAG, "REQUEST_COARSE_LOCATION PERMISSION WAS GRANTED, GOING TO SETUP DIALOG");
                     setup = new SetupDialog(this, false, userData);
                     setup.show();
-                } else {
-                    Log.i(TAG, "REQUEST_COARSE_LOCATION PERMISSION WAS NOT GRANTED, RETURNING TO GAME SELECT ACTIVITY");
-                    new MessageToast(this, "You must grant permissions to use Bluetooth!").show();
+                }
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED) {
+
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                        new MessageToast(this, "You MUST grant permissions to use Couch Potato!").show();
+                        goToSettings();
+                        break;
+                    }
+                    else {
+                        Log.i(TAG, "REQUEST_COARSE_LOCATION PERMISSION WAS NOT GRANTED, RETURNING TO GAME SELECT ACTIVITY");
+                        new MessageToast(this, "You must grant permissions to use Bluetooth!").show();
+                    }
                 }
                 break;
             }
             // other 'case' lines to check for other
             // permissions this app might request
         }
+    }
+
+    private void goToSettings() {
+        final Intent i = new Intent();
+        i.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        i.addCategory(Intent.CATEGORY_DEFAULT);
+        i.setData(Uri.parse("package:" + getPackageName()));
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        this.startActivity(i);
     }
 
     @Override

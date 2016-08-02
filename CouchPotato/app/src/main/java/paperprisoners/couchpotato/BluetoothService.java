@@ -40,12 +40,11 @@ public class BluetoothService {
     private static AcceptThread mAcceptThread;
     private static ConnectThread mConnectThread;
     private static ConnectedThread mConnectedThread;
-    private static HashMap<Integer, ConnectedThread> mConnectedDevices = new HashMap<>();
+    private static HashMap<String, ConnectedThread> mConnectedDevices = new HashMap<>();
 
     public static HashSet<MessageListener> listeners = new HashSet<>();
     private static int maxPlayers = 7;
     public static String DELIM = "\\|/";
-    private static int tracker = 1;
 
 
     public static Handler mHandler = new Handler() {
@@ -122,8 +121,7 @@ public class BluetoothService {
         } else {
             Log.d(TAG, "No Duplicate Found, Adding Connection To List");
             */
-            mConnectedDevices.put(tracker, mConnectedThread);
-
+            mConnectedDevices.put(device.getAddress(), mConnectedThread);
         //}
         Log.d(TAG, "Number of Devices: " + mConnectedDevices.size());
         mConnectedThread.start();
@@ -158,7 +156,7 @@ public class BluetoothService {
     public static void writeToClients(int type, String[] content) {
         String output;
         Log.i(TAG, "NUMBER OF CONNECTED DEVICES: " + mConnectedDevices.size());
-        for(Map.Entry<Integer, ConnectedThread> device : mConnectedDevices.entrySet()) {
+        for(Map.Entry<String, ConnectedThread> device : mConnectedDevices.entrySet()) {
             try {
                 output = "0" + DELIM + type + DELIM + TextUtils.join(DELIM, content);
                 Log.i(TAG, "CREATING WRITE MESSAGE - " + output);
@@ -170,9 +168,15 @@ public class BluetoothService {
         }
     }
 
-    public static void write(int playerID,String player, int type, String[] content){
-        String output = player + DELIM + type + DELIM + TextUtils.join(DELIM, content);
-        mConnectedDevices.get(playerID-1).write(output.getBytes());
+    public static void write(String macAddress, String player, int type, String[] content){
+        try {
+            Log.i(TAG, "NUMBER OF CONNECTED DEVICES: " + mConnectedDevices.size());
+            String output = player + DELIM + type + DELIM + TextUtils.join(DELIM, content);
+            Log.i(TAG, "SINGLE WRITE CALLED: " + output);
+            mConnectedDevices.get(macAddress).write(output.getBytes());
+        } catch (Exception e){
+            Log.e(TAG, "COULD NOT WRITE TO CLIENT WITH MAC ADDRESS: " + macAddress);
+        }
     }
 
     private static class AcceptThread extends Thread {
@@ -383,7 +387,6 @@ public class BluetoothService {
 
     public static void stopSearching(Context context, BroadcastReceiver bcReceiver){
         mAdapter.cancelDiscovery();
-        mAdapter.setName(getDefaultDeviceName());
         Log.i(TAG, "SEARCHING FOR DEVICES ENDED");
     }
 

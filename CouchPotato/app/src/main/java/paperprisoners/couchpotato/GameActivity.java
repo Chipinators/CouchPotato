@@ -4,13 +4,16 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -20,7 +23,7 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 /**
- * @Auther Ian Donovan
+ * @Author Ian Donovan
  */
 public class GameActivity extends Activity implements View.OnClickListener {
 
@@ -37,7 +40,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
     private TextView name;
     private ImageView rank;
     private Button menu;
-    private RelativeLayout container;
+    private FrameLayout container;
     private Fragment screen;
     private FragmentManager manager;
 
@@ -55,32 +58,38 @@ public class GameActivity extends Activity implements View.OnClickListener {
         name = (TextView) findViewById(R.id.game_name);
         rank = (ImageView) findViewById(R.id.game_rank);
         menu = (Button) findViewById(R.id.game_menu);
-        container = (RelativeLayout) findViewById(R.id.game_container);
+        container = (FrameLayout) findViewById(R.id.game_container);
         //Sets fonts
         name.setTypeface(TypefaceManager.get("Oswald-Bold"));
         //Adds listeners
-        root.setOnClickListener(new KeyboardHidingListener(this,root));
+        root.setOnClickListener(new KeyboardHidingListener(this, root));
         menu.setOnClickListener(this);
         //Sets top bar content
         username = this.getIntent().getStringExtra("username");
         if (username != null)
             name.setText(username);
-        //Other junk
-
+        //Putting together player data
         Bundle extras = getIntent().getExtras();
-
         ArrayList<String> tmp = extras.getStringArrayList("PlayerArray");
         players = new ArrayList<UserData>();
-
-        for(int i = 0; i < tmp.size(); i++){
+        for (int i = 0; i < tmp.size(); i++) {
             String[] split = TextUtils.split(tmp.get(i), Pattern.quote(GameActivity.DELIM2));
             players.add(new UserData(split));
         }
-        Log.i(TAG,"FINISHED GETTING PLAYER ARRAY DATA FROM BUNDLE");
-        me = new UserData( TextUtils.split(extras.getString("me"), Pattern.quote(GameActivity.DELIM2) ));
+        Log.i(TAG, "FINISHED GETTING PLAYER ARRAY DATA FROM BUNDLE");
+        me = new UserData(TextUtils.split(extras.getString("me"), Pattern.quote(GameActivity.DELIM2)));
         host = extras.getBoolean("host");
-        Log.i(TAG,"FINISHED GETTING USER DATA FROM BUNDLE");
-        Log.i(TAG, "PLAYER DATA ----- " + TextUtils.join(",",players));
+        Log.i(TAG, "FINISHED GETTING USER DATA FROM BUNDLE");
+        Log.i(TAG, "PLAYER DATA ----- " + TextUtils.join(",", players));
+        //Setting player-specific stuff
+        int playerNumber = me.getPlayerID() + 1;
+        setColor(playerNumber);
+        if (playerNumber == 1) {
+            ColorStateList gold = new ColorStateList(new int[1][0], new int[]{ContextCompat.getColor(this, R.color.place_gold)});
+            rank.setImageResource(R.drawable.ic_star_white_48dp);
+            rank.setImageTintList(gold);
+        }
+        //Creates fragment and sets it
         manager = getFragmentManager();
         Fragment wcFrag = new WouldChuckFragment();
         setFragment(wcFrag);
@@ -96,6 +105,13 @@ public class GameActivity extends Activity implements View.OnClickListener {
         swapper.commit();
     }
 
+    public void setColor(int playerNumber) {
+        try {
+            int color = getResources().getIdentifier("p" + playerNumber + "_col", "color", this.getPackageName());
+            root.setBackgroundColor(ContextCompat.getColor(this, color));
+        } catch (Exception e) {
+        }
+    }
 
     //INHERITED METHODS BELOW
 
@@ -113,10 +129,12 @@ public class GameActivity extends Activity implements View.OnClickListener {
     public ArrayList<UserData> getPlayers() {
         return players;
     }
-    public UserData getMe(){
+
+    public UserData getMe() {
         return me;
     }
-    public boolean getHost(){
-        return  host;
+
+    public boolean getHost() {
+        return host;
     }
 }

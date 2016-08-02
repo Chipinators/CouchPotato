@@ -40,6 +40,7 @@
     <string name="info_bar_title">GAME INFO</string>
     <string name="select_host">HOST A GAME</string>
     <string name="select_join">JOIN A GAME</string>
+    <string name="select_info">HELP</string>
     <string name="setup_host1">Please wait for people to join your room...</string>
     <string name="setup_host2">Found enough players! Hit START when ready.</string>
     <string name="setup_host3">You\'ve got a full house! Tap START to begin.</string>
@@ -66,5 +67,13 @@
     <string name="wouldchuck_wyr">WOULD YOU RATHER...</string>
     <string name="wouldchuck_or">OR</string>
     <string name="wouldchuck_directions">Enter 2 things you\'d see on a \'Would You Rather\' question:</string>
+    
+    <!--Text for InfoActivity-->
+    <string name="info_wouldchuck">Welcome to Wouldchuck - the silliest game of \"Would You Rather\" on this side of the Universe!\n\n
+The game is broken into three rounds, and each starts by asking you for two things you might see on a \"Would You Rather\" question. It can be anything from \"Be able to fly\" to \"Eat a bucket of squirming worms\" - keep in mind that they DON\'T need to be related to one another.\n\n
+Once the time is up or everyone\'s submitted, that\'s when the real fun begins! We scramble up everyone\'s submissions, then remix them into brand new \"Would You Rather\" questions for everyone to vote on.\n\n
+Throw down your vote honestly, or spend the rest of the time trying to influence your friend\'s votes, because at the end of the round the person with the LEAST votes get\'s the lions share of the available points. The bigger the difference in points, the more points you can win.\n\n
+Finally, after all submissions have been used, the round ends, the ante is increased, and it starts all over again!\n\n
+Think you can you out-bizarre your friends? Now you can prove it!</string>
 
 </resources>

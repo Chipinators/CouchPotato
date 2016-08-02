@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ public class PagedFragment extends Fragment implements ViewPager.OnPageChangeLis
     private PagedGameAdapter adapter;
     private RelativeLayout wrapper;
     private LinearLayout indicator;
+    private Bitmap img;
     private ArrayList<ImageView> dots = new ArrayList<>(3);
     private ViewPager.OnPageChangeListener listener;
 
@@ -52,6 +54,9 @@ public class PagedFragment extends Fragment implements ViewPager.OnPageChangeLis
         //Applies important stuff
         pager.addOnPageChangeListener(this);
         pager.setAdapter(adapter);
+        //Reinstantiates images
+        if (img == null)
+            img = BitmapFactory.decodeResource(getResources(), R.drawable.ic_pagination_white_48dp);
         return v;
     }
 
@@ -59,6 +64,7 @@ public class PagedFragment extends Fragment implements ViewPager.OnPageChangeLis
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         if (listener != null)
             listener.onPageScrolled(position, positionOffset, positionOffsetPixels);
+        Log.v("PagedFragment", "Scrolled event! position: " + position + "\toffset: " + positionOffset + "\tpixels: " + positionOffsetPixels);
     }
 
     @Override
@@ -73,6 +79,14 @@ public class PagedFragment extends Fragment implements ViewPager.OnPageChangeLis
     public void onPageScrollStateChanged(int state) {
         if (listener != null)
             listener.onPageScrollStateChanged(state);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (img != null)
+            img.recycle();
+        img = null;
     }
 
 
@@ -90,7 +104,7 @@ public class PagedFragment extends Fragment implements ViewPager.OnPageChangeLis
         removeIndicator(index);
     }
 
-    public void setListener(ViewPager.OnPageChangeListener listener){
+    public void setListener(ViewPager.OnPageChangeListener listener) {
         this.listener = listener;
     }
 
@@ -101,9 +115,10 @@ public class PagedFragment extends Fragment implements ViewPager.OnPageChangeLis
         dot.setMaxWidth(size);
         dot.setMaxHeight(size);
         dot.setLayoutParams(new ViewGroup.LayoutParams(size, size));
-        Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.ic_pagination_white_48dp);
+        if (img != null)
+            img = BitmapFactory.decodeResource(getResources(), R.drawable.ic_pagination_white_48dp);
         dot.setImageBitmap(img);
-        dot.setColorFilter(ContextCompat.getColor(this.getActivity().getBaseContext(),R.color.main_black));
+        dot.setColorFilter(ContextCompat.getColor(this.getActivity().getBaseContext(), R.color.main_black));
         dots.add(dot);
         resetIndicator();
     }
@@ -115,6 +130,10 @@ public class PagedFragment extends Fragment implements ViewPager.OnPageChangeLis
                 selected = dots.size() - 1;
             gotoPage(selected, false);
             resetIndicator();
+        }
+        if (indicator.getChildCount() <= 0) {
+            img.recycle();
+            img = null;
         }
     }
 

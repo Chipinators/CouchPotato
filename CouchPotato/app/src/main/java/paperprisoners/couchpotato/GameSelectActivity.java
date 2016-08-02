@@ -256,6 +256,7 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
     protected void onStop() {
         super.onStop();
         BluetoothService.getmAdapter().setName(BluetoothService.getDefaultDeviceName());
+        BluetoothService.listeners.remove(this);
     }
 
     @Override

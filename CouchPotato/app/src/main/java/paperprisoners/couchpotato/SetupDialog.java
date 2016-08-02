@@ -163,6 +163,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     private void setupClient() {
         //BLUETOOTH
         BluetoothService.getmAdapter().setName(userData.getUsername());
+        BluetoothService.getmAdapter().setName(userData.getUsername());
         BluetoothService.stopSearching(ownerContext, bCReciever);
         BluetoothService.startSearching(ownerContext, bCReciever);
         //END BLUETOOTH
@@ -343,6 +344,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     @Override
     protected void onStop() {
         super.onStop();
+        BluetoothService.getmAdapter().setName(BluetoothService.getDefaultDeviceName());
         //ownerContext.unregisterReceiver(bCReciever);
     }
 
@@ -382,8 +384,8 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
                 break;
             case Constants.USER_KICKED:
                 Log.i(TAG, "USER KICK RECEIVED: User Address - " + content[0]);
-                Log.i(TAG, "User Address: " + userData.getAddress());
-                if(content[0].equals(userData.getAddress())) {
+                Log.i(TAG, "User Address: " + BluetoothService.getmAdapter().getAddress());
+                if(content[0].equals(userData.address)) {
                     BluetoothService.stop();
                     adapter.clear();
                     userList.invalidate();

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -58,6 +59,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
 
         Log.i(TAG, "ME ID: " + me.getPlayerID());
 
+        //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
         //region Start Thread
         start = new Thread() {
             @Override
@@ -65,22 +67,10 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 Log.i(TAG, "IN THREAD");
                 try {
                     stage = 0;
-                    //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
                     gameRound = 1; //initalize the starting round
                     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            getActivity().setContentView(R.layout.wouldchuck_round);
-                            int dRID = getActivity().getResources().getIdentifier("@drawable/round" + gameRound + "_512", "drawable", "paperprisoners.couchpotato");
-                            ImageView rv = (ImageView) getActivity().findViewById(R.id.wc_round_img);
-                            Log.i(TAG, "DRID: " + dRID);
-                            rv.setImageResource(dRID);
-                        }
-                    });
-
-                    //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
                     while (gameRound <= 3) { //loop through the rounds!
+                        showSlashScreen();
 
                         responsesLeft = players.size() * 2; //number of responses
                         stage = 1;
@@ -104,7 +94,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                             votes2 = 0;
                             vtePlayer1 = -1;
                             vtePlayer2 = -1;
-
+                            rathers = null;
                             responsesLeft = responsesLeft - 2; //update responses to pars
                         }
                         showRoundResults();//show the final winner screen
@@ -125,19 +115,69 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
 
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     //region Game Code
-    public void usersEnterValues() {
-        try {
-            Thread.sleep(2500);
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Log.i(TAG, "HERE!");
-                    getActivity().setContentView(R.layout.wouldchuck_input);
-                }
-            });
-        } catch (Exception e) {
-            Log.e(TAG, "ERROR WITH TIMES");
+    public void showSlashScreen() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().setContentView(R.layout.wouldchuck_round);
+                int dRID = getActivity().getResources().getIdentifier("@drawable/round" + gameRound + "_512", "drawable", "paperprisoners.couchpotato");
+                ImageView rv = (ImageView) getActivity().findViewById(R.id.wc_round_img);
+                Log.i(TAG, "DRID: " + dRID);
+                rv.setImageResource(dRID);
+            }
+        });
+
+        Handler h = new Handler(Looper.getMainLooper());
+        h.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                cont = true;
+            }
+        }, 2500);
+
+        while (true) {
+            if (cont) {
+                Log.i(TAG, "PAST DELAY");
+                cont = false;
+                break;
+            }
         }
+    }//done
+
+    public void usersEnterValues() {
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.i(TAG, "HERE!");
+                getActivity().setContentView(R.layout.wouldchuck_input);
+            }
+        });
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                final Handler timer = new Handler();
+                Runnable clock = new Runnable() {
+                    TextView timerText = (TextView) getActivity().findViewById(R.id.wc_input_timer);
+                    int time = 30;
+
+                    @Override
+                    public void run() {
+                        if (time > 0) {
+                            timerText.setText("" + time);
+                            timerText.invalidate();
+                            time--;
+                            timer.postDelayed(this, 1000);
+                        } else {
+
+                        }
+                    }
+                };
+                timer.post(clock);
+            }
+        });
+
         Handler handler2 = new Handler(Looper.getMainLooper());
         Runnable r2 = new Runnable() {
             @Override
@@ -284,6 +324,30 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             }
         }, 15000);
 
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                final Handler timer = new Handler();
+                Runnable clock = new Runnable() {
+                    TextView timerText = (TextView) getActivity().findViewById(R.id.wc_choice_timer);
+                    int time = 15;
+
+                    @Override
+                    public void run() {
+                        if (time > 0) {
+                            timerText.setText("" + time);
+                            timerText.invalidate();
+                            time--;
+                            timer.postDelayed(this, 1000);
+                        } else {
+
+                        }
+                    }
+                };
+                timer.post(clock);
+            }
+        });
+
         while (true) {
             if (cont) {
                 Log.i(TAG, "PAST DELAY");
@@ -361,7 +425,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             public void run() {
                 cont = true;
             }
-        }, 10000);
+        }, 7500);
         Log.i(TAG, "Delay");
         while (true) {
             if (cont) {
@@ -387,9 +451,10 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                     ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_name" + (i + 1), "id", "paperprisoners.couchpotato"))).setText(players.get(order[i][0]).username); //SEARCH STRING TO RESOURCE ID
                     ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_score" + (i + 1), "id", "paperprisoners.couchpotato"))).setText("" + order[i][1]);
                 }
-                for(int i = order.length; i < 8; i ++){
-                    ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_name" + (i + 1), "id", "paperprisoners.couchpotato"))).setText(""); //SEARCH STRING TO RESOURCE ID
-                    ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_score" + (i + 1), "id", "paperprisoners.couchpotato"))).setText("");
+
+                LinearLayout parent = (LinearLayout) getActivity().findViewById(R.id.wc_leaderboard_parentLayout);
+                for (int i = order.length; i < 8; i++) {
+                    parent.removeView(getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_layout" + (i + 1), "id", "paperprisoners.couchpotato")));
                 }
             }
         });
@@ -401,7 +466,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             public void run() {
                 cont = true;
             }
-        }, 15000);
+        }, 7500);
         Log.i(TAG, "Delay");
         while (true) {
             if (cont) {
@@ -474,10 +539,9 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             case Constants.WC_VOTE: //TODO: FIX?
                 if (Boolean.valueOf((String) content[0]) == true) {
                     votes1++;
-                } else if(Boolean.valueOf((String) content[1]) == true){
+                } else if (Boolean.valueOf((String) content[1]) == true) {
                     votes2++;
-                }
-                else{
+                } else {
                     //no vote
                 }
                 Log.i(TAG, "VOTE COUNT: v1 - " + votes1 + ", v2 - " + votes2);
@@ -539,6 +603,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                     updateResponses(randPlayer1, randQ1);
                     updateResponses(randPlayer2, randQ2);
 
+                    Log.i(TAG, "RATHER'S DEBUG: r1: " + res1 + "\tr2: " + res2);
                     return new String[]{res1, res2, "" + randPlayer1, "" + randPlayer2};
                 } else {
                     //loop again
@@ -554,6 +619,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         if (responses[index][1].equals(""))
             i--;
 
+        Log.i(TAG, "RATHER'S DEBUG: remaing num: " + i);
         return i;
     } //DONE
 
@@ -565,6 +631,8 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             responses[index][1] = "";
             responses[index][0] = tmp;
         }
+
+        Log.i(TAG, "RATHER'S DEBUG: (" + index +") REMAINING " + responses[index][0] + ", " + responses[index][1]);
     } //DONE
 
     public void sendUserVotes(boolean[] vteResults) {

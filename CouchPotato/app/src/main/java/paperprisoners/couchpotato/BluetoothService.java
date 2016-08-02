@@ -168,9 +168,15 @@ public class BluetoothService {
         }
     }
 
-    public static void write(int playerID,String player, int type, String[] content){
-        String output = player + DELIM + type + DELIM + TextUtils.join(DELIM, content);
-        mConnectedDevices.get(playerID-1).write(output.getBytes());
+    public static void write(String macAddress, String player, int type, String[] content){
+        try {
+            Log.i(TAG, "NUMBER OF CONNECTED DEVICES: " + mConnectedDevices.size());
+            String output = player + DELIM + type + DELIM + TextUtils.join(DELIM, content);
+            Log.i(TAG, "SINGLE WRITE CALLED: " + output);
+            mConnectedDevices.get(macAddress).write(output.getBytes());
+        } catch (Exception e){
+            Log.e(TAG, "COULD NOT WRITE TO CLIENT WITH MAC ADDRESS: " + macAddress);
+        }
     }
 
     private static class AcceptThread extends Thread {

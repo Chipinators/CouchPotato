@@ -27,9 +27,10 @@ public interface Constants {
     public static final int USER_DISCONNECTED = 7;      //Not sure what used for yet
     public static final int USER_KICKED = 8;            //Host to Client - Tells the client it was kicked
     public static final int USER_ID = 9;                //Server to Client - sends client their user ID
-    public static final int START = 10;                 //Server to Client - Tells Clients to start the game
-    public static final int RESTART = 11;               //Server to Client - Restart the game
-    public static final int EXIT = 12;                  //Server to Client - Tells Client to Exit the current game
+    public static final int MAC_ADDRESS = 10;           //Server to Client - sends MAC Address to client when it connects
+    public static final int START = 11;                 //Server to Client - Tells Clients to start the game
+    public static final int RESTART = 12;               //Server to Client - Restart the game
+    public static final int EXIT = 13;                  //Server to Client - Tells Client to Exit the current game
 
     //REQUIRE TYPE - Used When A REQ Type Call Is Made - Stored on the content part of the Write call
     public static final int USER = 0;

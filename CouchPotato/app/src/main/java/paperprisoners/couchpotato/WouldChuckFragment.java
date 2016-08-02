@@ -49,24 +49,25 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         me = ((GameActivity) getActivity()).getMe();
         host = ((GameActivity) getActivity()).getHost();
 
-        Log.i(TAG, "PLAYERS:" + players.size());
+        if(Constants.debug){Log.i(TAG, "PLAYERS:" + players.size());}
+
         for (int i = 0; i < players.size(); i++) {
-            Log.i(TAG, players.get(i).username + " - " + me.username + ": " + players.get(i).username.equals(me.username));
+            if(Constants.debug){Log.i(TAG, players.get(i).username + " - " + me.username + ": " + players.get(i).username.equals(me.username));}
             if (players.get(i).username.equals(me.username)) {
-                Log.i(TAG, "I AM HERE");
+                if(Constants.debug){Log.i(TAG, "I AM HERE");}
                 me.setPlayerID(players.get(i).playerID);
                 break;
             }
         }
 
-        Log.i(TAG, "ME ID: " + me.getPlayerID());
+        if(Constants.debug){Log.i(TAG, "ME ID: " + me.getPlayerID());}
 
         //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
         //region Start Thread
         start = new Thread() {
             @Override
             public void run() {
-                Log.i(TAG, "IN THREAD");
+                if(Constants.debug){Log.i(TAG, "IN THREAD");}
                 try {
                     stage = 0;
                     gameRound = 1; //initalize the starting round
@@ -111,9 +112,9 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 }
             }
         };
-        Log.i(TAG, "THREAD START");
+        if(Constants.debug){Log.i(TAG, "THREAD START");}
         start.start(); //Run the game thread!
-        Log.i(TAG, "THREAD END");
+        if(Constants.debug){Log.i(TAG, "THREAD END");}
         //endregion
     } //DONE
 
@@ -126,7 +127,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 getActivity().setContentView(R.layout.wouldchuck_round);
                 int dRID = getActivity().getResources().getIdentifier("@drawable/round" + gameRound + "_512", "drawable", "paperprisoners.couchpotato");
                 ImageView rv = (ImageView) getActivity().findViewById(R.id.wc_round_img);
-                Log.i(TAG, "DRID: " + dRID);
+                if(Constants.debug){Log.i(TAG, "DRID: " + dRID);}
                 rv.setImageResource(dRID);
             }
         });
@@ -141,7 +142,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
 
         while (true) {
             if (cont) {
-                Log.i(TAG, "PAST DELAY");
+                if(Constants.debug){Log.i(TAG, "PAST DELAY");}
                 cont = false;
                 break;
             }
@@ -160,7 +161,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Log.i(TAG, "HERE!");
+                if(Constants.debug){Log.i(TAG, "HERE!");}
                 getActivity().setContentView(R.layout.wouldchuck_input);
             }
         });
@@ -207,7 +208,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             @Override
             public void run() {
                 if (!buttonPressed) {
-                    Log.i(TAG, "Start Second Runnable (Pre data from users)");
+                    if(Constants.debug){Log.i(TAG, "Start Second Runnable (Pre data from users)");}
                     input1 = ((TextView) getActivity().findViewById(R.id.wc_input_1)).getText().toString();//store rather 1
                     input2 = ((TextView) getActivity().findViewById(R.id.wc_input_2)).getText().toString();//store rather 2
                     ((TextView) getActivity().findViewById(R.id.wc_input_1)).setText("");//clear
@@ -218,7 +219,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 }
                 getDataFromUsers(input1, input2);//parse and store the data
 
-                Log.i(TAG, "End Second Runnable (Post data from users)");
+                if(Constants.debug){Log.i(TAG, "End Second Runnable (Post data from users)");}
             }
         };
         handler2.postDelayed(r2, time * 1000);
@@ -226,7 +227,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
     } //DONE
 
     public void getDataFromUsers(String input1, String input2) {
-        Log.i(TAG, "getDataFromUsers called");
+        if(Constants.debug){Log.i(TAG, "getDataFromUsers called");}
         responses = new String[players.size()][2]; //here so if players drop out we dont expect stuff from them. also clears array
         Arrays.fill(responses, new String[]{"", ""});
 
@@ -238,18 +239,18 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         }
 
         if (host) {
-            Log.i(TAG, "Set host's responses");
+            if(Constants.debug){Log.i(TAG, "Set host's responses");}
             responses[0] = new String[]{input1, input2};
 
-            Log.i(TAG, "host's responses written");
+            if(Constants.debug){Log.i(TAG, "host's responses written");}
             stage = 2;
-            Log.i(TAG, "In host - HOST");
+            if(Constants.debug){Log.i(TAG, "In host - HOST");}
             cont = false;
 
         } else {
-            Log.i(TAG, "Not in host - CLIENT");
+            if(Constants.debug){Log.i(TAG, "Not in host - CLIENT");}
             BluetoothService.writeToServer("" + me.playerID, Constants.WC_SUBMISSION, new String[]{input1, input2});
-            Log.i(TAG, me.playerID + ": WROTE TO HOST: " + input1 + ", " + input2);
+            if(Constants.debug){Log.i(TAG, me.playerID + ": WROTE TO HOST: " + input1 + ", " + input2);}
             stage = 2;
             cont = false;
         }
@@ -269,11 +270,11 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         });
 
         if (host) {
-            Log.i(TAG, "LENGTH HOST: " + responses[0][0]);
-            Log.i(TAG, "LENGTH CLIENT: " + responses[1][0]);
+            if(Constants.debug){Log.i(TAG, "LENGTH HOST: " + responses[0][0]);}
+            if(Constants.debug){Log.i(TAG, "LENGTH CLIENT: " + responses[1][0]);}
 
             submissions = selectRathers(); //generate submissions
-            Log.i(TAG, "RATHERS: " + submissions[0] + " | " + submissions[1] + " | " + submissions[2] + " | " + submissions[3]);
+            if(Constants.debug){Log.i(TAG, "RATHERS: " + submissions[0] + " | " + submissions[1] + " | " + submissions[2] + " | " + submissions[3]);}
 
             BluetoothService.writeToClients(Constants.WC_QUESTION, submissions);//send the data over to clients
 
@@ -284,7 +285,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             while (vtePlayer1 == -1 || vtePlayer2 == -1) {
             }
         }
-        Log.i(TAG, "PAST THE WAITING");
+        if(Constants.debug){Log.i(TAG, "PAST THE WAITING");}
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -297,7 +298,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 ch2.invalidate();
             }
         });
-        Log.i(TAG, "PAST THE UI THREAD");
+        if(Constants.debug){Log.i(TAG, "PAST THE UI THREAD");}
         input = new boolean[2];
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -312,7 +313,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                             Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
                             Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_2);
 
-                            Log.i(TAG, "VOTED FOR 1st Element");
+                            if(Constants.debug){Log.i(TAG, "VOTED FOR 1st Element");}
                             input[0] = true;
                             input[1] = false;
                             ch2.setEnabled(true);
@@ -328,7 +329,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                             Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
                             Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_2);
 
-                            Log.i(TAG, "VOTED FOR 2nd Element");
+                            if(Constants.debug){Log.i(TAG, "VOTED FOR 2nd Element");}
                             input[1] = true;
                             input[0] = false;
                             ch2.setEnabled(false);
@@ -349,7 +350,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         });
 
         cont = false;
-        Log.i(TAG, "DELAY");
+        if(Constants.debug){Log.i(TAG, "DELAY");}
         Handler h = new Handler(Looper.getMainLooper());
         h.postDelayed(new Runnable() {
             @Override
@@ -386,7 +387,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
 
         while (true) {
             if (cont) {
-                Log.i(TAG, "PAST DELAY");
+                if(Constants.debug){Log.i(TAG, "PAST DELAY");}
                 cont = false;
                 break;
             }
@@ -402,8 +403,11 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         stage = 3;
     } //DONE
 
+
+
+
     public void showVotingResults() {
-        Log.i(TAG, "Show Results");
+        if(Constants.debug){Log.i(TAG, "Show Results");}
         loading("Gathering Votes...");
         cont = false;
 
@@ -414,7 +418,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 }
             }
             BluetoothService.writeToClients(Constants.WC_RESULTS, new String[]{"" + vtePlayer1, "" + vtePlayer2, "" + votes1, "" + votes2});
-            Log.i(TAG, "Sent Results to Clients: id" + vtePlayer1 + " - num votes " + votes1 + ", id" + vtePlayer2 + " - num votes " + votes2);
+            if(Constants.debug){Log.i(TAG, "Sent Results to Clients: id" + vtePlayer1 + " - num votes " + votes1 + ", id" + vtePlayer2 + " - num votes " + votes2);}
             cont = true;
         } else {
 
@@ -433,7 +437,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Log.i(TAG, "Viewing Results");
+                        if(Constants.debug){Log.i(TAG, "Viewing Results");}
                         getActivity().setContentView(R.layout.wouldchuck_results);
                         ((TextView) getActivity().findViewById(R.id.wc_results_content1)).setText(submissions[0]);
                         getActivity().findViewById(R.id.wc_results_content1).invalidate();
@@ -492,28 +496,28 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 cont = true;
             }
         }, 7500);
-        Log.i(TAG, "Delay");
+        if(Constants.debug){Log.i(TAG, "Delay");}
         while (true) {
             if (cont) {
                 cont = false;
                 break;
             }
         }
-        Log.i(TAG, "Done Delay");
+        if(Constants.debug){Log.i(TAG, "Done Delay");}
         savePlayerPoints();
     }//TODO: FIX?
 
     public void showRoundResults() {
-        Log.i(TAG, "Round Results");
+        if(Constants.debug){Log.i(TAG, "Round Results");}
 
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Log.i(TAG, "Set order on leader board");
+                if(Constants.debug){Log.i(TAG, "Set order on leader board");}
                 int[][] order = playerOrder();
                 getActivity().setContentView(R.layout.wouldchuck_leaderboard);
                 for (int i = 0; i < order.length; i++) {
-                    Log.i(TAG, "ORDER: ID - " + order[i][0] + ", POINTS - " + order[i][1]);
+                    if(Constants.debug){Log.i(TAG, "ORDER: ID - " + order[i][0] + ", POINTS - " + order[i][1]);}
                     ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_name" + (i + 1), "id", "paperprisoners.couchpotato"))).setText(players.get(order[i][0]).username); //SEARCH STRING TO RESOURCE ID
                     ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_score" + (i + 1), "id", "paperprisoners.couchpotato"))).setText("" + order[i][1]);
                 }
@@ -533,18 +537,18 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 cont = true;
             }
         }, 7500);
-        Log.i(TAG, "Delay");
+        if(Constants.debug){Log.i(TAG, "Delay");}
         while (true) {
             if (cont) {
                 cont = false;
                 break;
             }
         }
-        Log.i(TAG, "Done Delay");
+        if(Constants.debug){Log.i(TAG, "Done Delay");}
     } //DONE
 
     public int[][] playerOrder() {
-        Log.i(TAG, "Getting Player Order");
+        if(Constants.debug){Log.i(TAG, "Getting Player Order");}
         int[][] order = new int[responses.length][2];
 
         for (int i = 0; i < players.size(); i++) {
@@ -571,7 +575,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
     }//DONE
 
     public void gameOver() {
-        Log.i(TAG, "GAME OVER");
+        if(Constants.debug){Log.i(TAG, "GAME OVER");}
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -586,13 +590,13 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
     //*********************************************************************************
     @Override
     public void onReceiveMessage(int player, int messageType, Object[] content) {
-        Log.i(TAG, "RECIEVED MESSAGE " + messageType);
+        if(Constants.debug){Log.i(TAG, "RECIEVED MESSAGE " + messageType);}
         switch (messageType) {
             case Constants.NEXT:
                 cont = true;
                 break;
             case Constants.WC_SUBMISSION: //DONE
-                Log.i(TAG, "SUBMISSION");
+                if(Constants.debug){Log.i(TAG, "SUBMISSION");}
                 int index = findPlayerIndex(player);
                 responses[index] = new String[]{(String) content[0], (String) content[1]};
                 resultsRecieved ++;
@@ -601,7 +605,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 vtePlayer1 = Integer.parseInt((String) content[2]);//store the owner ints
                 vtePlayer2 = Integer.parseInt((String) content[3]);//store the owner ints
                 submissions = new String[]{(String) content[0], (String) content[1]};//remove the ints
-                Log.i(TAG, "IMPORTED: " + vtePlayer1 + " | " + vtePlayer2 + " | " + submissions[0] + " | " + submissions[1]);
+                if(Constants.debug){Log.i(TAG, "IMPORTED: " + vtePlayer1 + " | " + vtePlayer2 + " | " + submissions[0] + " | " + submissions[1]);}
                 break;
             case Constants.WC_VOTE: //TODO: FIX?
                 if (content[0].toString().toLowerCase().equals("false") && content[1].toString().toLowerCase().equals("false")) {
@@ -613,7 +617,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 }
 
                 numberOfVotesIn++;
-                Log.i(TAG, "VOTE COUNT: v1 - " + votes1 + ", v2 - " + votes2);
+                if(Constants.debug){Log.i(TAG, "VOTE COUNT: v1 - " + votes1 + ", v2 - " + votes2);}
                 break;
             case Constants.WC_RESULTS://TODO: FIX?
                 vtePlayer1 = Integer.parseInt((String) content[0]);//store the owner ints
@@ -621,7 +625,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 votes1 = Integer.parseInt((String) content[2]);//store the owner ints
                 votes2 = Integer.parseInt((String) content[3]);//store the owner ints
                 cont = true;
-                Log.i(TAG, "Results: player" + vtePlayer1 + " - " + votes1 + ", player" + vtePlayer2 + " - " + votes2);
+                if(Constants.debug){Log.i(TAG, "Results: player" + vtePlayer1 + " - " + votes1 + ", player" + vtePlayer2 + " - " + votes2);}
                 break;
 
         }
@@ -693,7 +697,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 randQ = responses[randPlayer][i%2];
 
                 temp.add(new String[]{randQ, randPlayer + ""});
-                Log.i(TAG, "NEW PAIR: " + Arrays.toString(temp.get(temp.size() - 1)));
+                if(Constants.debug){Log.i(TAG, "NEW PAIR: " + Arrays.toString(temp.get(temp.size() - 1)));}
             }
 
             for (int i = 0; i < temp.size(); i = i + 2) {
@@ -708,7 +712,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
     } //DONE
 
     public void sendUserVotes(boolean[] vteResults) {
-        Log.i(TAG, "Get User's Votes");
+        if(Constants.debug){Log.i(TAG, "Get User's Votes");}
         if (host) {
             if (vteResults[0] == false && vteResults[1] == false) {
                 //do nothing
@@ -719,12 +723,12 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             }
         } else {
             BluetoothService.writeToServer("" + me.playerID, Constants.WC_VOTE, new String[]{Boolean.toString(vteResults[0]), Boolean.toString(vteResults[1])});
-            Log.i(TAG, "Sent Votes to Host");
+            if(Constants.debug){Log.i(TAG, "Sent Votes to Host");}
         }
     } //TODO: FIX?
 
     public void savePlayerPoints() {
-        Log.i(TAG, "Saving points");
+        if(Constants.debug){Log.i(TAG, "Saving points");}
 
         int points = gameRound * 500;
         int winner;

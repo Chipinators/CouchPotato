@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
@@ -124,23 +125,61 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
             toInfo.putExtra("gameID", 0);
             this.startActivity(toInfo);
         } else if (v == hostButton) {
-            setup = new SetupDialog(this, true, userData);
-            setup.show();
-            BluetoothService.start();
+            BluetoothService.getDiscoverablePermissions(this);
+
         } else if (v == joinButton) {
-            requestLocation();
-            setup = new SetupDialog(this, false, userData);
-            setup.show();
-            //Intent t = new Intent(this, GameActivity.class);
-            //t.putExtra("username", username);
-            //startActivity(t);
+            if(ContextCompat.checkSelfPermission(this.getBaseContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                setup = new SetupDialog(this, false, userData);
+                setup.show();
+            }
+            else{
+                requestLocation();
+            }
         }
     }
 
     public void requestLocation() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 1;
-            ActivityCompat.requestPermissions(GameSelectActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION);
+            Log.i(TAG, "BUILD IS GREATER OR EQUAL TO VERSION M, CHECKING PERMISSIONS");
+            if (ContextCompat.checkSelfPermission(this.getBaseContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Log.i(TAG, "PERMISSION NOT GRANTED, REQUESTING COARSE LOCATION PERMISSION");
+                ActivityCompat.requestPermissions(GameSelectActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, Constants.REQUEST_COARSE_LOCATION);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case Constants.REQUEST_COARSE_LOCATION: {
+                Log.i(TAG, "REQUEST_COARSE_LOCATION REQUEST RESULT");
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.i(TAG, "REQUEST_COARSE_LOCATION PERMISSION WAS GRANTED, GOING TO SETUP DIALOG");
+                    setup = new SetupDialog(this, false, userData);
+                    setup.show();
+                } else {
+                    Log.i(TAG, "REQUEST_COARSE_LOCATION PERMISSION WAS NOT GRANTED, RETURNING TO GAME SELECT ACTIVITY");
+                    new MessageToast(this, "You must grant permissions to use Bluetooth!").show();
+                }
+                break;
+            }
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i(TAG, "REQUEST RECEIVED - Request Code: " + requestCode + "  Result Code: " + resultCode);
+        if (requestCode == Constants.REQUEST_DISCOVERABILITY) {
+            if(resultCode == 180){
+                setup = new SetupDialog(this, true, userData);
+                setup.show();
+            }
+            if (resultCode == 0) {
+                new MessageToast(this, "You must grant permissions to use Bluetooth!").show();
+            }
         }
     }
 

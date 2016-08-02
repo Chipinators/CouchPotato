@@ -45,4 +45,6 @@ public interface Constants {
 
     //BLUETOOTH
     public static final int REQUEST_BLUETOOTH = 100;
+    public static final int REQUEST_DISCOVERABILITY = 200;
+    public static final int REQUEST_COARSE_LOCATION = 300;
 }

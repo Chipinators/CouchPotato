@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/wc_input_root"
+    android:clickable="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
@@ -72,30 +74,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:digits="@string/chars_response"
+            android:textAllCaps="true"
             android:hint="put a thing here"
             android:textAlignment="center" />
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="@dimen/padding_small" />
+            android:layout_height="@dimen/padding_xlarge" />
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/padding_small" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/padding_small" />
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/padding_small" />
         <EditText
             android:id="@+id/wc_input_2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:digits="@string/chars_response"
+            android:textAllCaps="true"
             android:hint="put a second thing here"
             android:textAlignment="center" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_medium" />
     </LinearLayout>
 
 </RelativeLayout>

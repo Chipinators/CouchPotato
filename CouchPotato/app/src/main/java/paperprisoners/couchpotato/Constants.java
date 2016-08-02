@@ -5,6 +5,7 @@ package paperprisoners.couchpotato;
  */
 public interface Constants {
     public String app_name = "Couch Potato";
+    public static final boolean debug = true;
 
     final int range = 14;
 

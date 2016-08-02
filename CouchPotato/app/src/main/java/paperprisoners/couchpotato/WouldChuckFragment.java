@@ -26,13 +26,15 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
     private boolean host, cont = false;
     private UserData me; //Will be passed to GameActivity, pull from there later
     private int gameRound;
-    private String[][] responses;
+    private String[][] responses; //responses[playerid][submission] -- responses[players.size() - 1][1]
     private String[] submissions;
     private boolean[] input = new boolean[2];
     private int responsesLeft;
     private int vtePlayer1, vtePlayer2;//store the owners of votes1 and votes2
     private int votes1, votes2;
     private ArrayList<UserData> players;
+    //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    private boolean submissionsArePaired;
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     private Thread start;
 
@@ -71,9 +73,11 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
                     while (gameRound <= 3) { //loop through the rounds!
                         showSlashScreen();
-
+                        submissionsArePaired = false;
+                        resultsRecieved = 0;
                         responsesLeft = players.size() * 2; //number of responses
                         stage = 1;
+
                         usersEnterValues();//get the user's submissions
 
                         while (true) {
@@ -144,14 +148,13 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         }
     }//done
 
-
     private boolean buttonPressed = false;
     private String input1;
     private String input2;
 
     public void usersEnterValues() {
 
-        final int time = 10;
+        final int time =45 ;
         buttonPressed = false;
 
         getActivity().runOnUiThread(new Runnable() {
@@ -169,12 +172,13 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 Runnable clock = new Runnable() {
                     TextView timerText = (TextView) getActivity().findViewById(R.id.wc_input_timer);
                     int t = time;
+
                     @Override
                     public void run() {
                         if (t > 0) {
                             timerText.setText("" + t);
                             timerText.invalidate();
-                           t--;
+                            t--;
                             timer.postDelayed(this, 1000);
                         } else {
 
@@ -192,7 +196,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
 
                         buttonPressed = true;
 
-                        loading("Please Wait for Others to Submit Their Rathers...");
+                        loading("Please wait...");
                     }
                 });
             }
@@ -251,6 +255,8 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         }
     } //DONE
 
+    public int numberOfVotesIn;
+
     public void playerVoting() {
         vtePlayer2 = -1;
         vtePlayer1 = -1;
@@ -276,7 +282,6 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             submissions = new String[]{submissions[0], submissions[1]};//remove the ints
         } else {
             while (vtePlayer1 == -1 || vtePlayer2 == -1) {
-                Log.i(TAG, "WAITING FOR INPUT");
             }
         }
         Log.i(TAG, "PAST THE WAITING");
@@ -333,8 +338,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                             ch1.setAlpha((float) 1);
                         }
                     });
-                }
-                else{
+                } else {
                     ch1.setEnabled(false);
                     ch1.setAlpha((float) 1);
                     ch1.setTextColor(getActivity().getResources().getColor(R.color.main_deny));
@@ -393,20 +397,35 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 getActivity().setContentView(R.layout.wouldchuck_waiting);
             }
         });
+        numberOfVotesIn = 0;
         sendUserVotes(input);
         stage = 3;
     } //DONE
 
     public void showVotingResults() {
         Log.i(TAG, "Show Results");
-        loading("Calculating Results...");
+        loading("Gathering Votes...");
         cont = false;
+
         if (host) {
+            while (true) { //while waiting to recieve votes
+                if (numberOfVotesIn == players.size() - 1) {
+                    break;
+                }
+            }
             BluetoothService.writeToClients(Constants.WC_RESULTS, new String[]{"" + vtePlayer1, "" + vtePlayer2, "" + votes1, "" + votes2});
-            Log.i(TAG, "Sent Results to Clients: " + vtePlayer1 + " - " + votes1 + ", " + vtePlayer2 + " - " + votes2);
+            Log.i(TAG, "Sent Results to Clients: id" + vtePlayer1 + " - num votes " + votes1 + ", id" + vtePlayer2 + " - num votes " + votes2);
+            cont = true;
         } else {
 
         }
+        while (true) {//while waiting to recieve vote results
+            if (cont) {
+                cont = false;
+                break;
+            }
+        }
+
         Handler wait = new Handler(Looper.getMainLooper());
         wait.postDelayed(new Runnable() {
             @Override
@@ -576,6 +595,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 Log.i(TAG, "SUBMISSION");
                 int index = findPlayerIndex(player);
                 responses[index] = new String[]{(String) content[0], (String) content[1]};
+                resultsRecieved ++;
                 break;
             case Constants.WC_QUESTION: //DONE
                 vtePlayer1 = Integer.parseInt((String) content[2]);//store the owner ints
@@ -584,13 +604,15 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 Log.i(TAG, "IMPORTED: " + vtePlayer1 + " | " + vtePlayer2 + " | " + submissions[0] + " | " + submissions[1]);
                 break;
             case Constants.WC_VOTE: //TODO: FIX?
-                if (Boolean.valueOf((String) content[0]) == true) {
-                    votes1++;
-                } else if (Boolean.valueOf((String) content[1]) == true) {
-                    votes2++;
+                if (content[0].toString().toLowerCase().equals("false") && content[1].toString().toLowerCase().equals("false")) {
+                    //no vote, no input
+                } else if (content[0].toString().toLowerCase().equals("true")) {
+                    votes1 = votes1 + 1;
                 } else {
-                    //no vote
+                    votes2 = votes2 + 1;
                 }
+
+                numberOfVotesIn++;
                 Log.i(TAG, "VOTE COUNT: v1 - " + votes1 + ", v2 - " + votes2);
                 break;
             case Constants.WC_RESULTS://TODO: FIX?
@@ -598,14 +620,14 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 vtePlayer2 = Integer.parseInt((String) content[1]);//store the owner ints
                 votes1 = Integer.parseInt((String) content[2]);//store the owner ints
                 votes2 = Integer.parseInt((String) content[3]);//store the owner ints
-                Log.i(TAG, "Results: " + vtePlayer1 + " - " + votes1 + ", " + vtePlayer2 + " - " + votes2);
+                cont = true;
+                Log.i(TAG, "Results: player" + vtePlayer1 + " - " + votes1 + ", player" + vtePlayer2 + " - " + votes2);
                 break;
 
         }
     } //TODO: FIX?
     //*********************************************************************************
     //*********************************************************************************
-
 
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     public int findPlayerIndex(int id) {
@@ -627,65 +649,74 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         });
     } //DONE
 
+    private ArrayList<String[]> pairs;
+
+    private int resultsRecieved = 0;
     public String[] selectRathers() {
-        int randPlayer1, randPlayer2;
-        int randQ1, randQ2;
-        Random rand = new Random();
-
-        while (true) {
-            randPlayer1 = rand.nextInt(responses.length);
-            randPlayer2 = rand.nextInt(responses.length);
-            if (randPlayer1 == randPlayer2) {
-                //loop again
-            } else {
-                int tmp1 = responsesRemaining(randPlayer1);
-                int tmp2 = responsesRemaining(randPlayer2);
-                if (tmp1 != 0 && tmp2 != 0) {
-                    randQ1 = rand.nextInt(tmp1);
-                    randQ2 = rand.nextInt(tmp2);
-
-                    String res1 = responses[randPlayer1][randQ1];
-                    String res2 = responses[randPlayer2][randQ2];
-
-                    updateResponses(randPlayer1, randQ1);
-                    updateResponses(randPlayer2, randQ2);
-
-                    Log.i(TAG, "RATHER'S DEBUG: r1: " + res1 + "\tr2: " + res2);
-                    return new String[]{res1, res2, "" + randPlayer1, "" + randPlayer2};
-                } else {
-                    //loop again
+        if(resultsRecieved != -1){
+            while(true){
+                if(resultsRecieved == players.size() - 1){
+                    resultsRecieved = -1;
+                    break;
                 }
             }
         }
-    } //DONE
 
-    public int responsesRemaining(int index) { //returns the number of responses a user has left
-        int i = 2;
-        if (responses[index][0].equals(""))
-            i--;
-        if (responses[index][1].equals(""))
-            i--;
+        //private boolean submissionsArePaired;
+        int offset;
+        int interval;
+        int loopIndex;
 
-        Log.i(TAG, "RATHER'S DEBUG: remaing num: " + i);
-        return i;
-    } //DONE
+        if (!submissionsArePaired) {
+            Random rand = new Random();
+            offset = rand.nextInt(players.size());
+            interval = rand.nextInt(players.size() - 2) + 1;
 
-    public void updateResponses(int index, int response) { //if the user gave a response, shift so Response[user][0] always has a response (makes rand easier)
-        if (response == 1) {
-            responses[index][1] = "";
-        } else {
-            String tmp = responses[index][1];
-            responses[index][1] = "";
-            responses[index][0] = tmp;
+            if (players.size() % 2 == interval % 2) {
+                interval++;
+            }
+
+            pairs = new ArrayList<>();
+            submissionsArePaired = true;
+
+            int randPlayer;
+            int counter = 0;
+
+            String randQ;
+
+            ArrayList<String[]> temp = new ArrayList<>();
+
+            for (int i = 0; i < players.size() * 2; i++) {
+                counter += offset;
+                randPlayer = (counter) % players.size();
+
+                randQ = responses[randPlayer][i%2];
+
+                temp.add(new String[]{randQ, randPlayer + ""});
+                Log.i(TAG, "NEW PAIR: " + Arrays.toString(temp.get(temp.size() - 1)));
+            }
+
+            for (int i = 0; i < temp.size(); i = i + 2) {
+                pairs.add(new String[]{temp.get(i)[0], temp.get(i + 1)[0], temp.get(i)[1], temp.get(i + 1)[1]});
+            }
         }
 
-        Log.i(TAG, "RATHER'S DEBUG: (" + index + ") REMAINING " + responses[index][0] + ", " + responses[index][1]);
+        String[] temp = pairs.get(0);
+        Log.e(TAG, "PAIRs: " + Arrays.toString(temp));
+        pairs.remove(0);
+        return temp;
     } //DONE
 
     public void sendUserVotes(boolean[] vteResults) {
         Log.i(TAG, "Get User's Votes");
         if (host) {
-
+            if (vteResults[0] == false && vteResults[1] == false) {
+                //do nothing
+            } else if (vteResults[0]) {
+                votes1 = votes1 + 1;
+            } else {
+                votes2 = votes2 + 1;
+            }
         } else {
             BluetoothService.writeToServer("" + me.playerID, Constants.WC_VOTE, new String[]{Boolean.toString(vteResults[0]), Boolean.toString(vteResults[1])});
             Log.i(TAG, "Sent Votes to Host");

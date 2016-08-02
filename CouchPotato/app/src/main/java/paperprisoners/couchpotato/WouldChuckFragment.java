@@ -151,6 +151,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
 
     public void usersEnterValues() {
 
+        final int time = 10;
         buttonPressed = false;
 
         getActivity().runOnUiThread(new Runnable() {
@@ -167,14 +168,13 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 final Handler timer = new Handler();
                 Runnable clock = new Runnable() {
                     TextView timerText = (TextView) getActivity().findViewById(R.id.wc_input_timer);
-                    int time = 30;
-
+                    int t = time;
                     @Override
                     public void run() {
-                        if (time > 0) {
-                            timerText.setText("" + time);
+                        if (t > 0) {
+                            timerText.setText("" + t);
                             timerText.invalidate();
-                            time--;
+                           t--;
                             timer.postDelayed(this, 1000);
                         } else {
 
@@ -217,7 +217,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 Log.i(TAG, "End Second Runnable (Post data from users)");
             }
         };
-        handler2.postDelayed(r2, 30000);
+        handler2.postDelayed(r2, time * 1000);
 
     } //DONE
 
@@ -225,6 +225,13 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         Log.i(TAG, "getDataFromUsers called");
         responses = new String[players.size()][2]; //here so if players drop out we dont expect stuff from them. also clears array
         Arrays.fill(responses, new String[]{"", ""});
+
+        if (input1.equals("")) {
+            input1 = "User Didn't Enter a Value";
+        }
+        if (input2.equals("")) {
+            input2 = "User Didn't Enter a Value";
+        }
 
         if (host) {
             Log.i(TAG, "Set host's responses");
@@ -279,16 +286,6 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 getActivity().setContentView(R.layout.wouldchuck_choice);
                 Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
                 Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_2);
-                //NEED TO DELAY THIS FOR X TIME
-                if (vtePlayer1 == me.playerID || vtePlayer2 == me.playerID) {
-                    //grey out options if one of submissions is yours
-                    //TODO: re-enable this
-                    //ch1.setEnabled(false);
-                    //ch2.setEnabled(false);
-
-                } else {
-                    //do nothing
-                }
                 ch1.setText(submissions[0]); //set option 1
                 ch2.setText(submissions[1]); //set option 2
                 ch1.invalidate();
@@ -303,38 +300,47 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
                 Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_2);
 
-                ch1.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
-                        Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_2);
+                if (!ch1.getText().equals("User Didn't Enter a Value") && !ch2.getText().equals("User Didn't Enter a Value")) {
+                    ch1.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
+                            Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_2);
 
-                        Log.i(TAG, "VOTED FOR 1st Element");
-                        input[0] = true;
-                        input[1] = false;
-                        ch2.setEnabled(true);
-                        ch1.setEnabled(false);
+                            Log.i(TAG, "VOTED FOR 1st Element");
+                            input[0] = true;
+                            input[1] = false;
+                            ch2.setEnabled(true);
+                            ch1.setEnabled(false);
 
-                        ch1.setAlpha((float) .25);
-                        ch2.setAlpha((float) 1);
-                    }
-                });
-                ch2.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
-                        Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_2);
+                            ch1.setAlpha((float) .25);
+                            ch2.setAlpha((float) 1);
+                        }
+                    });
+                    ch2.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
+                            Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_2);
 
-                        Log.i(TAG, "VOTED FOR 2nd Element");
-                        input[1] = true;
-                        input[0] = false;
-                        ch2.setEnabled(false);
-                        ch1.setEnabled(true);
+                            Log.i(TAG, "VOTED FOR 2nd Element");
+                            input[1] = true;
+                            input[0] = false;
+                            ch2.setEnabled(false);
+                            ch1.setEnabled(true);
 
-                        ch2.setAlpha((float) .25);
-                        ch1.setAlpha((float) 1);
-                    }
-                });
+                            ch2.setAlpha((float) .25);
+                            ch1.setAlpha((float) 1);
+                        }
+                    });
+                }
+                else{
+                    ch1.setEnabled(false);
+                    ch1.setAlpha((float) 1);
+                    ch1.setTextColor(getActivity().getResources().getColor(R.color.main_deny));
+                    ch2.setAlpha((float) 1);
+                    ch2.setTextColor(getActivity().getResources().getColor(R.color.main_deny));
+                }
             }
         });
 
@@ -354,6 +360,8 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 final Handler timer = new Handler();
                 Runnable clock = new Runnable() {
                     TextView timerText = (TextView) getActivity().findViewById(R.id.wc_choice_timer);
+                    Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
+                    Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_2);
                     int time = 15;
 
                     @Override
@@ -421,12 +429,27 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                         ((TextView) getActivity().findViewById(R.id.wc_results_user2)).setText(players.get(findPlayerIndex(vtePlayer2)).username);
                         getActivity().findViewById(R.id.wc_results_user2).invalidate();
 
-                        if (votes1 > votes2) {//number 1 wins
+                        if (submissions[0].equals("User Didn't Enter a Value") && submissions[1].equals("User Didn't Enter a Value")) {
+                            ((TextView) getActivity().findViewById(R.id.wc_results_score1)).setText(-1 * ((500 * gameRound) / 2) + "");
+                            getActivity().findViewById(R.id.wc_results_score1).invalidate();
+                            ((TextView) getActivity().findViewById(R.id.wc_results_score2)).setText(-1 * ((500 * gameRound) / 2) + "");
+                            getActivity().findViewById(R.id.wc_results_score2).invalidate();
+                        } else if (submissions[0].equals("User Didn't Enter a Value")) {
+                            ((TextView) getActivity().findViewById(R.id.wc_results_score2)).setText(((500 * gameRound) / 2) + "");
+                            getActivity().findViewById(R.id.wc_results_score1).invalidate();
+                            ((TextView) getActivity().findViewById(R.id.wc_results_score1)).setText(-1 * ((500 * gameRound) / 2) + "");
+                            getActivity().findViewById(R.id.wc_results_score2).invalidate();
+                        } else if (submissions[1].equals("User Didn't Enter a Value")) {
+                            ((TextView) getActivity().findViewById(R.id.wc_results_score1)).setText((500 * gameRound) / 2 + "");
+                            getActivity().findViewById(R.id.wc_results_score1).invalidate();
+                            ((TextView) getActivity().findViewById(R.id.wc_results_score2)).setText((-1 * (500 * gameRound) / 2) + "");
+                            getActivity().findViewById(R.id.wc_results_score2).invalidate();
+                        } else if (votes1 < votes2) {//number 1 wins
                             ((TextView) getActivity().findViewById(R.id.wc_results_score1)).setText((500 * gameRound) + "");
                             getActivity().findViewById(R.id.wc_results_score1).invalidate();
                             ((TextView) getActivity().findViewById(R.id.wc_results_score2)).setText("0");
                             getActivity().findViewById(R.id.wc_results_score2).invalidate();
-                        } else if (votes2 > votes1) {//number 2 wins
+                        } else if (votes2 < votes1) {//number 2 wins
                             ((TextView) getActivity().findViewById(R.id.wc_results_score1)).setText("0");
                             getActivity().findViewById(R.id.wc_results_score1).invalidate();
                             ((TextView) getActivity().findViewById(R.id.wc_results_score2)).setText((500 * gameRound) + "");
@@ -675,14 +698,24 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         int points = gameRound * 500;
         int winner;
 
-        if (votes1 > votes2) {
+        if (submissions[0].equals("User Didn't Enter a Value") && submissions[1].equals("User Didn't Enter a Value")) {
+            points = -1 * points / 2;
+            winner = -1;
+        } else if (submissions[0].equals("User Didn't Enter a Value")) {
+            points = -1 * points / 2;
+            winner = vtePlayer2;
+        } else if (submissions[1].equals("User Didn't Enter a Value")) {
+            points = -1 * points / 2;
             winner = vtePlayer1;
         } else if (votes1 < votes2) {
+            winner = vtePlayer1;
+        } else if (votes1 > votes2) {
             winner = vtePlayer2;
         } else {
             winner = -1;
             points = points / 2;
         }
+
         if (winner == -1) {
             players.get(vtePlayer1).score += points;
             players.get(vtePlayer2).score += points;

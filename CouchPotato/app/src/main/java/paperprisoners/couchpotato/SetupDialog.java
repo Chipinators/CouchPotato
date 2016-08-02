@@ -54,6 +54,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
         this.userData = userData;
         BluetoothService.listeners.add(this);
         finalUserList = new ArrayList<>();
+        userData.setAddress(BluetoothService.getmAdapter().getAddress());
     }
 
     public SetupDialog(Context context, boolean isHost, UserData userData) {
@@ -237,8 +238,13 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
             ownerContext.startActivity(toGame);
             cancel();
         } else if (v == cancelButton) {
-            //addUser(new UserData("dude", 0, null, null));
-            BluetoothService.stop();
+            if(isHost){
+                BluetoothService.stopDiscoverable(ownerContext, bCReciever);
+            }
+            else{
+                BluetoothService.stopSearching(ownerContext, bCReciever);
+            }
+            BluetoothService.listeners.remove(this);
             adapter.clear();
             userList.invalidate();
             cancel();
@@ -247,6 +253,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
                 //This should only run for the host
                 UserData user = getUserDataFromButton((Button) v);
                 // TODO: Host sends kick to selected client as described in user object
+                BluetoothService.writeToClients(Constants.USER_KICKED, new String[] {user.getAddress()});
                 removeUser(user);
             } catch (ClassCastException e) {
             }
@@ -266,6 +273,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
             Log.e(TAG, "Cannot connect to server, server not available?");
             adapter.clear();
         }
+        Log.i(TAG, "Successfully connected to the host");
         BluetoothService.getmAdapter().cancelDiscovery();
         BluetoothService.writeToClients(Constants.USER_CONNECTED,userData.toArray());
         if (true)
@@ -328,13 +336,12 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     @Override
     public void onCancel(DialogInterface dialog) {
         Log.i(TAG, "ON CANCEL CALLED");
-        if(isHost){
-            BluetoothService.stopDiscoverable(ownerContext, bCReciever);
-        }
-        else{
-            BluetoothService.stopSearching(ownerContext, bCReciever);
-        }
-        BluetoothService.listeners.remove(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        ownerContext.unregisterReceiver(bCReciever);
     }
 
     @Override
@@ -361,12 +368,26 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
             case Constants.USER_CONNECTED:
                 Log.i(TAG, "USER_CONNECTED: PROCESSING USER DATA");
                 UserData user = new UserData((String)content[0], Integer.getInteger((String)content[1]));
+                if(connectedUsers.contains(user)){
+                    Log.i(TAG, "Duplicate user found, removing and adding again");
+                    connectedUsers.remove(user);
+                }
                 adapter.add(user);
                 break;
             case Constants.USER_ID:
                 Log.i(TAG, "USER ID RECEIVED: " + player);
                 userData.setPlayerID(player);
                 break;
+            case Constants.USER_KICKED:
+                Log.i(TAG, "USER KICK RECEIVED: User Address - " + content[0]);
+                Log.i(TAG, "User Address: " + userData.getAddress());
+                if(content[0].equals(userData.getAddress())) {
+                    BluetoothService.stop();
+                    adapter.clear();
+                    userList.invalidate();
+                    cancel();
+                    new MessageToast(ownerContext, "You were kicked by the host.").show();
+                }
         }
     }
 

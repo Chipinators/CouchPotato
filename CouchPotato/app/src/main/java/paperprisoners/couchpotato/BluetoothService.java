@@ -108,14 +108,16 @@ public class BluetoothService {
         }
         // Start the thread to manage the connection and perform transmissions
         mConnectedThread = new ConnectedThread(socket);
+
         if (mConnectedDevices.contains(mConnectedThread)) {
             mConnectedDevices.get(mConnectedDevices.indexOf(mConnectedThread)).cancel();
             Log.d(TAG, "Duplicate Device tried to connect");
             mConnectedDevices.remove(mConnectedThread);
             Log.d(TAG, "Number of Devices: " + mConnectedDevices.size());
+        } else {
+            Log.d(TAG, "No Duplicate Found, Adding Connection To List");
+            mConnectedDevices.add(mConnectedThread);
         }
-        mConnectedDevices.add(mConnectedThread);
-
         Log.d(TAG, "Number of Devices: " + mConnectedDevices.size());
         mConnectedThread.start();
 
@@ -150,9 +152,14 @@ public class BluetoothService {
         String output;
         Log.i(TAG, "NUMBER OF CONNECTED DEVICES: " + mConnectedDevices.size());
         for (ConnectedThread device : mConnectedDevices) {
-            output = "0" + DELIM + type + DELIM + TextUtils.join(DELIM, content);
-            Log.i(TAG, "CREATING WRITE MESSAGE - "+ output);
-            device.write(output.getBytes());
+            try {
+                output = "0" + DELIM + type + DELIM + TextUtils.join(DELIM, content);
+                Log.i(TAG, "CREATING WRITE MESSAGE - " + output);
+                device.write(output.getBytes());
+            } catch(Exception e){
+                device.cancel();
+                mConnectedDevices.remove(device);
+            }
         }
     }
 
@@ -178,22 +185,22 @@ public class BluetoothService {
 
             while (true) { //mState != STATE_CONNECTED
                 try {
-                    Log.i("Log", "SERVER SOCKET STARTED ");
+                    Log.i(TAG, "SERVER SOCKET STARTED ");
                     socket = mServerSocket.accept();
                 } catch (IOException e) {
-                    Log.i("Log", "SERVER SOCKET FAILED");
+                    Log.i(TAG, "SERVER SOCKET FAILED");
                     break;
                 }
 
                 if (socket != null) {
                     //TODO: MANAGE CONNECTED SOCKETS
-                    Log.i("Log", "SOCKET CONNECTED ");
+                    Log.i(TAG, "SOCKET CONNECTED ");
                     connected(socket, socket.getRemoteDevice());
 
 
                     if (mConnectedDevices.size() >= maxPlayers) {
                         try {
-                            Log.i("Log", "CLOSING SERVER SOCKET");
+                            Log.i(TAG, "CLOSING SERVER SOCKET");
                             mServerSocket.close();
                         } catch (IOException e) {
                         }
@@ -235,11 +242,11 @@ public class BluetoothService {
             mAdapter.cancelDiscovery();
 
             try {
-                Log.i("Log", "SOCKET TRYING TO CONNECT ");
+                Log.i(TAG, "SOCKET TRYING TO CONNECT ");
                 mSocket.connect();
             } catch (IOException connectionException) {
                 try {
-                    Log.i("Log", "SOCKET CONNECTION FAILED");
+                    Log.i(TAG, "SOCKET CONNECTION FAILED");
                     mSocket.close();
                 } catch (IOException e2) {
                     Log.e(TAG, "unable to close() socket during connection failure", e2);
@@ -252,7 +259,7 @@ public class BluetoothService {
                 mConnectThread = null;
             }
 
-            Log.i("Log", "SOCKET CONNECTED");
+            Log.i(TAG, "SOCKET CONNECTED");
             connected(mSocket, mDevice);
         }
 
@@ -295,7 +302,6 @@ public class BluetoothService {
                 try {
                     Log.i(TAG, "BEGIN try to read mConnectedThread");
                     bytes = mInStream.read(buffer);
-                    //TODO: HANDLE DATA MESSAGES
                     Log.i(TAG, "MESSAGE RECEIVED FROM REMOTE: Attempting to process - " + bytes + " bytes");
                     if(mHandler == null) {
                         Log.e(TAG, "mHandler received a null");
@@ -320,13 +326,15 @@ public class BluetoothService {
             try {
                 mOutStream.write(out);
             } catch (IOException e) {
-                Log.e(TAG, "COULD NOT WRITE TO CLIENT");
+                Log.e(TAG, "COULD NOT WRITE TO CLIENT - REMOVING CLIENT: " + this);
+                cancel();
             }
         }
 
         public void cancel() {
             try {
-                mConnectedDevices.remove(mSocket.getRemoteDevice());
+                Log.e(TAG, "CANCELING SOCKET - " + this);
+                //mConnectedDevices.remove(this);
                 mSocket.close();
             } catch (IOException e) {
             }
@@ -336,7 +344,7 @@ public class BluetoothService {
     //Makes the device discoverable for 300 seconds
     public static void startDiscoverable(Context context, BroadcastReceiver bCReciever) {
         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 180);
         context.startActivity(discoverableIntent);
         IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
         context.registerReceiver(bCReciever, intentFilter);
@@ -346,6 +354,7 @@ public class BluetoothService {
     }
 
     public static void stopDiscoverable(Context context, BroadcastReceiver bCReciever){
+        mAcceptThread.cancel();
         context.unregisterReceiver(bCReciever);
         mAdapter.setName(getDefaultDeviceName());
         Log.i(TAG, "DISCOVERY ENDED");

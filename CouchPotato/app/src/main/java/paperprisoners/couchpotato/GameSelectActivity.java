@@ -39,9 +39,11 @@ import java.util.regex.Pattern;
  */
 public class GameSelectActivity extends Activity implements View.OnClickListener, ViewPager.OnPageChangeListener, MessageListener {
     private static final String TAG = "GameSelectActivity";
-    protected String username;
 
+    protected String username;
     private UserData userData;
+    private Bitmap wcLogo, moreLogo;
+
     private TextView nameText, infoText;
     private Button backButton, menuButton, hostButton, joinButton;
     private LinearLayout infoButton;
@@ -95,8 +97,10 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
             userData = new UserData(username);
         }
 
-        Bitmap wcLogo = BitmapFactory.decodeResource(getResources(), R.drawable.wouldchuck_512);
-        Bitmap moreLogo = BitmapFactory.decodeResource(getResources(), R.drawable.more_512);
+        if (wcLogo == null)
+            wcLogo = BitmapFactory.decodeResource(getResources(), R.drawable.wouldchuck_512);
+        if (moreLogo == null)
+            moreLogo = BitmapFactory.decodeResource(getResources(), R.drawable.more_512);
         GameData wc = new GameData("Wouldchuck", wcLogo, 3, 8);
         GameData more = new GameData(moreLogo, 0, 0);
         pages.addPage(PagedGameAdapter.generateView(getBaseContext(), wc));
@@ -104,7 +108,7 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
 
         //Bluetooth
         BluetoothService.listeners.add(this);
-       // BluetoothService.setHandler(mHandler);
+        // BluetoothService.setHandler(mHandler);
     }
 
     @Override
@@ -113,7 +117,7 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
             Intent toTitle = new Intent(this, TitleActivity.class);
             toTitle.putExtra("username", username);
             this.startActivity(toTitle);
-        }else if (v == menuButton) {
+        } else if (v == menuButton) {
             new SettingsDialog(this, SettingsDialog.MenuState.MAIN).show();
         } else if (v == infoButton) {
             Intent toInfo = new Intent(this, InfoActivity.class);
@@ -134,7 +138,7 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
         }
     }
 
-    public void requestLocation(){
+    public void requestLocation() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 1;
             ActivityCompat.requestPermissions(GameSelectActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION);
@@ -161,24 +165,22 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
     @Override
     public void onPageSelected(int position) {
         if (position == 0) {
-            bg.setBackgroundColor(ContextCompat.getColor(this,R.color.wouldchuck));
+            bg.setBackgroundColor(ContextCompat.getColor(this, R.color.wouldchuck));
             hostButton.setEnabled(true);
-            hostButton.setBackgroundColor(ContextCompat.getColor(this,R.color.main_black));
+            hostButton.setBackgroundColor(ContextCompat.getColor(this, R.color.main_black));
             joinButton.setEnabled(true);
-            joinButton.setBackgroundColor(ContextCompat.getColor(this,R.color.main_black));
+            joinButton.setBackgroundColor(ContextCompat.getColor(this, R.color.main_black));
             infoButton.setEnabled(true);
-            infoButton.setBackgroundColor(ContextCompat.getColor(this,R.color.main_black));
-        }
-        else if (position == 1) {
-            bg.setBackgroundColor(ContextCompat.getColor(this,R.color.more));
+            infoButton.setBackgroundColor(ContextCompat.getColor(this, R.color.main_black));
+        } else if (position == 1) {
+            bg.setBackgroundColor(ContextCompat.getColor(this, R.color.more));
             hostButton.setEnabled(false);
-            hostButton.setBackgroundColor(ContextCompat.getColor(this,R.color.main_black_faded));
+            hostButton.setBackgroundColor(ContextCompat.getColor(this, R.color.main_black_faded));
             joinButton.setEnabled(false);
-            joinButton.setBackgroundColor(ContextCompat.getColor(this,R.color.main_black_faded));
+            joinButton.setBackgroundColor(ContextCompat.getColor(this, R.color.main_black_faded));
             infoButton.setEnabled(false);
-            infoButton.setBackgroundColor(ContextCompat.getColor(this,R.color.main_black_faded));
+            infoButton.setBackgroundColor(ContextCompat.getColor(this, R.color.main_black_faded));
         }
-
     }
 
     @Override
@@ -190,10 +192,16 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
     protected void onDestroy() {
         super.onDestroy();
         BluetoothService.getmAdapter().cancelDiscovery();
+        if (wcLogo != null)
+            wcLogo.recycle();
+        wcLogo = null;
+        if (moreLogo != null)
+            moreLogo.recycle();
+        moreLogo = null;
     }
 
-    //BLUETOOTH METHODS
 
+    //BLUETOOTH METHODS
 
     @Override
     public void onReceiveMessage(int player, int messageType, Object[] content) {

@@ -7,15 +7,22 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Static class used to globally store Typefaces.
  * Kind of a design faux paux but simplifies things a lot.
- *
+ * <p/>
  * Created by Ian on 7/14/2016.
  */
 public class TypefaceManager {
 
+    private static final int STRIKES = 3;
+    private static int consecutiveFails = 0;
+    private static boolean failFlag = false;
+
+    private static AssetManager assets;
+    private static HashSet<String> directories = new HashSet<>();
     private static HashMap<String, Typeface> fonts = new HashMap<>();
 
     private static final int EXTENSION_OFFSET = 3;
@@ -31,10 +38,17 @@ public class TypefaceManager {
 
     public static Typeface get(String name) {
         Typeface t = fonts.get(name);
-        if (t != null)
+        if (t != null) {
             return t;
-        else {
-            return Typeface.DEFAULT;
+        } else {
+            consecutiveFails++;
+            if (!failFlag && consecutiveFails < STRIKES) {
+                failFlag = true;
+                return get(name);
+            } else {
+                failFlag = false;
+                return Typeface.DEFAULT;
+            }
         }
     }
 
@@ -60,7 +74,19 @@ public class TypefaceManager {
         }
     }
 
+    protected static void attemptReload() {
+        try {
+            for (Object i : directories.toArray()) {
+                String str = (String) i;
+                loadFonts(assets, str);
+            }
+        } catch (Exception e) {
+        }
+    }
+
     protected static void loadFonts(AssetManager manager, String directory) {
+        assets = manager;
+        directories.add(directory);
         String[] fontPaths = findFonts(manager, directory);
         for (String path : fontPaths) {
             Typeface typeface = Typeface.createFromAsset(manager, path);
@@ -85,7 +111,7 @@ public class TypefaceManager {
             if (list.length > 0) {
                 //If path at location is a directory
                 for (String file : list)
-                    crawlFontPaths(location+'/'+file, fontList, manager);
+                    crawlFontPaths(location + '/' + file, fontList, manager);
             } else {
                 //If path a location is a file
                 String extension = location;
@@ -98,8 +124,8 @@ public class TypefaceManager {
                     fontList.add(path);
                 }
             }
+        } catch (IOException e) {
         }
-        catch (IOException e) { }
     }
 
     private static String generateName(String path) {

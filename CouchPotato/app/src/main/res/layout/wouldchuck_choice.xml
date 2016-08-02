@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:background="@color/main_white_faded"
     android:padding="@dimen/padding_large">
 
     <RelativeLayout

@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
-    android:background="@color/main_white_faded"
     android:padding="@dimen/padding_large">
 
     <LinearLayout
@@ -74,7 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:digits="@string/chars_response"
-            android:textAllCaps="true"
+            android:inputType="text"
             android:hint="put a thing here"
             android:textAlignment="center" />
 
@@ -87,7 +86,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:digits="@string/chars_response"
-            android:textAllCaps="true"
+            android:inputType="text"
             android:hint="put a second thing here"
             android:textAlignment="center" />
 

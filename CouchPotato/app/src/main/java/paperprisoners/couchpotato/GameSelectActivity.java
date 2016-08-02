@@ -117,15 +117,19 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
     public void onClick(View v) {
         if (v == backButton) {
             Intent toTitle = new Intent(this, TitleActivity.class);
+            toTitle.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             toTitle.putExtra("username", username);
             this.startActivity(toTitle);
+            finish();
         } else if (v == menuButton) {
             new SettingsDialog(this, SettingsDialog.MenuState.MAIN).show();
         } else if (v == infoButton) {
             Intent toInfo = new Intent(this, InfoActivity.class);
+            toInfo.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             toInfo.putExtra("username", username);
             toInfo.putExtra("gameID", 0);
             this.startActivity(toInfo);
+            finish();
         } else if (v == hostButton) {
             BluetoothService.getDiscoverablePermissions(this);
 
@@ -246,6 +250,12 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        BluetoothService.getmAdapter().setName(BluetoothService.getDefaultDeviceName());
     }
 
     @Override

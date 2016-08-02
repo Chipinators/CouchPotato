@@ -1,5 +1,6 @@
 package paperprisoners.couchpotato;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -10,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -346,11 +348,15 @@ public class BluetoothService {
         }
     } //End ConnectedThread
 
-    //Makes the device discoverable for 300 seconds
-    public static void startDiscoverable(Context context, BroadcastReceiver bCReciever) {
+    public static void getDiscoverablePermissions(Activity activity){
         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 180);
-        context.startActivity(discoverableIntent);
+        //context.startActivity(discoverableIntent);
+        activity.startActivityForResult(discoverableIntent, Constants.REQUEST_DISCOVERABILITY);
+    }
+
+    //Makes the device discoverable for 300 seconds
+    public static void startDiscoverable(Context context, BroadcastReceiver bCReciever) {
         IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
         context.registerReceiver(bCReciever, intentFilter);
         IntentFilter disconnect = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);

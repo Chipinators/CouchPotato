@@ -309,7 +309,9 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 Log.i(TAG, "LENGTH HOST: " + responses[0][0]);
             }
             if (Constants.debug) {
-                Log.i(TAG, "LENGTH CLIENT: " + responses[1][0]);
+                if(players.size() != 1){
+                    Log.i(TAG, "LENGTH CLIENT: " + responses[1][0]);
+                }
             }
 
             submissions = selectRathers(); //generate submissions

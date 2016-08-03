@@ -84,11 +84,8 @@ public class GameActivity extends Activity implements View.OnClickListener {
         //Setting player-specific stuff
         int playerNumber = me.getPlayerID() + 1;
         setColor(playerNumber);
-        if (playerNumber == 1) {
-            ColorStateList gold = new ColorStateList(new int[1][0], new int[]{ContextCompat.getColor(this, R.color.place_gold)});
-            rank.setImageResource(R.drawable.ic_star_white_48dp);
-            rank.setImageTintList(gold);
-        }
+        if (playerNumber == 1)
+            rank.setImageResource(R.drawable.ic_star_48dp);
         //Creates fragment and sets it
         manager = getFragmentManager();
         Fragment wcFrag = new WouldChuckFragment();
@@ -103,6 +100,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
         swapper.replace(R.id.game_container, fragment);
         swapper.addToBackStack(null);
         swapper.commit();
+        screen = fragment;
     }
 
     public void setColor(int playerNumber) {

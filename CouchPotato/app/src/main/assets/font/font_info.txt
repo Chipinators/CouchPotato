@@ -1,9 +1,0 @@
-Keep the OFL documents in their folders. Those are the licenses for each font and are required to stay in there.
-As for what fonts go to what part of Couch Potato, here you go:
-
-Main Menus = Oswald
-BADdle = Cabin Condensed*
-Draw Dunk = Passion One
-Wouldchuck = Kreon
-
-*Consider revising

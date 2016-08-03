@@ -3,6 +3,7 @@ package paperprisoners.couchpotato;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -23,16 +24,24 @@ public class KeyboardHidingListener implements View.OnFocusChangeListener, View.
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if (!hasFocus) {
-            InputMethodManager imm =  (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            try {
+                InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            } catch (NullPointerException n) {
+                Log.i("KeyboardHidingListener", "Keyboard not available to hide. onFocusChange failed.");
+            }
         }
     }
 
     @Override
     public void onClick(View v) {
         if (v == root) {
-            InputMethodManager imm =  (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+            try {
+                InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+            } catch (NullPointerException n) {
+                Log.i("KeyboardHidingListener", "Keyboard not available to hide. onClick failed.");
+            }
         }
     }
 }

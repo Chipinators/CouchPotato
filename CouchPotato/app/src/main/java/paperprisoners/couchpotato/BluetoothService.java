@@ -143,6 +143,7 @@ public class BluetoothService {
             mAcceptThread.cancel();
             mAcceptThread = null;
         }
+        mConnectedDevices.clear();
     }
 
     public static void writeToServer(String player, int type, String[] content) {

@@ -4,8 +4,7 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:paddingTop="@dimen/padding_medium"
-    android:paddingBottom="@dimen/padding_medium"
-    android:background="@color/p8_col">
+    android:paddingBottom="@dimen/padding_medium">
 
     <TextView
         android:id="@+id/wc_winner_name"

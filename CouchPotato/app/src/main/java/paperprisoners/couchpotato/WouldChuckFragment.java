@@ -41,7 +41,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     private Thread start;
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-    private int gameRound = 1;
+    private int gameRound = 3;
     private double inputTime = 20;
     private double voteTime = 15;
     private double resultsTimes = 7.5;
@@ -918,12 +918,17 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
 
             this.startActivity(again);
         } else {
-            start.interrupt();
             Intent back = new Intent(getActivity().getBaseContext(), TitleActivity.class);
-            BluetoothService.stop();
             BluetoothService.listeners.remove(this);
+            BluetoothService.stop();
             this.startActivity(back);
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        start.interrupt();
     }
 
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=

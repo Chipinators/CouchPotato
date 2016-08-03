@@ -309,7 +309,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 Log.i(TAG, "LENGTH HOST: " + responses[0][0]);
             }
             if (Constants.debug) {
-                if(players.size() != 1){
+                if (players.size() != 1) {
                     Log.i(TAG, "LENGTH CLIENT: " + responses[1][0]);
                 }
             }
@@ -833,46 +833,43 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             pairs = new ArrayList<>();
             submissionsArePaired = true;
 
-            if(players.size() == 1){
-                pairs.add(new String[]{responses[0][0], responses[0][1], "" + 0, "" + 0});
-            }
-            else if(players.size() == 2){
-                pairs.add(new String[]{responses[0][0], responses[1][1], "" + 0, "" + 1});
-                pairs.add(new String[]{responses[1][0], responses[0][1], "" + 1, "" + 0});
-            }
-            else if (players.size() == 3) {
-                int A = 0;
-                int B = 1;
-                int C = 2;
-                pairs.add(new String[]{responses[A][0], responses[B][1], "" + A, "" + B});
-                pairs.add(new String[]{responses[C][0], responses[A][1], "" + C, "" + A});
-                pairs.add(new String[]{responses[B][0], responses[C][1], "" + B, "" + C});
+            if (players.size() == 1) {
+                pairs.add(new String[]{responses[0][0], responses[0][1], "0", "0"});
             } else {
                 //private boolean submissionsArePaired;
                 int offset;
                 int interval;
-                int loopIndex;
 
                 if (!submissionsArePaired) {
                     Random rand = new Random();
                     offset = rand.nextInt(players.size());
-                    interval = rand.nextInt(players.size() - 2) + 1;
-
-                    if (players.size() % 2 == interval % 2) {
-                        interval++;
+                    //Condition for 1-2 player debugging
+                    if (players.size() <= 2)
+                        interval = 0;
+                    else {
+                        interval = rand.nextInt(players.size() - 2) + 1;
+                        //Overlaps can happen if the offset and interval are both odd or both even
+                        if (players.size() % 2 == interval % 2) {
+                            interval++;
+                        }
+                        //Then we need to make sure that they don't evenly divide either
+                        if (players.size()%2==0 && interval<=1 && players.size()%interval==0) {
+                            interval += 2;
+                        }
                     }
 
                     int randPlayer;
-                    int counter = 0;
+                    int counter = offset;
 
                     String randQ;
 
                     ArrayList<String[]> temp = new ArrayList<>();
 
                     for (int i = 0; i < players.size() * 2; i++) {
-                        counter += offset;
+                        counter += interval;
                         randPlayer = (counter) % players.size();
 
+                        //Case for if you somehow overlap
                         randQ = responses[randPlayer][i % 2];
 
                         temp.add(new String[]{randQ, randPlayer + ""});

@@ -586,12 +586,12 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                     TextView place = (TextView) v.findViewById(placeID);
                     place.setTypeface(bold);
                     String nameStr = "wc_leaderboard_name"+i;
-                    int nameID = getResources().getIdentifier(placeStr, "id", getActivity().getPackageName());
-                    TextView name = (TextView) v.findViewById(placeID);
+                    int nameID = getResources().getIdentifier(nameStr, "id", getActivity().getPackageName());
+                    TextView name = (TextView) v.findViewById(nameID);
                     name.setTypeface(light);
                     String scoreStr = "wc_leaderboard_score"+i;
-                    int scoreID = getResources().getIdentifier(placeStr, "id", getActivity().getPackageName());
-                    TextView score = (TextView) v.findViewById(placeID);
+                    int scoreID = getResources().getIdentifier(scoreStr, "id", getActivity().getPackageName());
+                    TextView score = (TextView) v.findViewById(scoreID);
                     score.setTypeface(regular);
                 }
 

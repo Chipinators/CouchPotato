@@ -8,6 +8,7 @@
     <dimen name="size_medium">50dp</dimen>
     <dimen name="size_large">65dp</dimen>
     <dimen name="size_xlarge">80dp</dimen>
+    <dimen name="size_xxlarge">90dp</dimen>
 
     <dimen name="padding_xsmall">4dp</dimen>
     <dimen name="padding_small">8dp</dimen>

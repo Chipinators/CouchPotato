@@ -29,6 +29,7 @@
         android:layout_height="@dimen/padding_large" />
 
     <TextView
+        android:id="@+id/wc_choice_wyr"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/wouldchuck_wyr"
@@ -94,6 +95,7 @@
             android:id="@+id/wc_choice_layout">
 
             <TextView
+                android:id="@+id/wc_choice_or"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/padding_small"

@@ -21,7 +21,7 @@
         <ImageView
             android:layout_width="@dimen/size_small"
             android:layout_height="@dimen/size_small"
-            android:src="@drawable/ic_group_white_48dp"
+            android:src="@drawable/ic_group_48dp"
             android:tint="@color/main_black" />
 
         <Space

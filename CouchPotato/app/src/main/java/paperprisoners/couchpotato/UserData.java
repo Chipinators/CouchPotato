@@ -19,7 +19,6 @@ public class UserData {
     protected int score;
     protected int playerID = -1;
     protected BluetoothDevice device;
-    protected BluetoothAdapter adapter;
 
     public UserData(String username) {
         this.username = username;
@@ -67,10 +66,6 @@ public class UserData {
         this.device = device;
     }
 
-    public void setAdapter(BluetoothAdapter adapter) {
-        this.adapter = adapter;
-    }
-
     public String getUsername() {
 
         return username;
@@ -86,10 +81,6 @@ public class UserData {
 
     public BluetoothDevice getDevice() {
         return device;
-    }
-
-    public BluetoothAdapter getAdapter() {
-        return adapter;
     }
 
     public String[] toArray() {

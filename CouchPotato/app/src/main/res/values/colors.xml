@@ -7,14 +7,14 @@
     <color name="black_overlay">#cc000000</color>
 
     <!--Player colors-->
-    <color name="p1_col">#ff2e2e</color>
-    <color name="p2_col">#5555ff</color>
-    <color name="p3_col">#ccbe1f</color>
-    <color name="p4_col">#60d033</color>
-    <color name="p5_col">#ffaa00</color>
-    <color name="p6_col">#eb52ba</color>
-    <color name="p7_col">#4ce6d4</color>
-    <color name="p8_col">#85778c</color>
+    <color name="p1_col">#f24949</color>
+    <color name="p2_col">#626bd9</color>
+    <color name="p3_col">#bfab26</color>
+    <color name="p4_col">#6dcc47</color>
+    <color name="p5_col">#f2aa18</color>
+    <color name="p6_col">#eb75c5</color>
+    <color name="p7_col">#6cd9cc</color>
+    <color name="p8_col">#88648f</color>
 
     <!--Couch Potato specific colors-->
     <color name="paper_prisoners">#318ebe</color>

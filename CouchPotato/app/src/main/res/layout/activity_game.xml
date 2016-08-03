@@ -17,7 +17,7 @@
 
         <ImageView
             android:id="@+id/game_rank"
-            android:src="@drawable/ic_person_white_48dp"
+            android:src="@drawable/ic_person_48dp"
             android:layout_width="@dimen/size_medium"
             android:layout_height="@dimen/size_medium"
             android:layout_alignParentLeft="true"
@@ -28,7 +28,7 @@
             android:layout_width="@dimen/size_medium"
             android:layout_height="@dimen/size_medium"
             android:layout_alignParentRight="true"
-            android:background="@drawable/ic_menu_white_48dp" />
+            android:background="@drawable/ic_menu_48dp" />
 
         <TextView
             android:id="@+id/game_name"

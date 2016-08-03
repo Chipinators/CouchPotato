@@ -47,20 +47,20 @@ public class SettingsDialog extends AlertDialog implements View.OnClickListener,
         //Voice volume
         if (SoundManager.isVoiceMuted()){
             //voiceMute.setImageBitmap(mute);
-            voiceMute.setBackgroundResource(R.drawable.ic_volume_off_white_48dp);
+            voiceMute.setBackgroundResource(R.drawable.ic_volume_off_48dp);
             voiceMute.setBackgroundTintList(muted);
         }
         else {
-            voiceMute.setBackgroundResource(R.drawable.ic_volume_up_white_48dp);
+            voiceMute.setBackgroundResource(R.drawable.ic_volume_up_48dp);
             voiceMute.setBackgroundTintList(active);
         }
         //SFX volume
         if (SoundManager.isSFXMuted()){
-            sfxMute.setBackgroundResource(R.drawable.ic_volume_off_white_48dp);
+            sfxMute.setBackgroundResource(R.drawable.ic_volume_off_48dp);
             sfxMute.setBackgroundTintList(muted);
         }
         else {
-            sfxMute.setBackgroundResource(R.drawable.ic_volume_up_white_48dp);
+            sfxMute.setBackgroundResource(R.drawable.ic_volume_up_48dp);
             sfxMute.setBackgroundTintList(active);
         }
     }

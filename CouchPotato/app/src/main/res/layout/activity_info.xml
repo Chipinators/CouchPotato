@@ -15,7 +15,7 @@
             android:id="@+id/info_back"
             android:layout_width="@dimen/size_medium"
             android:layout_height="@dimen/size_medium"
-            android:background="@drawable/ic_back_white_48dp"
+            android:background="@drawable/ic_back_48dp"
             android:backgroundTint="@color/main_white" />
 
         <TextView

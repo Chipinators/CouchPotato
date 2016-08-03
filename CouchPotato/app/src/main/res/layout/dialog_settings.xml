@@ -46,7 +46,7 @@
                 android:id="@+id/settings_voice_mute"
                 android:layout_width="@dimen/size_small"
                 android:layout_height="@dimen/size_small"
-                android:background="@drawable/ic_volume_up_white_48dp"
+                android:background="@drawable/ic_volume_up_48dp"
                 android:backgroundTint="@color/main_white"/>
 
             <SeekBar
@@ -86,7 +86,7 @@
                 android:id="@+id/settings_sfx_mute"
                 android:layout_width="@dimen/size_small"
                 android:layout_height="@dimen/size_small"
-                android:background="@drawable/ic_volume_up_white_48dp"/>
+                android:background="@drawable/ic_volume_up_48dp"/>
 
             <SeekBar
                 android:id="@+id/settings_sfx_slider"

@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
-    android:padding="@dimen/padding_medium">
+    android:paddingTop="@dimen/padding_medium"
+    android:paddingBottom="@dimen/padding_medium"
+    android:background="@color/p8_col">
 
     <TextView
         android:id="@+id/wc_winner_name"
@@ -36,8 +38,13 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/star_512"
-            android:tint="@color/main_black" />
+            android:src="@drawable/rays_512" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/padding_xlarge"
+            android:src="@drawable/star_512" />
 
         <TextView
             android:id="@+id/wc_winner_score"

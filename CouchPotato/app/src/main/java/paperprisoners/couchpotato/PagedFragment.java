@@ -56,7 +56,7 @@ public class PagedFragment extends Fragment implements ViewPager.OnPageChangeLis
         pager.setAdapter(adapter);
         //Reinstantiates images
         if (img == null)
-            img = BitmapFactory.decodeResource(getResources(), R.drawable.ic_pagination_white_48dp);
+            img = BitmapFactory.decodeResource(getResources(), R.drawable.ic_pagination_48dp);
         return v;
     }
 
@@ -116,7 +116,7 @@ public class PagedFragment extends Fragment implements ViewPager.OnPageChangeLis
         dot.setMaxHeight(size);
         dot.setLayoutParams(new ViewGroup.LayoutParams(size, size));
         if (img != null)
-            img = BitmapFactory.decodeResource(getResources(), R.drawable.ic_pagination_white_48dp);
+            img = BitmapFactory.decodeResource(getResources(), R.drawable.ic_pagination_48dp);
         dot.setImageBitmap(img);
         dot.setColorFilter(ContextCompat.getColor(this.getActivity().getBaseContext(), R.color.main_black));
         dots.add(dot);

@@ -20,8 +20,10 @@
     <color name="paper_prisoners">#318ebe</color>
     <color name="main_black">#222224</color>
     <color name="main_black_faded">#90111113</color>
+    <color name="main_black_superfaded">#46111113</color>
     <color name="main_white">#dfdddd</color>
     <color name="main_white_faded">#90ffffff</color>
+    <color name="main_white_superfaded">#46ffffff</color>
     <color name="main_accept">#50f055</color>
     <color name="main_deny">#f25749</color>
     <color name="main_neutral">#3399f0</color>

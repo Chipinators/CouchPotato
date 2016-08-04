@@ -41,9 +41,11 @@ public class TypefaceManager {
         if (t != null) {
             return t;
         } else {
+            Log.i(TypefaceManager.class.getName(),"Could not fine font \""+name+"\"");
             consecutiveFails++;
             if (!failFlag && consecutiveFails < STRIKES) {
                 failFlag = true;
+                manualLoadFonts(assets);
                 return get(name);
             } else {
                 failFlag = false;
@@ -62,14 +64,14 @@ public class TypefaceManager {
             fonts.put("Oswald-Bold", Typeface.createFromAsset(manager, "font/oswald/Oswald-Bold.ttf"));
             fonts.put("Kreon-Light", Typeface.createFromAsset(manager, "font/kreon/Kreon-Light.ttf"));
             fonts.put("Kreon-Regular", Typeface.createFromAsset(manager, "font/kreon/Kreon-Regular.ttf"));
-            fonts.put("Kreon-Regular", Typeface.createFromAsset(manager, "font/kreon/Kreon-Bold.ttf"));
-            fonts.put("PassionOne-Light", Typeface.createFromAsset(manager, "font/passion_one/PassionOne-Regular.ttf"));
+            fonts.put("Kreon-Bold", Typeface.createFromAsset(manager, "font/kreon/Kreon-Bold.ttf"));
+            /*fonts.put("PassionOne-Light", Typeface.createFromAsset(manager, "font/passion_one/PassionOne-Regular.ttf"));
             fonts.put("PassionOne-Regular", Typeface.createFromAsset(manager, "font/passion_one/PassionOne-Bold.ttf"));
             fonts.put("PassionOne-Bold", Typeface.createFromAsset(manager, "font/passion_one/PassionOne-Black.ttf"));
             fonts.put("CabinCondensed-Light", Typeface.createFromAsset(manager, "font/cabin_condensed/CabinCondensed-Regular.ttf"));
             fonts.put("CabinCondensed-Regular", Typeface.createFromAsset(manager, "font/cabin_condensed/CabinCondensed-Medium.ttf"));
             fonts.put("CabinCondensed-SemiBold", Typeface.createFromAsset(manager, "font/cabin_condensed/CabinCondensed-SemiBold.ttf"));
-            fonts.put("CabinCondensed-Bold", Typeface.createFromAsset(manager, "font/cabin_condensed/CabinCondensed-Bold.ttf"));
+            fonts.put("CabinCondensed-Bold", Typeface.createFromAsset(manager, "font/cabin_condensed/CabinCondensed-Bold.ttf"));*/
         } catch (Exception e) {
         }
     }

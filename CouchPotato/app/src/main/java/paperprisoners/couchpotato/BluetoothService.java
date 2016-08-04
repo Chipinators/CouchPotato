@@ -92,6 +92,11 @@ public class BluetoothService {
     //Host - starts a server listening thread
     public static synchronized void start() {
         if(Constants.debug) Log.d(TAG, "start");
+        //If there is currently an accept thread open close it
+        if(mAcceptThread != null){
+            mAcceptThread.cancel();
+            mAcceptThread = null;
+        }
         // Start the thread to listen on a BluetoothServerSocket
         if (mAcceptThread == null) {
             mAcceptThread = new AcceptThread();

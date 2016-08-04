@@ -3,14 +3,17 @@ package paperprisoners.couchpotato;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -39,6 +42,11 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
     private boolean submissionsArePaired;
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     private Thread start;
+    //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    //Requests fonts from TypefaceManager
+    private Typeface light;
+    private Typeface regular;
+    private Typeface bold;
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     private int gameRound = 3;
     private double inputTime = 20;
@@ -150,6 +158,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             public void run() {
                 container.removeAllViews();
                 inflater.inflate(R.layout.wouldchuck_round, container);
+                updateFonts();
 
                 int dRID = getActivity().getResources().getIdentifier("@drawable/round" + gameRound + "_512", "drawable", "paperprisoners.couchpotato");
                 ImageView rv = (ImageView) getActivity().findViewById(R.id.wc_round_img);
@@ -179,7 +188,23 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                     Log.i(TAG, "HERE!");
                 }
                 container.removeAllViews();
-                inflater.inflate(R.layout.wouldchuck_input, container);
+                //Properly setting up all elements
+                KeyboardHidingListener hider = new KeyboardHidingListener(getActivity(), container);
+                View v = inflater.inflate(R.layout.wouldchuck_input, container);
+                ViewGroup container = (ViewGroup) v.findViewById(R.id.wc_input_root);
+                container.setOnClickListener(hider);
+                TextView timer = (TextView) v.findViewById(R.id.wc_input_timer);
+                timer.setTypeface(bold);
+                TextView direction = (TextView) v.findViewById(R.id.wc_input_direction);
+                direction.setTypeface(bold);
+                EditText input1 = (EditText) v.findViewById(R.id.wc_input_1);
+                input1.setOnFocusChangeListener(hider);
+                input1.setTypeface(regular);
+                EditText input2 = (EditText) v.findViewById(R.id.wc_input_2);
+                input2.setOnFocusChangeListener(hider);
+                input2.setTypeface(regular);
+                Button submit = (Button) v.findViewById(R.id.wc_input_submit);
+                submit.setTypeface(bold);
             }
         });
 
@@ -296,13 +321,6 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         vtePlayer1 = -1;
         final double time = voteTime;
         input = null;
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                container.removeAllViews();
-                inflater.inflate(R.layout.wouldchuck_choice, container);
-            }
-        });
 
         if (host) {
             if (Constants.debug) {
@@ -335,7 +353,18 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             @Override
             public void run() {
                 container.removeAllViews();
-                inflater.inflate(R.layout.wouldchuck_choice, container);
+                View v = inflater.inflate(R.layout.wouldchuck_choice, container);
+                //Properly setting up all elements
+                TextView timer = (TextView) v.findViewById(R.id.wc_choice_timer);
+                timer.setTypeface(bold);
+                TextView wyr = (TextView) v.findViewById(R.id.wc_choice_wyr);
+                wyr.setTypeface(bold);
+                Button choice1 = (Button) v.findViewById(R.id.wc_choice_1);
+                choice1.setTypeface(regular);
+                Button choice2 = (Button) v.findViewById(R.id.wc_choice_2);
+                choice2.setTypeface(regular);
+                TextView direction = (TextView) v.findViewById(R.id.wc_choice_or);
+                direction.setTypeface(bold);
                 Button ch1 = (Button) getActivity().findViewById(R.id.wc_choice_1);
                 Button ch2 = (Button) getActivity().findViewById(R.id.wc_choice_2);
                 ch1.setText(submissions[0]); //set option 1
@@ -369,8 +398,8 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                             ch2.setEnabled(true);
                             ch1.setEnabled(false);
 
-                            ch1.setAlpha((float) .25);
-                            ch2.setAlpha((float) 1);
+                            ch1.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.main_black_superfaded));
+                            ch2.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.main_black_faded));
                         }
                     });
                     ch2.setOnClickListener(new View.OnClickListener() {
@@ -387,15 +416,13 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                             ch2.setEnabled(false);
                             ch1.setEnabled(true);
 
-                            ch2.setAlpha((float) .25);
-                            ch1.setAlpha((float) 1);
+                            ch2.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.main_black_superfaded));
+                            ch1.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.main_black_faded));
                         }
                     });
                 } else {
                     ch1.setEnabled(false);
-                    ch1.setAlpha((float) 1);
                     ch1.setTextColor(getActivity().getResources().getColor(R.color.main_deny));
-                    ch2.setAlpha((float) 1);
                     ch2.setTextColor(getActivity().getResources().getColor(R.color.main_deny));
                 }
             }
@@ -435,7 +462,8 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             @Override
             public void run() {
                 container.removeAllViews();
-                inflater.inflate(R.layout.wouldchuck_waiting, container);
+                View v = inflater.inflate(R.layout.wouldchuck_waiting, container);
+                ((TextView) v.findViewById(R.id.wc_waiting_text)).setTypeface(bold);
             }
         });
         numberOfVotesIn = 0;
@@ -452,9 +480,26 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         loading("Gathering Votes...");
         cont = false;
 
-        if (host) {
+        if (host) { //TODO: VOTE TIME OUT
+            final Handler h = new Handler();
+
+            Runnable clock = new Runnable() {
+                int time = 20;
+                @Override
+                public void run() {
+                    time --;
+                    if(time == 0){
+                        cont = true;
+                    }
+                    else{
+                        h.postDelayed(this, 1000);
+                    }
+                }
+            };
+            h.post(clock);
             while (true) { //while waiting to recieve votes
-                if (numberOfVotesIn == players.size() - 1) {
+                if (numberOfVotesIn == players.size() - 1 || cont) {
+                    cont = false;
                     break;
                 }
             }
@@ -484,50 +529,50 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                             Log.i(TAG, "Viewing Results");
                         }
                         container.removeAllViews();
-                        inflater.inflate(R.layout.wouldchuck_results, container);
-                        ((TextView) getActivity().findViewById(R.id.wc_results_content1)).setText(submissions[0]);
-                        getActivity().findViewById(R.id.wc_results_content1).invalidate();
-                        ((TextView) getActivity().findViewById(R.id.wc_results_content2)).setText(submissions[1]);
-                        getActivity().findViewById(R.id.wc_results_content2).invalidate();
-                        ((TextView) getActivity().findViewById(R.id.wc_results_count1)).setText(votes1 + "");
-                        getActivity().findViewById(R.id.wc_results_count1).invalidate();
-                        ((TextView) getActivity().findViewById(R.id.wc_results_count2)).setText(votes2 + "");
-                        getActivity().findViewById(R.id.wc_results_count2).invalidate();
-                        ((TextView) getActivity().findViewById(R.id.wc_results_user1)).setText(players.get(findPlayerIndex(vtePlayer1)).username);
-                        getActivity().findViewById(R.id.wc_results_user1).invalidate();
-                        ((TextView) getActivity().findViewById(R.id.wc_results_user2)).setText(players.get(findPlayerIndex(vtePlayer2)).username);
-                        getActivity().findViewById(R.id.wc_results_user2).invalidate();
+                        View v = inflater.inflate(R.layout.wouldchuck_results, container);
+                        TextView title = (TextView) v.findViewById(R.id.wc_results_title);
+                        title.setTypeface(bold);
+                        TextView content1 = (TextView) v.findViewById(R.id.wc_results_content1);
+                        content1.setTypeface(light);
+                        content1.setText(submissions[0]);
+                        TextView content2 = (TextView) v.findViewById(R.id.wc_results_content2);
+                        content2.setTypeface(light);
+                        content2.setText(submissions[1]);
+                        TextView count1 = (TextView) v.findViewById(R.id.wc_results_count1);
+                        count1.setTypeface(bold);
+                        count1.setText(votes1 + "");
+                        TextView count2 = (TextView) v.findViewById(R.id.wc_results_count2);
+                        count2.setTypeface(bold);
+                        count2.setText(votes2 + "");
+                        TextView score1 = (TextView) v.findViewById(R.id.wc_results_score1);
+                        score1.setTypeface(bold);
+                        TextView score2 = (TextView) v.findViewById(R.id.wc_results_score2);
+                        score2.setTypeface(bold);
+                        TextView user1 = (TextView) v.findViewById(R.id.wc_results_user1);
+                        user1.setTypeface(regular);
+                        user1.setText(players.get(findPlayerIndex(vtePlayer1)).username);
+                        TextView user2 = (TextView) v.findViewById(R.id.wc_results_user2);
+                        user2.setTypeface(regular);
+                        user2.setText(players.get(findPlayerIndex(vtePlayer2)).username);
 
                         if (submissions[0].equals("User Didn't Enter a Value") && submissions[1].equals("User Didn't Enter a Value")) {
-                            ((TextView) getActivity().findViewById(R.id.wc_results_score1)).setText(-1 * ((500 * gameRound) / 2) + "");
-                            getActivity().findViewById(R.id.wc_results_score1).invalidate();
-                            ((TextView) getActivity().findViewById(R.id.wc_results_score2)).setText(-1 * ((500 * gameRound) / 2) + "");
-                            getActivity().findViewById(R.id.wc_results_score2).invalidate();
+                            score1.setText(-1 * ((500 * gameRound) / 2) + "");
+                            score2.setText(-1 * ((500 * gameRound) / 2) + "");
                         } else if (submissions[0].equals("User Didn't Enter a Value")) {
-                            ((TextView) getActivity().findViewById(R.id.wc_results_score2)).setText(((500 * gameRound) / 2) + "");
-                            getActivity().findViewById(R.id.wc_results_score1).invalidate();
-                            ((TextView) getActivity().findViewById(R.id.wc_results_score1)).setText(-1 * ((500 * gameRound) / 2) + "");
-                            getActivity().findViewById(R.id.wc_results_score2).invalidate();
+                            score2.setText(((500 * gameRound) / 2) + "");
+                            score1.setText(-1 * ((500 * gameRound) / 2) + "");
                         } else if (submissions[1].equals("User Didn't Enter a Value")) {
-                            ((TextView) getActivity().findViewById(R.id.wc_results_score1)).setText((500 * gameRound) / 2 + "");
-                            getActivity().findViewById(R.id.wc_results_score1).invalidate();
-                            ((TextView) getActivity().findViewById(R.id.wc_results_score2)).setText((-1 * (500 * gameRound) / 2) + "");
-                            getActivity().findViewById(R.id.wc_results_score2).invalidate();
+                            score1.setText((500 * gameRound) / 2 + "");
+                            score2.setText((-1 * (500 * gameRound) / 2) + "");
                         } else if (votes1 < votes2) {//number 1 wins
-                            ((TextView) getActivity().findViewById(R.id.wc_results_score1)).setText((500 * gameRound) + "");
-                            getActivity().findViewById(R.id.wc_results_score1).invalidate();
-                            ((TextView) getActivity().findViewById(R.id.wc_results_score2)).setText("0");
-                            getActivity().findViewById(R.id.wc_results_score2).invalidate();
+                            score1.setText((500 * gameRound) + "");
+                            score2.setText("0");
                         } else if (votes2 < votes1) {//number 2 wins
-                            ((TextView) getActivity().findViewById(R.id.wc_results_score1)).setText("0");
-                            getActivity().findViewById(R.id.wc_results_score1).invalidate();
-                            ((TextView) getActivity().findViewById(R.id.wc_results_score2)).setText((500 * gameRound) + "");
-                            getActivity().findViewById(R.id.wc_results_score2).invalidate();
+                            score1.setText("0");
+                            score2.setText((500 * gameRound) + "");
                         } else {//tie
-                            ((TextView) getActivity().findViewById(R.id.wc_results_score1)).setText((250 * gameRound) + "");
-                            getActivity().findViewById(R.id.wc_results_score1).invalidate();
-                            ((TextView) getActivity().findViewById(R.id.wc_results_score2)).setText((250 * gameRound) + "");
-                            getActivity().findViewById(R.id.wc_results_score2).invalidate();
+                            score1.setText((250 * gameRound) + "");
+                            score2.setText((250 * gameRound) + "");
                         }
                     }
                 });
@@ -549,7 +594,24 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             @Override
             public void run() {
                 container.removeAllViews();
-                inflater.inflate(R.layout.wouldchuck_leaderboard, container);
+                View v = inflater.inflate(R.layout.wouldchuck_leaderboard, container);
+                //Sets fonts for the leaderboard
+                TextView title = (TextView) v.findViewById(R.id.wc_leaderboard_title);
+                title.setTypeface(bold);
+                for (int i=1; i<=players.size(); i++) {
+                    String placeStr = "wc_leaderboard_place"+i;
+                    int placeID = getResources().getIdentifier(placeStr, "id", getActivity().getPackageName());
+                    TextView place = (TextView) v.findViewById(placeID);
+                    place.setTypeface(bold);
+                    String nameStr = "wc_leaderboard_name"+i;
+                    int nameID = getResources().getIdentifier(nameStr, "id", getActivity().getPackageName());
+                    TextView name = (TextView) v.findViewById(nameID);
+                    name.setTypeface(light);
+                    String scoreStr = "wc_leaderboard_score"+i;
+                    int scoreID = getResources().getIdentifier(scoreStr, "id", getActivity().getPackageName());
+                    TextView score = (TextView) v.findViewById(scoreID);
+                    score.setTypeface(regular);
+                }
 
                 if (Constants.debug) {
                     Log.i(TAG, "Set order on leader board");
@@ -559,13 +621,13 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                     if (Constants.debug) {
                         Log.i(TAG, "ORDER: ID - " + order[i][0] + ", POINTS - " + order[i][1]);
                     }
-                    ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_name" + (i + 1), "id", "paperprisoners.couchpotato"))).setText(players.get(order[i][0]).username); //SEARCH STRING TO RESOURCE ID
-                    ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_score" + (i + 1), "id", "paperprisoners.couchpotato"))).setText("" + order[i][1]);
+                    ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_name" + (i + 1), "id", getActivity().getPackageName()))).setText(players.get(order[i][0]).username); //SEARCH STRING TO RESOURCE ID
+                    ((TextView) getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_score" + (i + 1), "id", getActivity().getPackageName()))).setText("" + order[i][1]);
                 }
 
                 LinearLayout parent = (LinearLayout) getActivity().findViewById(R.id.wc_leaderboard_parentLayout);
                 for (int i = order.length; i < 8; i++) {
-                    parent.removeView(getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_layout" + (i + 1), "id", "paperprisoners.couchpotato")));
+                    parent.removeView(getActivity().findViewById(getResources().getIdentifier("wc_leaderboard_layout" + (i + 1), "id", getActivity().getPackageName())));
                 }
             }
         });
@@ -628,10 +690,16 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 @Override
                 public void run() {
                     container.removeAllViews();
-                    inflater.inflate(R.layout.wouldchuck_winner, container);
-
-                    ((TextView) getActivity().findViewById(R.id.wc_winner_name)).setText(players.get(winners.get(z)).username);
-                    ((TextView) getActivity().findViewById(R.id.wc_winner_score)).setText("" + winningPoints);
+                    View v = inflater.inflate(R.layout.wouldchuck_winner, container);
+                    //Sets fonts and text
+                    TextView title = (TextView) getActivity().findViewById(R.id.wc_winner_title);
+                    title.setTypeface(bold);
+                    TextView name = (TextView) getActivity().findViewById(R.id.wc_winner_name);
+                    name.setTypeface(regular);
+                    name.setText(players.get(winners.get(z)).username);
+                    TextView score = (TextView) v.findViewById(R.id.wc_winner_score);
+                    score.setTypeface(bold);
+                    score.setText("" + winningPoints);
                 }
             });
 
@@ -651,7 +719,9 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                     inflater.inflate(R.layout.wouldchuck_hostend, container);
 
                     Button again = (Button) getActivity().findViewById(R.id.wc_again);
+                    again.setTypeface(bold);
                     Button done = (Button) getActivity().findViewById(R.id.wc_close);
+                    done.setTypeface(bold);
 
                     again.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -810,7 +880,9 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             public void run() {
                 container.removeAllViews();
                 inflater.inflate(R.layout.wouldchuck_waiting, container);
-                ((TextView) getActivity().findViewById(R.id.wc_waiting_text)).setText(Message);
+                TextView text = (TextView) getActivity().findViewById(R.id.wc_waiting_text);
+                text.setTypeface(bold);
+                text.setText(Message);
             }
         });
     } //DONE
@@ -971,6 +1043,12 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
 
     }
 
+    private void updateFonts() {
+        light = TypefaceManager.get("Kreon-Light");
+        regular = TypefaceManager.get("Kreon-Regular");
+        bold = TypefaceManager.get("Kreon-Bold");
+    }
+
     @Override
     public void onStop() {
         super.onStop();
@@ -983,13 +1061,14 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BluetoothService.addMessageListener(this);
+        updateFonts();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_would_chuck, container, false);
+        View view = inflater.inflate(R.layout.wouldchuck_start, container, false);
         this.inflater = inflater;
         this.container = container;
         return view;

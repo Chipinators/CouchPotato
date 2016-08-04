@@ -78,6 +78,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
         Log.i(TAG, "FINISHED GETTING PLAYER ARRAY DATA FROM BUNDLE");
         me = new UserData(TextUtils.split(extras.getString("me"), Pattern.quote(GameActivity.DELIM2)));
         host = extras.getBoolean("host");
+        ((TextView) findViewById(R.id.game_name)).setText(me.username);
         Log.i(TAG, "FINISHED GETTING USER DATA FROM BUNDLE");
         Log.i(TAG, "PLAYER DATA ----- " + TextUtils.join(",", players));
         //Setting player-specific stuff

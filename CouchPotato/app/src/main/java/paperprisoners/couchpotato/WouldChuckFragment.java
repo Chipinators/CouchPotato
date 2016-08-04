@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -397,8 +398,8 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                             ch2.setEnabled(true);
                             ch1.setEnabled(false);
 
-                            ch1.setAlpha((float) .25);
-                            ch2.setAlpha((float) 1);
+                            ch1.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.main_black_superfaded));
+                            ch2.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.main_black_faded));
                         }
                     });
                     ch2.setOnClickListener(new View.OnClickListener() {
@@ -415,15 +416,13 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                             ch2.setEnabled(false);
                             ch1.setEnabled(true);
 
-                            ch2.setAlpha((float) .25);
-                            ch1.setAlpha((float) 1);
+                            ch2.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.main_black_superfaded));
+                            ch1.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.main_black_faded));
                         }
                     });
                 } else {
                     ch1.setEnabled(false);
-                    ch1.setAlpha((float) 1);
                     ch1.setTextColor(getActivity().getResources().getColor(R.color.main_deny));
-                    ch2.setAlpha((float) 1);
                     ch2.setTextColor(getActivity().getResources().getColor(R.color.main_deny));
                 }
             }

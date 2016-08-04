@@ -62,6 +62,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
         //Sets fonts
         name.setTypeface(TypefaceManager.get("Oswald-Bold"));
         //Adds listeners
+        root.setOnClickListener(new KeyboardHidingListener(this,root));
         menu.setOnClickListener(this);
         //Sets top bar content
         username = this.getIntent().getStringExtra("username");

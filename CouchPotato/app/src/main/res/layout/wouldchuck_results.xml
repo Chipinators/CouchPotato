@@ -64,7 +64,7 @@
                     android:layout_height="wrap_content"
                     android:text="0"
                     android:textColor="@color/main_white"
-                    android:textSize="150dp"
+                    android:textSize="160dp"
                     android:textStyle="bold" />
             </RelativeLayout>
 
@@ -140,7 +140,7 @@
                     android:layout_height="wrap_content"
                     android:text="0"
                     android:textColor="@color/main_white"
-                    android:textSize="150dp"
+                    android:textSize="160dp"
                     android:textStyle="bold" />
             </RelativeLayout>
 

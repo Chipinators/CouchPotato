@@ -62,7 +62,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
         //Sets fonts
         name.setTypeface(TypefaceManager.get("Oswald-Bold"));
         //Adds listeners
-        root.setOnClickListener(new KeyboardHidingListener(this, root));
+        root.setOnClickListener(new KeyboardHidingListener(this,root));
         menu.setOnClickListener(this);
         //Sets top bar content
         username = this.getIntent().getStringExtra("username");
@@ -118,10 +118,13 @@ public class GameActivity extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         if (v == menu) {
             SettingsDialog settings;
-            if (host)
+            if (host) {
                 settings = new SettingsDialog(this, SettingsDialog.MenuState.HOST);
-            else
+            }
+            else {
                 settings = new SettingsDialog(this, SettingsDialog.MenuState.CLIENT);
+            }
+            settings.show();
         }
     }
 

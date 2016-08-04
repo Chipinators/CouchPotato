@@ -480,9 +480,26 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         loading("Gathering Votes...");
         cont = false;
 
-        if (host) {
+        if (host) { //TODO: VOTE TIME OUT
+            final Handler h = new Handler();
+
+            Runnable clock = new Runnable() {
+                int time = 20;
+                @Override
+                public void run() {
+                    time --;
+                    if(time == 0){
+                        cont = true;
+                    }
+                    else{
+                        h.postDelayed(this, 1000);
+                    }
+                }
+            };
+            h.post(clock);
             while (true) { //while waiting to recieve votes
-                if (numberOfVotesIn == players.size() - 1) {
+                if (numberOfVotesIn == players.size() - 1 || cont) {
+                    cont = false;
                     break;
                 }
             }
@@ -918,14 +935,14 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                     }
 
                     int randPlayer;
-                    int counter = 0;
+                    int counter = offset;
 
                     String randQ;
 
                     ArrayList<String[]> temp = new ArrayList<>();
 
                     for (int i = 0; i < players.size() * 2; i++) {
-                        counter += offset;
+                        counter += interval;
                         randPlayer = (counter) % players.size();
 
                         randQ = responses[randPlayer][i % 2];

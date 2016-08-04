@@ -11,8 +11,7 @@
         android:id="@+id/title_adspace_reserved"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/p4_col" >
+        android:layout_alignParentBottom="true" >
     </RelativeLayout>
 
     <LinearLayout
@@ -82,15 +81,18 @@
                 android:textColor="@color/main_black"
                 android:textSize="@dimen/font_medium" />
 
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/padding_small" />
             <Button
                 android:id="@+id/title_submit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/main_black"
+                android:background="@color/main_neutral"
                 android:gravity="center"
                 android:keepScreenOn="true"
                 android:text="@string/title_play"
-                android:textColor="@color/main_white"
+                android:textColor="@color/main_black_superfaded"
                 android:textSize="@dimen/font_medium"
                 android:textStyle="bold" />
 

@@ -398,8 +398,8 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                             ch2.setEnabled(true);
                             ch1.setEnabled(false);
 
-                            ch1.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.main_black_superfaded));
-                            ch2.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.main_black_faded));
+                            ch1.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.main_black_superfaded));
+                            ch2.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.main_black_faded));
                         }
                     });
                     ch2.setOnClickListener(new View.OnClickListener() {
@@ -416,8 +416,8 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                             ch2.setEnabled(false);
                             ch1.setEnabled(true);
 
-                            ch2.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.main_black_superfaded));
-                            ch1.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.main_black_faded));
+                            ch2.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.main_black_superfaded));
+                            ch1.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.main_black_faded));
                         }
                     });
                 } else {
@@ -485,13 +485,13 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
 
             Runnable clock = new Runnable() {
                 int time = 20;
+
                 @Override
                 public void run() {
-                    time --;
-                    if(time == 0){
+                    time--;
+                    if (time == 0) {
                         cont = true;
-                    }
-                    else{
+                    } else {
                         h.postDelayed(this, 1000);
                     }
                 }
@@ -598,16 +598,16 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 //Sets fonts for the leaderboard
                 TextView title = (TextView) v.findViewById(R.id.wc_leaderboard_title);
                 title.setTypeface(bold);
-                for (int i=1; i<=players.size(); i++) {
-                    String placeStr = "wc_leaderboard_place"+i;
+                for (int i = 1; i <= players.size(); i++) {
+                    String placeStr = "wc_leaderboard_place" + i;
                     int placeID = getResources().getIdentifier(placeStr, "id", getActivity().getPackageName());
                     TextView place = (TextView) v.findViewById(placeID);
                     place.setTypeface(bold);
-                    String nameStr = "wc_leaderboard_name"+i;
+                    String nameStr = "wc_leaderboard_name" + i;
                     int nameID = getResources().getIdentifier(nameStr, "id", getActivity().getPackageName());
                     TextView name = (TextView) v.findViewById(nameID);
                     name.setTypeface(light);
-                    String scoreStr = "wc_leaderboard_score"+i;
+                    String scoreStr = "wc_leaderboard_score" + i;
                     int scoreID = getResources().getIdentifier(scoreStr, "id", getActivity().getPackageName());
                     TextView score = (TextView) v.findViewById(scoreID);
                     score.setTypeface(regular);
@@ -911,28 +911,26 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 //private boolean submissionsArePaired;
                 int offset;
                 int interval;
+                boolean overlap = false;
 
                 if (!submissionsArePaired) {
                     Random rand = new Random();
                     offset = rand.nextInt(players.size());
+                    interval = rand.nextInt(players.size() - 2) + 1;
                     //Condition for 1-2 player debugging
                     if (players.size() <= 2)
                         interval = 0;
-                    else {
-                        interval = rand.nextInt(players.size() - 2) + 1;
-                        //Overlaps can happen if the offset and interval are both odd or both even
-                        if (players.size() % 2 == interval % 2) {
-                            interval++;
-                        }
-                        //Then we need to make sure that they don't evenly divide either
-                        if (players.size()%2==0 && interval<=1 && players.size()%interval==0) {
-                            interval += 2;
-                        }
+                    //Overlaps can happen if the offset and interval are both odd or both even
+                    if (players.size() % 2 == interval % 2) {
+                        interval++;
+                    }
+                    //Then we need to make sure that they don't evenly divide either
+                    if (players.size() % 2 == 0 && interval <= 1 && players.size() % interval == 0) {
+                        interval += 2;
                     }
 
                     int randPlayer;
                     int counter = offset;
-
                     String randQ;
 
                     ArrayList<String[]> temp = new ArrayList<>();
@@ -941,8 +939,17 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                         counter += interval;
                         randPlayer = (counter) % players.size();
 
+                        //Checks if the algorithm overlapped onto the starting point
+                        if (randPlayer==offset && i%2==0)
+                            overlap = true;
+
                         //Case for if you somehow overlap
-                        randQ = responses[randPlayer][i % 2];
+                        if (!overlap)
+                            randQ = responses[randPlayer][i % 2];
+                        else {
+                            randQ = responses[randPlayer][(i+1) % 2];
+                            overlap = true;
+                        }
 
                         temp.add(new String[]{randQ, randPlayer + ""});
                         if (Constants.debug) {

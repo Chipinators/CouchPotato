@@ -915,6 +915,8 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                         counter += interval;
                         randPlayer = (counter) % players.size();
 
+                        Log.v("Selection_Fix","offset:" + offset + "\tinterval:" + interval + "\n");
+
                         //Checks if the algorithm overlapped onto the starting point
                         if (randPlayer==offset && i%2==0)
                             overlap = true;

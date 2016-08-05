@@ -48,7 +48,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
     private Typeface regular;
     private Typeface bold;
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-    private int gameRound = 3;
+    private int gameRound = 1;
     private double inputTime = 45;
     private double voteTime = 15;
     private double resultsTimes = 7.5;
@@ -822,7 +822,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
 
                     this.startActivity(again);
                 } else {
-                    Intent back = new Intent(getActivity().getBaseContext(), GameSelectActivity.class);
+                    Intent back = new Intent(getActivity().getBaseContext(), TitleActivity.class);
                     back.putExtra("username", me.username);
                     BluetoothService.writeToServer("" + me.getPlayerID(), Constants.USER_DISCONNECTED, new String[]{"ALL GOOD"});
                     this.startActivity(back);
@@ -1060,7 +1060,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                     Log.i(TAG, "CLOSE WAS SELECTED");
                 }
                 BluetoothService.writeToClients(Constants.WC_END, new String[]{"done"});//send the data over to clients
-                Intent back = new Intent(getActivity().getBaseContext(), GameSelectActivity.class);
+                Intent back = new Intent(getActivity().getBaseContext(), TitleActivity.class);
                 back.putExtra("username", me.username);
                 if (Constants.debug) {
                     Log.i(TAG, "CLOSE WAS SELECTED");
@@ -1079,7 +1079,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
 
                 }
             } else {
-                Intent back = new Intent(getActivity().getBaseContext(), GameSelectActivity.class);
+                Intent back = new Intent(getActivity().getBaseContext(), TitleActivity.class);
                 back.putExtra("username", me.username);
                 BluetoothService.writeToServer("" + me.getPlayerID(), Constants.USER_DISCONNECTED, new String[]{"ALL GOOD"});
                 this.startActivity(back);

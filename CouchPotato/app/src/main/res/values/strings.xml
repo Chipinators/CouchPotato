@@ -1,6 +1,6 @@
 <resources>
     <!--Titling-->
-    <string name="app_name">Wouldchuck</string>
+    <string name="app_name">Couch Potato</string>
     <string name="app_name_upper">COUCH POTATO</string>
     <string name="easter">COUCH BROTATO</string>
     <string name="version">v. 1.0.0</string>

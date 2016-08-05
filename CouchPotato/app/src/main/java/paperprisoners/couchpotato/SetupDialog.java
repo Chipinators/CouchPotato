@@ -287,7 +287,6 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
         adjustContent();
     }
 
-
     //BLUETOOTH METHODS
     public  final BroadcastReceiver bCReciever = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {

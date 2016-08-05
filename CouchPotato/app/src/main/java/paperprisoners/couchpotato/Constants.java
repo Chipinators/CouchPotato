@@ -4,7 +4,7 @@ package paperprisoners.couchpotato;
  * Created by chris on 7/16/2016.
  */
 public interface Constants {
-    public String app_name = "Couch Potato";
+    public String app_name = "Wouldchuck";
     public static final boolean debug = true;
 
     final int range = 14;

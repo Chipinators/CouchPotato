@@ -876,20 +876,22 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
 
         if (!submissionsArePaired) {
             pairs = new ArrayList<>();
-            submissionsArePaired = true;
 
             if (players.size() == 1) {
                 pairs.add(new String[]{responses[0][0], responses[0][1], "0", "0"});
+                submissionsArePaired = true;
             } else if (players.size() == 2) {
                 pairs.add(new String[]{responses[0][0], responses[1][1], "0", "1"});
                 pairs.add(new String[]{responses[1][0], responses[0][1], "1", "0"});
+                submissionsArePaired = true;
             } else {
                 //private boolean submissionsArePaired;
                 int offset=0;
                 int interval=1;
                 boolean overlap = false;
-
+                Log.i(TAG, "SUBMISSIONS ARE PAIRED: " + submissionsArePaired);
                 if (!submissionsArePaired) {
+                    submissionsArePaired = true;
                     Random rand = new Random();
                     offset = rand.nextInt(players.size());
                     interval = rand.nextInt(players.size() - 2) + 1;
@@ -905,17 +907,13 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                         interval += 2;
                     }
 
-                    int randPlayer;
+                    int randPlayer = offset;
                     int counter = offset;
                     String randQ;
 
                     ArrayList<String[]> temp = new ArrayList<>();
 
                     for (int i = 0; i < players.size() * 2; i++) {
-                        counter += interval;
-                        randPlayer = (counter) % players.size();
-
-                        Log.v("Selection_Fix","offset:" + offset + "\tinterval:" + interval + "\n");
 
                         //Checks if the algorithm overlapped onto the starting point
                         if (randPlayer==offset && i%2==0)
@@ -933,6 +931,9 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                         if (Constants.debug) {
                             Log.i(TAG, "NEW PAIR: " + Arrays.toString(temp.get(temp.size() - 1)));
                         }
+
+                        counter += interval;
+                        randPlayer = (counter) % players.size();
                     }
 
                     for (int i = 0; i < temp.size(); i = i + 2) {

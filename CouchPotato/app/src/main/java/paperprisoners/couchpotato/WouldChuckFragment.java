@@ -55,6 +55,10 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
     private double leaderboardTime = 7.5;
 
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    public WouldChuckFragment(){
+
+    }
+
     @Override
     public synchronized void onStart() {
         super.onStart();
@@ -322,12 +326,20 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         final double time = voteTime;
         input = null;
 
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                container.removeAllViews();
+                inflater.inflate(R.layout.wouldchuck_choice, container);
+            }
+        });
+
         if (host) {
             if (Constants.debug) {
                 Log.i(TAG, "LENGTH HOST: " + responses[0][0]);
             }
             if (Constants.debug) {
-                if(players.size() != 1){
+                if (players.size() != 1) {
                     Log.i(TAG, "LENGTH CLIENT: " + responses[1][0]);
                 }
             }
@@ -398,8 +410,8 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                             ch2.setEnabled(true);
                             ch1.setEnabled(false);
 
-                            ch1.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.main_black_superfaded));
-                            ch2.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.main_black_faded));
+                            ch1.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.main_black_superfaded));
+                            ch2.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.main_black_faded));
                         }
                     });
                     ch2.setOnClickListener(new View.OnClickListener() {
@@ -416,8 +428,8 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                             ch2.setEnabled(false);
                             ch1.setEnabled(true);
 
-                            ch2.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.main_black_superfaded));
-                            ch1.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.main_black_faded));
+                            ch2.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.main_black_superfaded));
+                            ch1.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.main_black_faded));
                         }
                     });
                 } else {
@@ -481,25 +493,8 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         cont = false;
 
         if (host) { //TODO: VOTE TIME OUT
-            final Handler h = new Handler();
-
-            Runnable clock = new Runnable() {
-                int time = 20;
-                @Override
-                public void run() {
-                    time --;
-                    if(time == 0){
-                        cont = true;
-                    }
-                    else{
-                        h.postDelayed(this, 1000);
-                    }
-                }
-            };
-            h.post(clock);
             while (true) { //while waiting to recieve votes
-                if (numberOfVotesIn == players.size() - 1 || cont) {
-                    cont = false;
+                if (numberOfVotesIn == players.size() - 1) {
                     break;
                 }
             }
@@ -598,16 +593,16 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 //Sets fonts for the leaderboard
                 TextView title = (TextView) v.findViewById(R.id.wc_leaderboard_title);
                 title.setTypeface(bold);
-                for (int i=1; i<=players.size(); i++) {
-                    String placeStr = "wc_leaderboard_place"+i;
+                for (int i = 1; i <= players.size(); i++) {
+                    String placeStr = "wc_leaderboard_place" + i;
                     int placeID = getResources().getIdentifier(placeStr, "id", getActivity().getPackageName());
                     TextView place = (TextView) v.findViewById(placeID);
                     place.setTypeface(bold);
-                    String nameStr = "wc_leaderboard_name"+i;
+                    String nameStr = "wc_leaderboard_name" + i;
                     int nameID = getResources().getIdentifier(nameStr, "id", getActivity().getPackageName());
                     TextView name = (TextView) v.findViewById(nameID);
                     name.setTypeface(light);
-                    String scoreStr = "wc_leaderboard_score"+i;
+                    String scoreStr = "wc_leaderboard_score" + i;
                     int scoreID = getResources().getIdentifier(scoreStr, "id", getActivity().getPackageName());
                     TextView score = (TextView) v.findViewById(scoreID);
                     score.setTypeface(regular);
@@ -669,8 +664,10 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
     }//DONE
 
     private int z;
+    private int next;
 
     public void gameOver() {
+        next = 0;
         if (Constants.debug) {
             Log.i(TAG, "GAME OVER");
         }
@@ -714,7 +711,6 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    usersDone = 0;
                     container.removeAllViews();
                     inflater.inflate(R.layout.wouldchuck_hostend, container);
 
@@ -726,54 +722,28 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                     again.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            BluetoothService.writeToClients(Constants.WC_END, new String[]{"again"});//send the data over to clients
-                            start.interrupt();
-
-                            Intent again = new Intent(getActivity().getBaseContext(), GameActivity.class);
-                            again.putExtra("me", UserData.toString(me));
-                            again.putExtra("host", host);
-
-                            for (int i = 0; i < players.size(); i++) {
-                                players.get(i).score = 0;
-                            }
-
-                            ArrayList<String> values = new ArrayList<>();
-                            for (int i = 0; i < players.size(); i++) {
-                                values.add(UserData.toString(players.get(i)));
-                            }
-                            again.putStringArrayListExtra("PlayerArray", values);
-
-                            getActivity().startActivity(again);
+                            next = 1;
                         }
                     });
                     done.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            loading("Please wait, disconnecting the other devices;");
-                            if (Constants.debug) {
-                                Log.i(TAG, "CLOSE WAS SELECTED");
-                            }
-                            BluetoothService.writeToClients(Constants.WC_END, new String[]{"done"});//send the data over to clients
-                            Intent back = new Intent(getActivity().getBaseContext(), GameSelectActivity.class);
-                            back.putExtra("username", me.username);
-                            if (Constants.debug) {
-                                Log.i(TAG, "CLOSE WAS SELECTED");
-                            }
-                            loading("Disconecting the clients");
-                            while (true) {
-                                if (usersDone == players.size() - 1) {
-                                    if (Constants.debug) {
-                                        Log.i(TAG, "CLIENTS HAVE CLOSED");
-                                    }
-                                    BluetoothService.listeners.remove(this);
-                                    BluetoothService.stop();
-                                    getActivity().startActivity(back);
-                                }
-                            }
+                            next = -1;
                         }
                     });
                 }
             });
+
+            while (true) {
+                if (next == 1 || next == -1) {
+                    break;
+                }
+            }
+            if (next == 1) {
+                endGame("again");
+            } else {
+                endGame("done");
+            }
         } else {
             loading("Waiting on host...");
         }
@@ -831,6 +801,9 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                     Log.i(TAG, "Results: player" + vtePlayer1 + " - " + votes1 + ", player" + vtePlayer2 + " - " + votes2);
                 }
                 break;
+            case Constants.EXIT:
+                endGame("done");
+                break;
             case Constants.WC_END:
                 if (content[0].toString().toLowerCase().equals("again")) {
                     start.interrupt();
@@ -857,10 +830,10 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 }
                 break;
             case Constants.USER_DISCONNECTED:
-                usersDone++;
+                players.remove(player);
                 break;
         }
-    } //TODO: FIX?
+    }
     //*********************************************************************************
     //*********************************************************************************
 
@@ -903,60 +876,80 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
 
         if (!submissionsArePaired) {
             pairs = new ArrayList<>();
-            submissionsArePaired = true;
 
-            if(players.size() == 1){
-                pairs.add(new String[]{responses[0][0], responses[0][1], "" + 0, "" + 0});
-            }
-            else if(players.size() == 2){
-                pairs.add(new String[]{responses[0][0], responses[1][1], "" + 0, "" + 1});
-                pairs.add(new String[]{responses[1][0], responses[0][1], "" + 1, "" + 0});
-            }
-            else if (players.size() == 3) {
-                int A = 0;
-                int B = 1;
-                int C = 2;
-                pairs.add(new String[]{responses[A][0], responses[B][1], "" + A, "" + B});
-                pairs.add(new String[]{responses[C][0], responses[A][1], "" + C, "" + A});
-                pairs.add(new String[]{responses[B][0], responses[C][1], "" + B, "" + C});
+            if (players.size() == 1) {
+                pairs.add(new String[]{responses[0][0], responses[0][1], "0", "0"});
+                submissionsArePaired = true;
+            } else if (players.size() == 2) {
+                pairs.add(new String[]{responses[0][0], responses[1][1], "0", "1"});
+                pairs.add(new String[]{responses[1][0], responses[0][1], "1", "0"});
+                submissionsArePaired = true;
             } else {
                 //private boolean submissionsArePaired;
-                int offset;
-                int interval;
-                int loopIndex;
-
+                int offset=0;
+                int interval=1;
+                boolean overlap = false;
+                Log.i(TAG, "SUBMISSIONS ARE PAIRED: " + submissionsArePaired);
                 if (!submissionsArePaired) {
+                    submissionsArePaired = true;
                     Random rand = new Random();
                     offset = rand.nextInt(players.size());
                     interval = rand.nextInt(players.size() - 2) + 1;
-
+                    //Condition for 1-2 player debugging
+                    if (players.size() <= 2)
+                        interval = 0;
+                    //Overlaps can happen if the offset and interval are both odd or both even
                     if (players.size() % 2 == interval % 2) {
                         interval++;
                     }
+                    //Then we need to make sure that they don't evenly divide either
+                    if (players.size() % 2 == 0 && interval <= 1 && players.size() % interval == 0) {
+                        interval += 2;
+                    }
 
-                    int randPlayer;
+                    int randPlayer = offset;
                     int counter = offset;
-
                     String randQ;
 
                     ArrayList<String[]> temp = new ArrayList<>();
 
                     for (int i = 0; i < players.size() * 2; i++) {
-                        counter += interval;
-                        randPlayer = (counter) % players.size();
 
-                        randQ = responses[randPlayer][i % 2];
+                        //Checks if the algorithm overlapped onto the starting point
+                        if (randPlayer==offset && i%2==0)
+                            overlap = true;
+
+                        //Case for if you somehow overlap
+                        if (!overlap)
+                            randQ = responses[randPlayer][i % 2];
+                        else {
+                            randQ = responses[randPlayer][(i+1) % 2];
+                            overlap = true;
+                        }
 
                         temp.add(new String[]{randQ, randPlayer + ""});
                         if (Constants.debug) {
                             Log.i(TAG, "NEW PAIR: " + Arrays.toString(temp.get(temp.size() - 1)));
                         }
+
+                        counter += interval;
+                        randPlayer = (counter) % players.size();
                     }
 
                     for (int i = 0; i < temp.size(); i = i + 2) {
                         pairs.add(new String[]{temp.get(i)[0], temp.get(i + 1)[0], temp.get(i)[1], temp.get(i + 1)[1]});
                     }
                 }
+                String pair = "PAIRS CREATED:\n";
+                try {
+                    pair += "offset:" + offset + "\tinterval:" + interval + "\n";
+                } catch (Exception exception){}
+                for ( String[] combo : pairs ){
+                    for (String item : combo)
+                        pair += item+'\t';
+                    pair += '\n';
+                }
+                Log.v("Selection_Fix",pair);
             }
         }
 
@@ -1040,10 +1033,58 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         }
     }
 
-    private int usersDone;
-
     public void endGame(String state) {
+        if (state.equals("again")) {
+            BluetoothService.writeToClients(Constants.WC_END, new String[]{"again"});//send the data over to clients
+            this.start.interrupt();
 
+            Intent again = new Intent(getActivity().getBaseContext(), GameActivity.class);
+            again.putExtra("me", UserData.toString(me));
+            again.putExtra("host", host);
+
+            for (int i = 0; i < players.size(); i++) {
+                players.get(i).score = 0;
+            }
+
+            ArrayList<String> values = new ArrayList<>();
+            for (int i = 0; i < players.size(); i++) {
+                values.add(UserData.toString(players.get(i)));
+            }
+            again.putStringArrayListExtra("PlayerArray", values);
+
+            getActivity().startActivity(again);
+        } else {
+            if (host) {
+                loading("Please wait, disconnecting the other devices;");
+                if (Constants.debug) {
+                    Log.i(TAG, "CLOSE WAS SELECTED");
+                }
+                BluetoothService.writeToClients(Constants.WC_END, new String[]{"done"});//send the data over to clients
+                Intent back = new Intent(getActivity().getBaseContext(), GameSelectActivity.class);
+                back.putExtra("username", me.username);
+                if (Constants.debug) {
+                    Log.i(TAG, "CLOSE WAS SELECTED");
+                }
+                loading("Disconecting the clients");
+                while (true) {
+                    if (players.size() == 1) {
+                        if (Constants.debug) {
+                            Log.i(TAG, "CLIENTS HAVE CLOSED");
+                        }
+                        BluetoothService.listeners.remove(this);
+                        BluetoothService.stop();
+                        getActivity().startActivity(back);
+                        break;
+                    }
+
+                }
+            } else {
+                Intent back = new Intent(getActivity().getBaseContext(), GameSelectActivity.class);
+                back.putExtra("username", me.username);
+                BluetoothService.writeToServer("" + me.getPlayerID(), Constants.USER_DISCONNECTED, new String[]{"ALL GOOD"});
+                this.startActivity(back);
+            }
+        }
     }
 
     private void updateFonts() {
@@ -1086,5 +1127,5 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
     public void onDetach() {
         super.onDetach();
     }
-    //endregion (N
+    //endregion
 }

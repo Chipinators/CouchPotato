@@ -122,13 +122,11 @@ public class TitleActivity extends Activity implements View.OnClickListener, Tex
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         if (s != null && s.length() >= 1) {
             submit.setEnabled(true);
-            submit.setBackgroundColor( ContextCompat.getColor(this, R.color.main_accept) );
             submit.setTextColor( ContextCompat.getColor(this, R.color.main_black) );
         }
         else {
             submit.setEnabled(false);
-            submit.setBackgroundColor( ContextCompat.getColor(this, R.color.main_black) );
-            submit.setTextColor( ContextCompat.getColor(this, R.color.main_white) );
+            submit.setTextColor( ContextCompat.getColor(this, R.color.main_black_superfaded) );
         }
     }
 

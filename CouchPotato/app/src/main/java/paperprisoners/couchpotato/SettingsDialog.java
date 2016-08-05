@@ -1,5 +1,6 @@
 package paperprisoners.couchpotato;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -25,6 +26,7 @@ public class SettingsDialog extends AlertDialog implements View.OnClickListener,
     }
 
     private MenuState state = MenuState.MAIN;
+    private int playerID = -1;
 
     private ColorStateList active, muted;
 
@@ -34,9 +36,10 @@ public class SettingsDialog extends AlertDialog implements View.OnClickListener,
     private Button quitButton, backButton;
     private SeekBar voiceSlider, sfxSlider;
 
-    public SettingsDialog(Context context, MenuState state) {
+    public SettingsDialog(Context context, int playerID) {
         super(context);
-        this.state = state;
+        //this.state = state;
+        this.playerID = playerID;
     }
 
 
@@ -108,9 +111,11 @@ public class SettingsDialog extends AlertDialog implements View.OnClickListener,
         voiceSlider.setOnSeekBarChangeListener(this);
         sfxSlider.setOnSeekBarChangeListener(this);
         //Tweaking the quit button
-        if (state == MenuState.HOST)
+        //if (state == MenuState.HOST)
+        if (playerID == 0)
             quitButton.setText(getContext().getString(R.string.close_room));
-        else if (state == MenuState.MAIN)
+        //else if (state == MenuState.MAIN)
+        else if (playerID < 0 )
             root.removeView(quitButton);
         adjustContent();
     }
@@ -134,8 +139,7 @@ public class SettingsDialog extends AlertDialog implements View.OnClickListener,
             adjustContent();
         }
         else if (v == quitButton) {
-            //TODO: Leave game
-
+            BluetoothService.scanMessageListeners(playerID, Constants.EXIT, new String[]{"DONE"});
         }
         else if (v == backButton) {
             cancel();

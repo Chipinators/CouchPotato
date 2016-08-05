@@ -322,6 +322,14 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
         final double time = voteTime;
         input = null;
 
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                container.removeAllViews();
+                inflater.inflate(R.layout.wouldchuck_choice, container);
+            }
+        });
+
         if (host) {
             if (Constants.debug) {
                 Log.i(TAG, "LENGTH HOST: " + responses[0][0]);
@@ -909,8 +917,8 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 pairs.add(new String[]{responses[0][0], responses[0][1], "0", "0"});
             } else {
                 //private boolean submissionsArePaired;
-                int offset;
-                int interval;
+                int offset=0;
+                int interval=1;
                 boolean overlap = false;
 
                 if (!submissionsArePaired) {
@@ -961,6 +969,16 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                         pairs.add(new String[]{temp.get(i)[0], temp.get(i + 1)[0], temp.get(i)[1], temp.get(i + 1)[1]});
                     }
                 }
+                String pair = "PAIRS CREATED:\n";
+                try {
+                    pair += "offset:" + offset + "\tinterval:" + interval + "\n";
+                } catch (Exception exception){}
+                for ( String[] combo : pairs ){
+                    for (String item : combo)
+                        pair += item+'\t';
+                    pair += '\n';
+                }
+                Log.v("Selection_Fix",pair);
             }
         }
 

@@ -44,6 +44,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
     private Fragment screen;
     private FragmentManager manager;
 
+    private Fragment gameFrag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,8 +90,8 @@ public class GameActivity extends Activity implements View.OnClickListener {
             rank.setImageResource(R.drawable.ic_star_48dp);
         //Creates fragment and sets it
         manager = getFragmentManager();
-        Fragment wcFrag = new WouldChuckFragment();
-        setFragment(wcFrag);
+        gameFrag = new WouldChuckFragment();
+        setFragment(gameFrag);
     }
 
 
@@ -118,12 +119,13 @@ public class GameActivity extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         if (v == menu) {
             SettingsDialog settings;
-            if (host) {
+            settings = new SettingsDialog(this, me.playerID);
+            /*if (host) {
                 settings = new SettingsDialog(this, SettingsDialog.MenuState.HOST);
             }
             else {
                 settings = new SettingsDialog(this, SettingsDialog.MenuState.CLIENT);
-            }
+            }*/
             settings.show();
         }
     }

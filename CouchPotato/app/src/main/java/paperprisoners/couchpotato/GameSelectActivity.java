@@ -122,7 +122,8 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
             this.startActivity(toTitle);
             finish();
         } else if (v == menuButton) {
-            new SettingsDialog(this, SettingsDialog.MenuState.MAIN).show();
+            new SettingsDialog(this, -1).show();
+            //new SettingsDialog(this, SettingsDialog.MenuState.MAIN).show();
         } else if (v == infoButton) {
             Intent toInfo = new Intent(this, InfoActivity.class);
             toInfo.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

@@ -64,12 +64,7 @@ public class BluetoothService {
                 String[] content = Arrays.copyOfRange(split, 2, split.length);
                 if(Constants.debug) Log.i(TAG, "Message Content: " + Arrays.toString(split));
                 if(Constants.debug) Log.i(TAG, "NUMBER OF MESSAGE LISTENERS = " + listeners.size());
-                for (MessageListener m : BluetoothService.listeners) {
-                    if (m != null) {
-                        m.onReceiveMessage(player, type, content);
-                        if(Constants.debug) Log.i(TAG, "Message sent to: " + m.toString());
-                    }
-                }
+                scanMessageListeners(player,type,content);
             } catch (NumberFormatException nf) {
                 Log.e(TAG, "Could not parse message header");
             }
@@ -415,5 +410,14 @@ public class BluetoothService {
 
     public static void addMessageListener(MessageListener m) {
         listeners.add(m);
+    }
+
+    public static void scanMessageListeners(int player, int type, String[] content){
+        for (MessageListener m : BluetoothService.listeners) {
+            if (m != null) {
+                m.onReceiveMessage(player, type, content);
+                if(Constants.debug) Log.i(TAG, "Message sent to: " + m.toString());
+            }
+        }
     }
 }

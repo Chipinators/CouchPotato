@@ -49,11 +49,10 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
     private Typeface bold;
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     private int gameRound = 3;
-    private double inputTime = 20;
+    private double inputTime = 45;
     private double voteTime = 15;
     private double resultsTimes = 7.5;
     private double leaderboardTime = 7.5;
-
     //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     public WouldChuckFragment(){
 
@@ -243,7 +242,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
 
                         buttonPressed = true;
 
-                        loading("Please wait...");
+                        loading("Waiting for users to submit...");
                     }
                 });
             }
@@ -830,7 +829,8 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 }
                 break;
             case Constants.USER_DISCONNECTED:
-                players.remove(player);
+                Log.i(TAG, "PLAYER BEING DISCONECTED: " + player);
+                players.remove(findPlayerIndex(player));
                 break;
         }
     }
@@ -1071,8 +1071,8 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                         if (Constants.debug) {
                             Log.i(TAG, "CLIENTS HAVE CLOSED");
                         }
-                        BluetoothService.listeners.remove(this);
                         BluetoothService.stop();
+                        BluetoothService.listeners.remove(this);
                         getActivity().startActivity(back);
                         break;
                     }

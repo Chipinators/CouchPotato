@@ -30,7 +30,7 @@ import java.util.ArrayList;
  */
 public class SetupDialog extends AlertDialog implements View.OnClickListener, AdapterView.OnItemClickListener, DialogInterface.OnCancelListener, MessageListener{
     private static final String TAG = "SetupDialog";
-    private int minPlayers = 1, maxPlayers = 8;
+    private int minPlayers = 3, maxPlayers = 8;
     private boolean isHost = false;
     private boolean joined = false;
 
@@ -60,7 +60,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     }
 
     public SetupDialog(Context context, boolean isHost, UserData userData) {
-        this(context, 1, 8, isHost, userData);
+        this(context, 3, 8, isHost, userData);
     }
 
     //CUSTOM METHODS
@@ -118,7 +118,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
                 countText.setTextColor(ContextCompat.getColor(getContext(),R.color.main_white));
                 messageText.setText(getContext().getString(R.string.setup_host1));
                 startButton.setEnabled(false);
-                startButton.setTextColor(ContextCompat.getColor(getContext(),R.color.main_black_faded));
+                startButton.setTextColor(ContextCompat.getColor(getContext(),R.color.main_black_superfaded));
             }
         } else {
             if (joined) {

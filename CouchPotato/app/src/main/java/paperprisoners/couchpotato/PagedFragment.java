@@ -64,7 +64,7 @@ public class PagedFragment extends Fragment implements ViewPager.OnPageChangeLis
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         if (listener != null)
             listener.onPageScrolled(position, positionOffset, positionOffsetPixels);
-        Log.v("PagedFragment", "Scrolled event! position: " + position + "\toffset: " + positionOffset + "\tpixels: " + positionOffsetPixels);
+        if(Constants.debug) Log.v("PagedFragment", "Scrolled event! position: " + position + "\toffset: " + positionOffset + "\tpixels: " + positionOffsetPixels);
     }
 
     @Override

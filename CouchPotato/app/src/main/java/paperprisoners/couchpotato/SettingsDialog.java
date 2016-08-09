@@ -46,7 +46,7 @@ public class SettingsDialog extends AlertDialog implements View.OnClickListener,
     //CUSTOM METHODS BELOW
 
     private void adjustContent() {
-        Log.v("SoundManager", SoundManager.isVoiceMuted()+" "+ SoundManager.isSFXMuted());
+        if(Constants.debug) Log.v("SoundManager", SoundManager.isVoiceMuted()+" "+ SoundManager.isSFXMuted());
         //Voice volume
         if (SoundManager.isVoiceMuted()){
             //voiceMute.setImageBitmap(mute);

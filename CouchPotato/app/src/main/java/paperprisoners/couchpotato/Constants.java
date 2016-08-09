@@ -5,7 +5,7 @@ package paperprisoners.couchpotato;
  */
 public interface Constants {
     public String app_name = "Wouldchuck";
-    public static final boolean debug = true;
+    public static final boolean debug = false;
 
     final int range = 14;
 

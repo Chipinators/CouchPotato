@@ -139,7 +139,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                     }
                     gameOver();//call the game over screen!
                 } catch (Exception e) {
-                    Log.e(TAG, e.getMessage()); //ERROR (in case you fuck heads didn't know)
+                    if(Constants.debug) Log.e(TAG, e.getMessage()); //ERROR (in case you fuck heads didn't know)
                 }
             }
         };
@@ -829,7 +829,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 }
                 break;
             case Constants.USER_DISCONNECTED:
-                Log.i(TAG, "PLAYER BEING DISCONECTED: " + player);
+                if(Constants.debug) Log.i(TAG, "PLAYER BEING DISCONECTED: " + player);
                 players.remove(findPlayerIndex(player));
                 break;
         }
@@ -889,7 +889,7 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                 int offset=0;
                 int interval=1;
                 boolean overlap = false;
-                Log.i(TAG, "SUBMISSIONS ARE PAIRED: " + submissionsArePaired);
+                if(Constants.debug) Log.i(TAG, "SUBMISSIONS ARE PAIRED: " + submissionsArePaired);
                 if (!submissionsArePaired) {
                     submissionsArePaired = true;
                     Random rand = new Random();
@@ -949,12 +949,12 @@ public class WouldChuckFragment extends Fragment implements MessageListener {
                         pair += item+'\t';
                     pair += '\n';
                 }
-                Log.v("Selection_Fix",pair);
+                if(Constants.debug) Log.v("Selection_Fix",pair);
             }
         }
 
         String[] temp = pairs.get(0);
-        Log.e(TAG, "PAIRs: " + Arrays.toString(temp));
+        if(Constants.debug) Log.e(TAG, "PAIRs: " + Arrays.toString(temp));
         pairs.remove(0);
         return temp;
     } //DONE

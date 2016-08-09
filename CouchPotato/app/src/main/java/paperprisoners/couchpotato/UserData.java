@@ -35,7 +35,7 @@ public class UserData {
         this.score = score;
     }
     public UserData(String[] data){
-        Log.i(TAG, "USER DATA STRING ARRAY CONSTRUCTOR CALLED:   " + TextUtils.join(",",data));
+        if(Constants.debug) Log.i(TAG, "USER DATA STRING ARRAY CONSTRUCTOR CALLED:   " + TextUtils.join(",",data));
         username = data[0];
         address = data[1];
         score = Integer.parseInt(data[2]);
@@ -93,7 +93,7 @@ public class UserData {
     public static String toString(UserData u){
         String delim = "||||";
         String temp = u.username + delim + u.address + delim + u.score + delim + u.playerID;
-        Log.i(TAG, "TO STRING CALLED - OUTPUT: " + temp);
+        if(Constants.debug) Log.i(TAG, "TO STRING CALLED - OUTPUT: " + temp);
         return temp;
     }
 }

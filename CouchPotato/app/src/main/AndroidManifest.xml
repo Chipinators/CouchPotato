@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="paperprisoners.couchpotato">
+    package="paperprisoners.couchpotato"
+    android:versionCode="1"
+    android:versionName="@string/version">
 
     <!-- Permissions for Couch Potato -->
     <uses-permission android:name="android.permission.INTERNET" />

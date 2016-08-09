@@ -73,12 +73,12 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
             //Then adds listener if needed
             if (isHost) {
                 int pos = adapter.getCount() - 1;
-                Log.v("SETUPD",""+pos);
+                if(Constants.debug) Log.v("SETUPD",""+pos);
                 //Button b = (Button) userList.getChildAt(pos).findViewById(R.id.item_setup_kick);
                 //b.setOnClickListener(this);
             }
         }
-        Log.i(TAG, "USER ADDED TO ADAPTER: " + data.getAddress() + "    ADAPTER SIZE: " + connectedUsers.size());
+        if(Constants.debug) Log.i(TAG, "USER ADDED TO ADAPTER: " + data.getAddress() + "    ADAPTER SIZE: " + connectedUsers.size());
     }
 
     public UserData getUser(int index) {
@@ -215,27 +215,27 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
         if (v == startButton) {
             createFinalPlayerList();
             //Send Player ID To Clients
-            Log.i(TAG, "FINAL USER LIST SIZE BEFORE WRITE: " + finalUserList.size());
+            if(Constants.debug) Log.i(TAG, "FINAL USER LIST SIZE BEFORE WRITE: " + finalUserList.size());
             //TODO: Send Final Player List to all devices in the START message
-            Log.i(TAG, "CREATING PLAYERS TEMP ARRAYLIST");
+            if(Constants.debug) Log.i(TAG, "CREATING PLAYERS TEMP ARRAYLIST");
             //Create ArrayList that gets sent over to the next activity
             ArrayList<String> players = new ArrayList<String>();
             for(UserData user : finalUserList){
                 players.add(UserData.toString(user));
             }
-            Log.i(TAG, "PLAYERS TEMP ARRAYLIST CREATED WITH SIZE: " + players.size() + "   --- CREATING VALUES STRING ARRAY");
+            if(Constants.debug) Log.i(TAG, "PLAYERS TEMP ARRAYLIST CREATED WITH SIZE: " + players.size() + "   --- CREATING VALUES STRING ARRAY");
             //Create String Array of all players that gets sent to all of the clients
             String[] values = new String[players.size()];
             for(int i = 0; i < players.size(); i++){
                 values[i] = players.get(i);
             }
-            Log.i(TAG, "VALUES STRING ARRAY CREATED WITH SIZE: " + values.length);
+            if(Constants.debug) Log.i(TAG, "VALUES STRING ARRAY CREATED WITH SIZE: " + values.length);
             //TODO: HOST SEND FINAL USER LIST TO CLIENTS
             //BluetoothService.writeToClients(Constants.START,values);
             for(int i = 1; i < finalUserList.size(); i++){
                 BluetoothService.write(finalUserList.get(i).getAddress(), finalUserList.get(i).getPlayerID() + "",Constants.START, values);
             }
-            Log.i(TAG, "HOST WROTE FINAL USER LIST TO CLIENTS");
+            if(Constants.debug) Log.i(TAG, "HOST WROTE FINAL USER LIST TO CLIENTS");
             //Game Intent Stuff
             Intent toGame = new Intent(ownerContext, GameActivity.class);
             toGame.putStringArrayListExtra("PlayerArray", players);
@@ -272,14 +272,14 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
         // TODO: Connect client to selected host as described in user object
 
         UserData selected = adapter.getItem(position);
-        Log.i("Log", "Item clicked trying to connect");
+        if(Constants.debug) Log.i("Log", "Item clicked trying to connect");
         try {
             BluetoothService.connect(selected.getDevice());
         } catch (Exception e) {
-            Log.e(TAG, "Cannot connect to server, server not available?");
+            if(Constants.debug) Log.e(TAG, "Cannot connect to server, server not available?");
             adapter.clear();
         }
-        Log.i(TAG, "Successfully connected to the host");
+        if(Constants.debug) Log.i(TAG, "Successfully connected to the host");
         BluetoothService.getmAdapter().cancelDiscovery();
         BluetoothService.writeToClients(Constants.USER_CONNECTED,userData.toArray());
         if (true)
@@ -291,42 +291,42 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     public  final BroadcastReceiver bCReciever = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            Log.i(TAG, action);
+            if(Constants.debug) Log.i(TAG, action);
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                Log.i(TAG,"Device Name: " + device.getName());
+                if(Constants.debug) Log.i(TAG,"Device Name: " + device.getName());
                 UserData foundDevice = new UserData(device, device.getAddress(), device.getName());
                 if (!connectedUsers.contains(foundDevice) && device.getName() != null) {
-                    Log.i(TAG, "USER IS NOT ON LIST");
+                    if(Constants.debug) Log.i(TAG, "USER IS NOT ON LIST");
                     //TODO: MAKE IT SO THAT IT LOOKS FOR THE GAME NAME, NOT APP NAME.
                     if (foundDevice.getUsername().contains(Constants.app_name)) {
-                        Log.i(TAG, "USERNAME CONTAINS APP NAME - ADDED TO AVAILABLE DEVICES");
+                        if(Constants.debug) Log.i(TAG, "USERNAME CONTAINS APP NAME - ADDED TO AVAILABLE DEVICES");
                         addUser(foundDevice);
                     }
                 }
             }
             if(BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)){
-                Log.i(TAG, "USER CONNECTED TO SERVER - adding user to list");
+                if(Constants.debug) Log.i(TAG, "USER CONNECTED TO SERVER - adding user to list");
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 UserData connectedDevice = new UserData(device,device.getAddress(), device.getName());
                 addUser(connectedDevice);
-                Log.i(TAG, "USER ADDED TO LIST WITH ADDRESS: " + device.getAddress());
+                if(Constants.debug) Log.i(TAG, "USER ADDED TO LIST WITH ADDRESS: " + device.getAddress());
                 if(isHost){
 
                 }
             }
             if(BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)){
-                Log.i(TAG, "USER DISCONNECTED");
+                if(Constants.debug) Log.i(TAG, "USER DISCONNECTED");
                 if(isHost){
                     //TODO: REMOVE DISCONNECTED USER FROM USER LIST
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    Log.i(TAG, "USER DISCONNECTED WITH ADDRESS: " + device.getAddress());
-                    Log.i(TAG, "ADAPTER SIZE: " + connectedUsers.size());
+                    if(Constants.debug) Log.i(TAG, "USER DISCONNECTED WITH ADDRESS: " + device.getAddress());
+                    if(Constants.debug) Log.i(TAG, "ADAPTER SIZE: " + connectedUsers.size());
                     for(UserData user : connectedUsers){
-                        Log.i(TAG, "USER ADDRESS: " + user.getAddress() + "   DEVICE ADDRESS: " + device.getAddress());
+                        if(Constants.debug) Log.i(TAG, "USER ADDRESS: " + user.getAddress() + "   DEVICE ADDRESS: " + device.getAddress());
                         if(device.getAddress().equals(user.getAddress())){
                             removeUser(user);
-                            Log.i(TAG, "REMOVING " + user.getUsername());
+                            if(Constants.debug) Log.i(TAG, "REMOVING " + user.getUsername());
                         }
                     }
                     userList.invalidate();
@@ -343,7 +343,7 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
 
     @Override
     public void onCancel(DialogInterface dialog) {
-        Log.i(TAG, "ON CANCEL CALLED");
+        if(Constants.debug) Log.i(TAG, "ON CANCEL CALLED");
     }
 
     @Override
@@ -356,19 +356,19 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     public void onReceiveMessage(int player, int messageType, Object[] content) {
         switch(messageType){
             case Constants.START:
-                Log.i(TAG, "START MESSAGE RECEIVED FROM HOST");
+                if(Constants.debug) Log.i(TAG, "START MESSAGE RECEIVED FROM HOST");
                 //ownerContext.unregisterReceiver(bCReciever);
                 BluetoothService.getmAdapter().cancelDiscovery();
                 //TODO: ADD BUNDLED DATA TO SEND TO GAME ACTIVITY
                 userData.setPlayerID(player);
-                Log.i(TAG, "USER ID FROM HOST:" + userData.playerID);
+                if(Constants.debug) Log.i(TAG, "USER ID FROM HOST:" + userData.playerID);
                 Intent toGame = new Intent(ownerContext, GameActivity.class);
-                Log.i(TAG, "RECREATING PLAYER LIST SENT FROM HOST WITH SIZE: " + content.length);
+                if(Constants.debug) Log.i(TAG, "RECREATING PLAYER LIST SENT FROM HOST WITH SIZE: " + content.length);
                 ArrayList<String> players = new ArrayList<String>();
                 for(int i = 0; i < content.length; i++){
                     players.add((String)content[i]);
                 }
-                Log.i(TAG, "RECREATED PLAYER LIST SENT FROM HOST WITH SIZE: " + players.size());
+                if(Constants.debug) Log.i(TAG, "RECREATED PLAYER LIST SENT FROM HOST WITH SIZE: " + players.size());
                 toGame.putStringArrayListExtra("PlayerArray", players);
 
                 toGame.putExtra("me", UserData.toString(userData));
@@ -376,21 +376,21 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
                 ownerContext.startActivity(toGame);
                 break;
             case Constants.USER_CONNECTED:
-                Log.i(TAG, "USER_CONNECTED: PROCESSING USER DATA");
+                if(Constants.debug) Log.i(TAG, "USER_CONNECTED: PROCESSING USER DATA");
                 UserData user = new UserData((String)content[0], Integer.getInteger((String)content[1]));
                 if(connectedUsers.contains(user)){
-                    Log.i(TAG, "Duplicate user found, removing and adding again");
+                    if(Constants.debug) Log.i(TAG, "Duplicate user found, removing and adding again");
                     connectedUsers.remove(user);
                 }
                 adapter.add(user);
                 break;
             case Constants.USER_ID:
-                Log.i(TAG, "USER ID RECEIVED: " + player);
+                if(Constants.debug) Log.i(TAG, "USER ID RECEIVED: " + player);
                 userData.setPlayerID(player);
                 break;
             case Constants.USER_KICKED:
-                Log.i(TAG, "USER KICK RECEIVED: User Address - " + content[0]);
-                Log.i(TAG, "User Address: " + BluetoothService.getmAdapter().getAddress());
+                if(Constants.debug) Log.i(TAG, "USER KICK RECEIVED: User Address - " + content[0]);
+                if(Constants.debug) Log.i(TAG, "User Address: " + BluetoothService.getmAdapter().getAddress());
                 if(content[0].equals(userData.address)) {
                     BluetoothService.stop();
                     adapter.clear();
@@ -405,12 +405,12 @@ public class SetupDialog extends AlertDialog implements View.OnClickListener, Ad
     public void createFinalPlayerList(){
         finalUserList.add(userData);
         finalUserList.addAll(connectedUsers);
-        Log.i(TAG, "SETTING IDS, count " +  finalUserList.size());
+        if(Constants.debug) Log.i(TAG, "SETTING IDS, count " +  finalUserList.size());
         int i = 0;
         for(UserData user : finalUserList){
-            Log.i(TAG, "PRE SET: " + user.username + " | " + user.playerID + "");
+            if(Constants.debug) Log.i(TAG, "PRE SET: " + user.username + " | " + user.playerID + "");
             user.setPlayerID(i);
-            Log.i(TAG, "AFTER SET: " + user.playerID + "");
+            if(Constants.debug) Log.i(TAG, "AFTER SET: " + user.playerID + "");
             i++;
         }
         userData.setPlayerID(0);

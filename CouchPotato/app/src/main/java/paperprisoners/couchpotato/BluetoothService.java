@@ -66,7 +66,7 @@ public class BluetoothService {
                 if(Constants.debug) Log.i(TAG, "NUMBER OF MESSAGE LISTENERS = " + listeners.size());
                 scanMessageListeners(player,type,content);
             } catch (NumberFormatException nf) {
-                Log.e(TAG, "Could not parse message header");
+                if(Constants.debug) Log.e(TAG, "Could not parse message header");
             }
         }
     };
@@ -188,7 +188,7 @@ public class BluetoothService {
             if(Constants.debug) Log.i(TAG, "SINGLE WRITE CALLED: " + output);
             mConnectedDevices.get(macAddress).write(output.getBytes());
         } catch (Exception e){
-            Log.e(TAG, "COULD NOT WRITE TO CLIENT WITH MAC ADDRESS: " + macAddress);
+            if(Constants.debug) Log.e(TAG, "COULD NOT WRITE TO CLIENT WITH MAC ADDRESS: " + macAddress);
         }
     }
 
@@ -241,7 +241,7 @@ public class BluetoothService {
             try {
                 mServerSocket.close();
             } catch (IOException e) {
-                Log.e(TAG, "close() of server failed", e);
+                if(Constants.debug) Log.e(TAG, "close() of server failed", e);
             }
         }
     } //End Server
@@ -258,7 +258,7 @@ public class BluetoothService {
             try {
                 tmp = device.createInsecureRfcommSocketToServiceRecord(uuid);
             } catch (IOException e) {
-                Log.e(TAG, "create() failed", e);
+                if(Constants.debug) Log.e(TAG, "create() failed", e);
             }
             mSocket = tmp;
         }
@@ -275,7 +275,7 @@ public class BluetoothService {
                     if(Constants.debug) Log.i(TAG, "SOCKET CONNECTION FAILED");
                     mSocket.close();
                 } catch (IOException e2) {
-                    Log.e(TAG, "unable to close() socket during connection failure", e2);
+                    if(Constants.debug) Log.e(TAG, "unable to close() socket during connection failure", e2);
                 }
                 //connectionFailed();
                 return;
@@ -313,7 +313,7 @@ public class BluetoothService {
                 tmpIn = socket.getInputStream();
                 tmpOut = socket.getOutputStream();
             } catch (IOException e) {
-                Log.e(TAG, "temp sockets not created", e);
+                if(Constants.debug) Log.e(TAG, "temp sockets not created", e);
             }
             mInStream = tmpIn;
             mOutStream = tmpOut;
@@ -330,7 +330,7 @@ public class BluetoothService {
                     bytes = mInStream.read(buffer);
                     if(Constants.debug) Log.i(TAG, "MESSAGE RECEIVED FROM REMOTE: Attempting to process - " + bytes + " bytes");
                     if(mHandler == null) {
-                        Log.e(TAG, "mHandler received a null");
+                        if(Constants.debug) Log.e(TAG, "mHandler received a null");
                     }else {
                         if(Constants.debug) Log.i(TAG, "Obtain Message Reached");
                         /*Message msg = mHandler.obtainMessage(100, bytes, -1, buffer).;
@@ -341,7 +341,7 @@ public class BluetoothService {
                     }
 
                 } catch (IOException e) {
-                    Log.e(TAG, "disconnected", e);
+                    if(Constants.debug) Log.e(TAG, "disconnected", e);
                     //connectionLost();
                     break;
                 }
@@ -352,14 +352,14 @@ public class BluetoothService {
             try {
                 mOutStream.write(out);
             } catch (IOException e) {
-                Log.e(TAG, "COULD NOT WRITE TO CLIENT - REMOVING CLIENT: " + this);
+                if(Constants.debug) Log.e(TAG, "COULD NOT WRITE TO CLIENT - REMOVING CLIENT: " + this);
                 cancel();
             }
         }
 
         public void cancel() {
             try {
-                Log.e(TAG, "CANCELING SOCKET - " + this);
+                if(Constants.debug) Log.e(TAG, "CANCELING SOCKET - " + this);
                 //mConnectedDevices.remove(this);
                 mSocket.close();
             } catch (IOException e) {

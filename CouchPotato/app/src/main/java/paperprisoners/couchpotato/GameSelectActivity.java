@@ -2,11 +2,7 @@ package paperprisoners.couchpotato;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -15,13 +11,10 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -30,11 +23,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.regex.Pattern;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -147,9 +135,9 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
 
     public void requestLocation() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Log.i(TAG, "BUILD IS GREATER OR EQUAL TO VERSION M, CHECKING PERMISSIONS");
+            if(Constants.debug)Log.i(TAG, "BUILD IS GREATER OR EQUAL TO VERSION M, CHECKING PERMISSIONS");
             if (ContextCompat.checkSelfPermission(this.getBaseContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                Log.i(TAG, "PERMISSION NOT GRANTED, REQUESTING COARSE LOCATION PERMISSION");
+                if(Constants.debug)Log.i(TAG, "PERMISSION NOT GRANTED, REQUESTING COARSE LOCATION PERMISSION");
                 ActivityCompat.requestPermissions(GameSelectActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, Constants.REQUEST_COARSE_LOCATION);
             }
         }
@@ -159,10 +147,10 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case Constants.REQUEST_COARSE_LOCATION: {
-                Log.i(TAG, "REQUEST_COARSE_LOCATION REQUEST RESULT");
+                if(Constants.debug)Log.i(TAG, "REQUEST_COARSE_LOCATION REQUEST RESULT");
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.i(TAG, "REQUEST_COARSE_LOCATION PERMISSION WAS GRANTED, GOING TO SETUP DIALOG");
+                    if(Constants.debug)Log.i(TAG, "REQUEST_COARSE_LOCATION PERMISSION WAS GRANTED, GOING TO SETUP DIALOG");
                     setup = new SetupDialog(this, false, userData);
                     setup.show();
                 }
@@ -174,7 +162,7 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
                         break;
                     }
                     else {
-                        Log.i(TAG, "REQUEST_COARSE_LOCATION PERMISSION WAS NOT GRANTED, RETURNING TO GAME SELECT ACTIVITY");
+                        if(Constants.debug)Log.i(TAG, "REQUEST_COARSE_LOCATION PERMISSION WAS NOT GRANTED, RETURNING TO GAME SELECT ACTIVITY");
                         new MessageToast(this, "You must grant permissions to use Bluetooth!").show();
                     }
                 }
@@ -198,7 +186,7 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i(TAG, "REQUEST RECEIVED - Request Code: " + requestCode + "  Result Code: " + resultCode);
+        if(Constants.debug)Log.i(TAG, "REQUEST RECEIVED - Request Code: " + requestCode + "  Result Code: " + resultCode);
         if (requestCode == Constants.REQUEST_DISCOVERABILITY) {
             if(resultCode == 180){
                 setup = new SetupDialog(this, true, userData);
@@ -278,7 +266,7 @@ public class GameSelectActivity extends Activity implements View.OnClickListener
     @Override
     public void onReceiveMessage(int player, int messageType, Object[] content) {
         if (messageType == 1) {
-            Log.i(TAG, "Message received from remote device! - " + content.toString());
+            if(Constants.debug)Log.i(TAG, "Message received from remote device! - " + content.toString());
         }
     }
 }

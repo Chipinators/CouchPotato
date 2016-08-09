@@ -28,7 +28,7 @@ public class KeyboardHidingListener implements View.OnFocusChangeListener, View.
                 InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
             } catch (NullPointerException n) {
-                Log.i("KeyboardHidingListener", "Keyboard not available to hide. onFocusChange failed.");
+                if(Constants.debug) Log.i("KeyboardHidingListener", "Keyboard not available to hide. onFocusChange failed.");
             }
         }
     }
@@ -40,7 +40,7 @@ public class KeyboardHidingListener implements View.OnFocusChangeListener, View.
                 InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
             } catch (NullPointerException n) {
-                Log.i("KeyboardHidingListener", "Keyboard not available to hide. onClick failed.");
+                if(Constants.debug) Log.i("KeyboardHidingListener", "Keyboard not available to hide. onClick failed.");
             }
         }
     }
